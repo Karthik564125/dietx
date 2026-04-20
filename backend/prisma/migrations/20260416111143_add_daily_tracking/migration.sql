@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE `user` ADD COLUMN `lastEntryDate` VARCHAR(191) NULL,
+    ADD COLUMN `sleepHours` DOUBLE NOT NULL DEFAULT 0,
+    ADD COLUMN `waterIntake` INTEGER NOT NULL DEFAULT 0;

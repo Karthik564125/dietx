@@ -1,0 +1,11 @@
+-- AlterTable
+ALTER TABLE `user` ADD COLUMN `activityLevel` VARCHAR(191) NULL,
+    ADD COLUMN `age` INTEGER NULL,
+    ADD COLUMN `bmi` DOUBLE NULL,
+    ADD COLUMN `dailyCalories` INTEGER NULL,
+    ADD COLUMN `gender` VARCHAR(191) NULL,
+    ADD COLUMN `height` DOUBLE NULL,
+    ADD COLUMN `heightUnit` VARCHAR(191) NULL,
+    ADD COLUMN `profileComplete` BOOLEAN NOT NULL DEFAULT false,
+    ADD COLUMN `weight` DOUBLE NULL,
+    ADD COLUMN `weightUnit` VARCHAR(191) NULL;

@@ -11,6 +11,26 @@ interface NutritionDetailProps {
 const NutritionDetail = ({ setIsAuthenticated }: NutritionDetailProps) => {
   const navigate = useNavigate();
   const [health, setHealth] = useState<any>(null);
+  const [activeDiet, setActiveDiet] = useState<'veg'|'nonVeg'>('veg');
+
+  const recipes = {
+    veg: [
+      { name: 'Paneer Tikka Salad', macros: 'P: 22g | C: 12g | F: 18g', desc: 'Grilled cottage cheese with fresh greens and mint chutney dressing.', cal: '320 kcal' },
+      { name: 'Quinoa & Black Bean Bowl', macros: 'P: 18g | C: 45g | F: 10g', desc: 'Protein-packed quinoa with spiced black beans, corn, and avocado.', cal: '410 kcal' },
+      { name: 'Oats & Veggie Chilla', macros: 'P: 15g | C: 35g | F: 8g', desc: 'Savory Indian pancakes made with oats, besan, and mixed vegetables.', cal: '280 kcal' },
+      { name: 'Lentil (Dal) Power Soup', macros: 'P: 20g | C: 40g | F: 5g', desc: 'Comforting yellow dal tempered with ghee, cumin, and garlic.', cal: '350 kcal' },
+      { name: 'Greek Yogurt & Berries', macros: 'P: 15g | C: 20g | F: 4g', desc: 'High-protein yogurt topped with fresh mixed berries and chia seeds.', cal: '180 kcal' },
+      { name: 'Tofu Stir-fry', macros: 'P: 24g | C: 15g | F: 14g', desc: 'Firm tofu tossed with bell peppers, broccoli, and a light soy-ginger glaze.', cal: '310 kcal' },
+    ],
+    nonVeg: [
+      { name: 'Grilled Lemon Herb Chicken', macros: 'P: 45g | C: 5g | F: 12g', desc: 'Lean chicken breast marinated in herbs, served with steamed broccoli.', cal: '340 kcal' },
+      { name: 'Baked Salmon with Asparagus', macros: 'P: 35g | C: 8g | F: 22g', desc: 'Rich in Omega-3s, baked to perfection with a light lemon drizzle.', cal: '420 kcal' },
+      { name: 'Turkey Meatballs & Zoodles', macros: 'P: 30g | C: 15g | F: 14g', desc: 'Healthy alternative to pasta using zucchini noodles and lean turkey.', cal: '360 kcal' },
+      { name: 'Egg White Veggie Omelette', macros: 'P: 24g | C: 5g | F: 8g', desc: '4 egg whites + 1 whole egg packed with spinach, mushrooms, and peppers.', cal: '210 kcal' },
+      { name: 'Tuna Salad Lettuce Wraps', macros: 'P: 28g | C: 4g | F: 10g', desc: 'Light tuna mixed with Greek yogurt, served in crisp romaine leaves.', cal: '250 kcal' },
+      { name: 'Chicken & Sweet Potato Mash', macros: 'P: 38g | C: 35g | F: 9g', desc: 'Shredded chicken breast with roasted sweet potatoes and green beans.', cal: '450 kcal' },
+    ]
+  };
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -92,41 +112,74 @@ const NutritionDetail = ({ setIsAuthenticated }: NutritionDetailProps) => {
 
         {/* Nutrition Tips Section */}
         <section className="space-y-8">
-            <h2 className="text-3xl font-black text-slate-900 flex items-center gap-3">
-              <Salad className="text-emerald-600" size={32} />
-              Curated Meal Architecture
-            </h2>
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                <h2 className="text-3xl font-black text-slate-900 flex items-center gap-3">
+                  <Salad className="text-emerald-600" size={32} />
+                  Suggested Recipes
+                </h2>
+                
+                {/* Veg/Non-Veg Toggle */}
+                <div className="flex bg-slate-100 p-1 rounded-xl w-fit">
+                    <button 
+                      onClick={() => setActiveDiet('veg')}
+                      className={`px-6 py-2.5 rounded-lg font-black text-xs uppercase tracking-widest transition-all ${activeDiet === 'veg' ? 'bg-white text-emerald-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                    >
+                      Vegetarian
+                    </button>
+                    <button 
+                      onClick={() => setActiveDiet('nonVeg')}
+                      className={`px-6 py-2.5 rounded-lg font-black text-xs uppercase tracking-widest transition-all ${activeDiet === 'nonVeg' ? 'bg-white text-red-500 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                    >
+                      Non-Vegetarian
+                    </button>
+                </div>
+            </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {[
-                    { time: 'Breakfast', title: 'The Ignition Meal', icon: '🌅', desc: 'High protein and complex carbs to fire up your metabolism.' },
-                    { time: 'Lunch', title: 'The Power Fuel', icon: '☀️', desc: 'Balanced greens, healthy fats and lean protein for steady energy.' },
-                    { time: 'Dinner', title: 'The Recovery Meal', icon: '🌙', desc: 'Light and mineral-rich food to aid overnight healing.' }
-                ].map((meal, i) => (
-                    <div key={i} className="glass-card p-8 group cursor-pointer border-transparent hover:border-emerald-100">
-                        <div className="flex justify-between items-start mb-6">
-                            <span className="text-4xl">{meal.icon}</span>
-                            <div className="px-3 py-1 bg-emerald-50 text-emerald-600 rounded-full text-[10px] font-black uppercase tracking-widest">{meal.time}</div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {recipes[activeDiet].map((recipe, i) => (
+                    <div key={i} className={`glass-card p-6 flex flex-col justify-between border-transparent hover:border-${activeDiet === 'veg' ? 'emerald' : 'red'}-100 transition-all group`}>
+                        <div>
+                            <div className="flex justify-between items-start mb-4">
+                                <h4 className="text-lg font-black text-slate-900">{recipe.name}</h4>
+                                <div className="px-3 py-1 bg-slate-100 text-slate-600 rounded-full text-[10px] font-black uppercase tracking-widest whitespace-nowrap">
+                                    {recipe.cal}
+                                </div>
+                            </div>
+                            <p className="text-slate-500 font-medium text-sm leading-relaxed mb-6">{recipe.desc}</p>
                         </div>
-                        <h4 className="text-xl font-black text-slate-900 mb-2">{meal.title}</h4>
-                        <p className="text-slate-500 font-medium text-sm leading-relaxed mb-6">{meal.desc}</p>
-                        <button className="flex items-center gap-2 text-emerald-600 font-bold text-xs uppercase tracking-widest hover:translate-x-1 transition-all">
-                            View Suggested Recipes <ChevronRight size={14} />
-                        </button>
+                        <div className="pt-4 border-t border-slate-100 flex justify-between items-center">
+                            <span className={`text-[11px] font-black uppercase tracking-widest ${activeDiet === 'veg' ? 'text-emerald-600' : 'text-red-500'}`}>
+                                {recipe.macros}
+                            </span>
+                        </div>
                     </div>
                 ))}
+            </div>
 
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12 pt-12 border-t-2 border-slate-100">
                 <div className="glass-card p-8 bg-slate-50 border-emerald-100 flex flex-col justify-center items-center text-center space-y-6">
                     <div className="w-16 h-16 bg-white rounded-[1.5rem] flex items-center justify-center shadow-sm">
-                        <Info className="text-slate-400" size={24} />
+                        <Info className="text-emerald-500" size={24} />
                     </div>
                     <div className="space-y-2">
                         <h4 className="text-lg font-black text-slate-900">Custom Nutrition Plan</h4>
-                        <p className="text-slate-500 font-medium text-sm">Need a month-long detailed chart? Request our expert nutritionists.</p>
+                        <p className="text-slate-500 font-medium text-sm">Need a month-long detailed chart? Book a session with our expert nutritionists.</p>
                     </div>
-                    <button className="px-6 py-3 bg-slate-900 text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-emerald-600 transition-all">
-                        Request Full Plan
+                    <button 
+                      onClick={() => navigate('/sessions')}
+                      className="px-6 py-3 bg-slate-900 text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-emerald-600 transition-all"
+                    >
+                        Go to Sessions
                     </button>
+                </div>
+                
+                <div className="flex flex-col justify-center p-8 bg-amber-50/50 rounded-3xl border border-amber-100">
+                    <h4 className="text-amber-900 font-black text-sm uppercase tracking-widest mb-3 flex items-center gap-2">
+                      <span className="text-xl">⚠️</span> Medical Disclaimer
+                    </h4>
+                    <p className="text-amber-800/80 font-medium text-sm leading-relaxed">
+                        Please consult with a qualified healthcare professional or doctor before starting any new diet, nutrition plan, or drastically changing your eating habits. These recipes are suggestions and may need to be tailored to your specific medical needs and allergies.
+                    </p>
                 </div>
             </div>
         </section>

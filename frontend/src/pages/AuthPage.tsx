@@ -107,8 +107,7 @@ const AuthPage = ({ setAuth }: AuthPageProps) => {
              <img 
                src={logo} 
                alt="DietX Logo" 
-               className="w-full h-full object-contain mix-blend-multiply"
-               style={{ maskImage: 'radial-gradient(circle, black 40%, transparent 75%)', WebkitMaskImage: 'radial-gradient(circle, black 40%, transparent 75%)' }}
+               className="w-full h-full object-contain rounded-3xl"
              />
           </div>
           <div className="flex flex-col text-left">

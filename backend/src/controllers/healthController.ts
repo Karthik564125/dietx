@@ -8,6 +8,16 @@ function getBmiCategory(bmi: number): string {
   return 'Obese';
 }
 
+function calculateIdealWeight(gender: string, heightCm: number): number {
+  if (!heightCm) return 0;
+  const inchesOver60 = (heightCm / 2.54) - 60;
+  if (gender === 'male') {
+    return 50 + 2.3 * inchesOver60;
+  } else {
+    return 45.5 + 2.3 * inchesOver60;
+  }
+}
+
 export const updateHealthProfile = async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = (req as any).user.userId;
@@ -35,24 +45,25 @@ export const updateHealthProfile = async (req: Request, res: Response): Promise<
     const heightM = heightCm / 100;
     const bmi = parseFloat((weightKg / (heightM * heightM)).toFixed(1));
 
-    // Mifflin-St Jeor BMR equation
+    // Harris-Benedict BMR equation
     let bmr: number;
     const ageNum = parseInt(age);
     if (gender === 'male') {
-      bmr = 10 * weightKg + 6.25 * heightCm - 5 * ageNum + 5;
+      bmr = 88.362 + (13.397 * weightKg) + (4.799 * heightCm) - (5.677 * ageNum);
     } else {
-      bmr = 10 * weightKg + 6.25 * heightCm - 5 * ageNum - 161;
+      bmr = 447.593 + (9.247 * weightKg) + (3.098 * heightCm) - (4.330 * ageNum);
     }
 
     const activityFactors: Record<string, number> = {
       sedentary: 1.2,
-      light: 1.375,
-      moderate: 1.55,
-      active: 1.725,
+      light: 1.3,
+      moderate: 1.5,
+      active: 1.7,
       veryActive: 1.9,
     };
 
     const dailyCalories = Math.round(bmr * (activityFactors[activityLevel] ?? 1.2));
+    const idealWeight = calculateIdealWeight(gender, heightCm);
 
     await prisma.user.update({
       where: { id: userId },
@@ -75,6 +86,7 @@ export const updateHealthProfile = async (req: Request, res: Response): Promise<
       bmi,
       dailyCalories,
       bmiCategory: getBmiCategory(bmi),
+      idealWeight: parseFloat(idealWeight.toFixed(1))
     });
   } catch (error) {
     console.error('Health profile update error:', error);
@@ -107,6 +119,7 @@ export const getHealthProfile = async (req: Request, res: Response): Promise<voi
         bmi: user.bmi,
         dailyCalories: user.dailyCalories,
         bmiCategory: user.bmi ? getBmiCategory(user.bmi) : null,
+        idealWeight: user.height ? parseFloat(calculateIdealWeight(user.gender || 'female', user.height).toFixed(1)) : null,
         waterIntake: user.waterIntake,
         sleepHours: user.sleepHours,
         lastEntryDate: user.lastEntryDate,

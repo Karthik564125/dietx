@@ -121,8 +121,12 @@ const Profile = ({ setIsAuthenticated }: ProfileProps) => {
                        <span className="text-sm font-black text-slate-900">{healthStats?.weight || '--'} kg</span>
                     </div>
                     <div className="flex justify-between items-center">
+                       <span className="text-xs font-bold text-slate-400">Ideal Weight</span>
+                       <span className="text-sm font-black text-emerald-600">{healthStats?.idealWeight ? `${healthStats.idealWeight} kg` : '--'}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
                        <span className="text-xs font-bold text-slate-400">Daily Goal</span>
-                       <span className="text-sm font-black text-emerald-600">{healthStats?.dailyCalories || '--'} kcal</span>
+                       <span className="text-sm font-black text-slate-900">{healthStats?.dailyCalories || '--'} kcal</span>
                     </div>
                  </div>
               </div>

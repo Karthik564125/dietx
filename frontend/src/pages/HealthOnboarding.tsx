@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
+import logo from '../assets/logo.png';
 
 type Gender = 'male' | 'female' | 'other' | '';
 type ActivityLevel = 'sedentary' | 'light' | 'moderate' | 'active' | 'veryActive' | '';
@@ -9,6 +10,7 @@ interface Results {
   bmi: number;
   dailyCalories: number;
   bmiCategory: string;
+  idealWeight?: number;
 }
 
 const activityOptions = [
@@ -74,6 +76,9 @@ export default function HealthOnboarding() {
   const [weightLbs, setWeightLbs] = useState('');
   const [activity, setActivity] = useState<ActivityLevel>('');
 
+  const [isUpdateMode, setIsUpdateMode] = useState(location.state?.from === '/profile');
+  const [hasFetched, setHasFetched] = useState(false);
+
   useEffect(() => {
     // Detect country via IP to set default unit system
     fetch('https://ipapi.co/json/')
@@ -81,6 +86,42 @@ export default function HealthOnboarding() {
       .then(d => { if (['US', 'LR', 'MM'].includes(d.country_code)) setUseImperial(true); })
       .catch(() => {});
   }, []);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token && !hasFetched) {
+      axios.get('http://localhost:5001/api/health-profile', {
+        headers: { Authorization: `Bearer ${token}` }
+      }).then(res => {
+        const d = res.data;
+        if (d.profileComplete && d.health) {
+          setIsUpdateMode(true);
+          const h = d.health;
+          if (h.age) setAge(h.age.toString());
+          if (h.gender) setGender(h.gender);
+          if (h.activityLevel) setActivity(h.activityLevel);
+          if (h.height) {
+            setHeightCm(h.height.toString());
+            if (h.heightUnit === 'ft_in') {
+              setUseImperial(true);
+              const totalInches = h.height / 2.54;
+              setHeightFt(Math.floor(totalInches / 12).toString());
+              setHeightIn(Math.round(totalInches % 12).toString());
+            } else {
+              setUseImperial(false);
+            }
+          }
+          if (h.weight) {
+            setWeightKg(h.weight.toString());
+            if (h.weightUnit === 'lbs') {
+              setWeightLbs((h.weight / 0.453592).toFixed(1).toString());
+            }
+          }
+          setStep(2);
+        }
+      }).catch(() => {}).finally(() => setHasFetched(true));
+    }
+  }, [hasFetched]);
 
   const validate = () => {
     setError('');
@@ -121,7 +162,7 @@ export default function HealthOnboarding() {
       const stored = JSON.parse(localStorage.getItem('user') || '{}');
       localStorage.setItem('user', JSON.stringify({
         ...stored, profileComplete: true,
-        bmi: res.data.bmi, dailyCalories: res.data.dailyCalories, bmiCategory: res.data.bmiCategory,
+        bmi: res.data.bmi, dailyCalories: res.data.dailyCalories, bmiCategory: res.data.bmiCategory, idealWeight: res.data.idealWeight
       }));
       setResults(res.data);
     } catch (e: unknown) {
@@ -141,9 +182,7 @@ export default function HealthOnboarding() {
         <div style={{ maxWidth: 560, width: '100%' }}>
           {/* Brand */}
           <div style={{ textAlign: 'center', marginBottom: 28 }}>
-            <span style={{ fontSize: 26, fontWeight: 900, color: '#0f172a', letterSpacing: '-0.5px' }}>
-              Diet<span style={{ color: '#059669' }}>X</span>
-            </span>
+          <img src={logo} alt="DietX Logo" style={{ height: 100, margin: '0 auto', display: 'block', borderRadius: 24 }} />
           </div>
 
           <div style={{ background: '#fff', borderRadius: 28, boxShadow: '0 8px 48px rgba(0,0,0,.09)', border: '1px solid #e2e8f0', padding: '36px 32px', display: 'flex', flexDirection: 'column', gap: 24 }}>
@@ -183,8 +222,21 @@ export default function HealthOnboarding() {
                 <span style={{ fontSize: 52, fontWeight: 900 }}>{results.dailyCalories.toLocaleString()}</span>
                 <span style={{ fontSize: 17, color: '#94a3b8', fontWeight: 600 }}>kcal / day</span>
               </div>
-              <p style={{ margin: '8px 0 0', fontSize: 12, color: '#475569' }}>Mifflin–St Jeor equation · adjusted for your activity level</p>
+              <p style={{ margin: '8px 0 0', fontSize: 12, color: '#475569' }}>Harris-Benedict equation · adjusted for your activity level</p>
             </div>
+
+            {/* Ideal Body Weight Card */}
+            {results.idealWeight && (
+              <div style={{ borderRadius: 20, padding: 24, background: 'linear-gradient(135deg,#059669,#10b981)', color: '#fff' }}>
+                <p style={{ margin: '0 0 8px', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#d1fae5' }}>Ideal Body Weight</p>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+                  <span style={{ fontSize: 42, fontWeight: 900 }}>
+                    {useImperial ? (results.idealWeight * 2.20462).toFixed(1) : results.idealWeight}
+                  </span>
+                  <span style={{ fontSize: 17, color: '#ecfdf5', fontWeight: 600 }}>{useImperial ? 'lbs' : 'kg'}</span>
+                </div>
+              </div>
+            )}
 
             {/* Food Recommendations */}
             <div>
@@ -222,10 +274,8 @@ export default function HealthOnboarding() {
       <div style={{ maxWidth: 520, width: '100%' }}>
         {/* Brand */}
         <div style={{ textAlign: 'center', marginBottom: 24 }}>
-          <span style={{ fontSize: 26, fontWeight: 900, color: '#0f172a', letterSpacing: '-0.5px' }}>
-            Diet<span style={{ color: '#059669' }}>X</span>
-          </span>
-          <p style={{ margin: '4px 0 0', color: '#64748b', fontSize: 14 }}>Let's set up your health profile</p>
+          <img src={logo} alt="DietX Logo" style={{ height: 100, margin: '0 auto', display: 'block', borderRadius: 24 }} />
+          <p style={{ margin: '8px 0 0', color: '#64748b', fontSize: 14 }}>Let's set up your health profile</p>
         </div>
 
         <div style={{ background: '#fff', borderRadius: 28, boxShadow: '0 8px 48px rgba(0,0,0,.09)', border: '1px solid #e2e8f0', padding: '36px 32px' }}>
@@ -299,16 +349,18 @@ export default function HealthOnboarding() {
                   <span style={unitBadge}>yrs</span>
                 </div>
               </div>
-              <div>
-                <label style={labelStyle}>Your gender</label>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
-                  {([['male','👨','Male'],['female','👩','Female'],['other','🧑','Other']] as [Gender,string,string][]).map(([v,em,lbl]) => (
-                    <button key={v} onClick={() => setGender(v)} style={{ padding: '16px 8px', borderRadius: 16, border: `2px solid ${gender === v ? '#0f172a' : '#e2e8f0'}`, background: gender === v ? '#0f172a' : '#fff', color: gender === v ? '#fff' : '#0f172a', cursor: 'pointer', fontWeight: 700, fontSize: 13, transition: 'all .2s', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
-                      <span style={{ fontSize: 26 }}>{em}</span>{lbl}
-                    </button>
-                  ))}
+              {!isUpdateMode && (
+                <div>
+                  <label style={labelStyle}>Your gender</label>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
+                    {([['male','👨','Male'],['female','👩','Female'],['other','🧑','Other']] as [Gender,string,string][]).map(([v,em,lbl]) => (
+                      <button key={v} onClick={() => setGender(v)} style={{ padding: '16px 8px', borderRadius: 16, border: `2px solid ${gender === v ? '#0f172a' : '#e2e8f0'}`, background: gender === v ? '#0f172a' : '#fff', color: gender === v ? '#fff' : '#0f172a', cursor: 'pointer', fontWeight: 700, fontSize: 13, transition: 'all .2s', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+                        <span style={{ fontSize: 26 }}>{em}</span>{lbl}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           )}
 
@@ -367,6 +419,22 @@ export default function HealthOnboarding() {
           {/* ── STEP 3 ── */}
           {step === 3 && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {(() => {
+                 let hCm = useImperial ? (parseFloat(heightFt||'0')*12 + parseFloat(heightIn||'0')) * 2.54 : parseFloat(heightCm||'0');
+                 if (hCm > 0) {
+                   let ibw = gender === 'male' ? 50 + 2.3 * ((hCm / 2.54) - 60) : 45.5 + 2.3 * ((hCm / 2.54) - 60);
+                   if (ibw < 0) ibw = 0;
+                   return (
+                     <div style={{ padding: '16px', background: '#f0fdf4', borderRadius: 16, border: '1px solid #bbf7d0', marginBottom: 12, textAlign: 'center' }}>
+                       <p style={{ margin: 0, fontSize: 12, fontWeight: 700, color: '#166534', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Your Ideal Body Weight</p>
+                       <p style={{ margin: '4px 0 0', fontSize: 24, fontWeight: 900, color: '#15803d' }}>
+                         {useImperial ? `${(ibw * 2.20462).toFixed(1)} lbs` : `${ibw.toFixed(1)} kg`}
+                       </p>
+                     </div>
+                   );
+                 }
+                 return null;
+              })()}
               {activityOptions.map(opt => {
                 const active = activity === opt.value;
                 return (

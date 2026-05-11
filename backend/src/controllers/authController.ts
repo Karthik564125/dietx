@@ -7,7 +7,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'secret123';
 
 export const registerUser = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, phone } = req.body;
 
     if (!email || !password || !name) {
       res.status(400).json({ error: 'Please provide all required fields' });
@@ -15,7 +15,7 @@ export const registerUser = async (req: Request, res: Response): Promise<void> =
     }
 
     // Check if user exists
-    const existingUser = await prisma.user.findUnique({ where: { email } });
+    const existingUser = await (prisma as any).user.findUnique({ where: { email } });
     if (existingUser) {
       res.status(400).json({ error: 'User already exists' });
       return;
@@ -25,13 +25,15 @@ export const registerUser = async (req: Request, res: Response): Promise<void> =
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Save to db
-    const newUser = await prisma.user.create({
+    const newUser = await (prisma as any).user.create({
       data: {
         name,
         email,
         password: hashedPassword,
+        phone: phone || null,
       },
     });
+
 
     res.status(201).json({ message: 'User registered successfully', userId: newUser.id });
   } catch (error) {
@@ -50,7 +52,8 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
     }
 
     // Check user
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user = await (prisma as any).user.findUnique({ where: { email } });
+
     if (!user) {
       res.status(400).json({ error: 'Invalid credentials' });
       return;
@@ -70,7 +73,24 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
       { expiresIn: '7d' }
     );
 
-    res.json({ message: 'Login successful', token, user: { name: user.name, email: user.email, profileComplete: user.profileComplete } });
+    // Check if user has a premium purchase
+    const purchase = await (prisma as any).nutritionPlanPurchase.findFirst({
+      where: { userId: user.id, status: 'completed' }
+    });
+
+    res.json({ 
+      message: 'Login successful', 
+      token, 
+      user: { 
+        id: user.id,
+        name: user.name, 
+        email: user.email, 
+        phone: user.phone,
+        profileComplete: user.profileComplete,
+        isPremium: !!purchase
+      } 
+    });
+
   } catch (error) {
     console.error('Login error:', error);
     res.status(500).json({ error: 'Internal server error' });

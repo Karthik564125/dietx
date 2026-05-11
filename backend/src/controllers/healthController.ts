@@ -97,18 +97,28 @@ export const updateHealthProfile = async (req: Request, res: Response): Promise<
 export const getHealthProfile = async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = (req as any).user.userId;
-    const user = await prisma.user.findUnique({ where: { id: userId } });
+    const user = await prisma.user.findUnique({ where: { id: userId } }) as any;
 
     if (!user) {
       res.status(404).json({ error: 'User not found' });
       return;
     }
 
+    // Check if user has a premium purchase
+    const purchase = await (prisma as any).nutritionPlanPurchase.findFirst({
+      where: { userId, status: 'completed' }
+    });
+
     res.json({
       profileComplete: user.profileComplete,
+      userId: user.id,
       name: user.name,
       email: user.email,
+      phone: user.phone,
+      isPremium: !!purchase,
+
       health: {
+
         age: user.age,
         gender: user.gender,
         height: user.height,
@@ -155,14 +165,15 @@ export const updateDailyTracking = async (req: Request, res: Response): Promise<
 export const updateBasicProfile = async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = (req as any).user.userId;
-    const { name, email } = req.body;
+    const { name, email, phone } = req.body;
 
-    await prisma.user.update({
+    await (prisma as any).user.update({
       where: { id: userId },
-      data: { name, email },
+      data: { name, email, phone },
     });
 
     res.json({ message: 'Profile updated successfully' });
+
   } catch (error) {
     console.error('Update profile error:', error);
     res.status(500).json({ error: 'Internal server error' });

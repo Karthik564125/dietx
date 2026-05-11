@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { LogOut, Info, Menu, X, LayoutDashboard, User, ChevronRight } from 'lucide-react';
+import { LogOut, Info, Menu, X, LayoutDashboard, User, Users, ChevronRight } from 'lucide-react';
+
 
 import logo from '../assets/logo.png';
 
@@ -26,8 +27,9 @@ const Navbar = ({ setIsAuthenticated }: NavbarProps) => {
 
   return (
     <>
-      <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-white/40 shadow-sm">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
+      <div className="p-4 sm:p-6 pb-0 sticky top-0 z-50">
+        <nav className="mx-auto max-w-7xl bg-emerald-100/40 backdrop-blur-2xl border border-emerald-200/50 shadow-[0_8px_30px_rgba(5,150,105,0.1)] rounded-[2.5rem] transition-all">
+          <div className="px-6 h-20 flex justify-between items-center">
           
           {/* Brand - Systematically aligned */}
           <div 
@@ -56,8 +58,8 @@ const Navbar = ({ setIsAuthenticated }: NavbarProps) => {
                   onClick={() => navigate(link.path)}
                   className={`px-5 py-2 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${
                     location.pathname === link.path 
-                    ? 'bg-slate-900 text-white shadow-lg shadow-slate-200' 
-                    : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
+                    ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-200/50' 
+                    : 'text-slate-500 hover:text-emerald-700 hover:bg-emerald-50'
                   }`}
                 >
                    {link.icon}
@@ -72,7 +74,7 @@ const Navbar = ({ setIsAuthenticated }: NavbarProps) => {
               className={`flex items-center gap-3 p-1.5 pr-5 rounded-2xl border transition-all ${
                 location.pathname === '/profile' 
                 ? 'bg-emerald-50 border-emerald-100 text-emerald-700 shadow-inner' 
-                : 'border-transparent text-slate-600 hover:bg-slate-50'
+                : 'border-transparent text-slate-600 hover:bg-emerald-50'
               }`}
             >
                 <div className={`w-9 h-9 rounded-xl flex items-center justify-center shadow-sm ${
@@ -95,63 +97,68 @@ const Navbar = ({ setIsAuthenticated }: NavbarProps) => {
           {/* Mobile Toggle */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden p-2.5 rounded-xl bg-slate-50 text-slate-600"
+            className="md:hidden p-2.5 rounded-xl bg-slate-50 text-slate-600 border border-slate-100 shadow-sm"
           >
             {isOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
         </div>
-      </nav>
+        </nav>
+      </div>
 
       {/* Mobile Sidebar Overlay */}
       <div 
-        className={`fixed inset-0 z-50 transition-opacity duration-300 md:hidden ${
-            isOpen ? 'bg-slate-900/40 opacity-100' : 'opacity-0 pointer-events-none'
+        className={`fixed inset-0 z-50 transition-opacity duration-700 md:hidden ${
+            isOpen ? 'bg-slate-900/40 backdrop-blur-md opacity-100' : 'opacity-0 pointer-events-none'
         }`}
         onClick={() => setIsOpen(false)}
       />
 
       {/* Mobile Side Drawer */}
-      <div className={`fixed inset-y-0 right-0 z-50 w-72 bg-premium shadow-2xl transition-transform duration-300 md:hidden flex flex-col ${
+      <div className={`fixed inset-y-0 right-0 z-50 w-[85vw] max-w-sm bg-white/70 backdrop-blur-3xl border-l border-white/40 shadow-[0_0_80px_rgba(5,150,105,0.2)] rounded-l-[3rem] transition-transform duration-700 md:hidden flex flex-col ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
       }`}>
-        <div className="p-6 border-b border-white/20 flex justify-between items-center">
-             <div className="flex items-center gap-3">
-                 <div className="w-10 h-10 bg-white rounded-lg border border-slate-100 p-1.5">
-                    <img src={logo} alt="DietX" className="w-full h-full object-contain" />
-                 </div>
-                 <span className="font-black text-slate-900">DIETX</span>
+        <div className="p-10 flex justify-between items-center border-b border-emerald-50">
+             <div className="flex items-center gap-4">
+                  <div className="w-14 h-14 bg-white rounded-2xl shadow-xl border border-white p-2.5">
+                     <img src={logo} alt="DietX" className="w-full h-full object-contain" />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="font-black text-2xl tracking-tighter text-slate-900 leading-none">DIET<span className="text-emerald-500">X</span></span>
+                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mt-1">Holistic Life</span>
+                  </div>
              </div>
-             <button onClick={() => setIsOpen(false)} className="p-2 text-slate-400"><X size={20} /></button>
+             <button onClick={() => setIsOpen(false)} className="w-12 h-12 flex items-center justify-center bg-slate-50 hover:bg-white rounded-2xl text-slate-400 hover:text-slate-900 transition-all shadow-inner"><X size={24} /></button>
         </div>
 
-        <div className="flex-1 p-6 space-y-3">
+        <div className="flex-1 px-8 space-y-4 mt-10">
             {[
-                { name: 'Dashboard', path: '/dashboard', icon: <LayoutDashboard size={20} /> },
-                { name: 'About Us', path: '/about', icon: <Info size={20} /> },
-                { name: 'My Profile', path: '/profile', icon: <User size={20} /> },
+                { name: 'Dashboard', path: '/dashboard', icon: <LayoutDashboard size={22} /> },
+                { name: 'Who Are We', path: '/who-are-we', icon: <Users size={22} /> },
+                { name: 'About Us', path: '/about', icon: <Info size={22} /> },
+                { name: 'My Profile', path: '/profile', icon: <User size={22} /> },
             ].map((link) => (
                 <button 
                     key={link.path}
                     onClick={() => navigate(link.path)}
-                    className={`flex items-center justify-between w-full p-4 rounded-2xl font-black transition-all ${
-                        location.pathname === link.path ? 'bg-slate-900 text-white' : 'text-slate-500 hover:bg-slate-50'
+                    className={`flex items-center justify-between w-full p-5 rounded-[2rem] font-black transition-all duration-500 ${
+                        location.pathname === link.path ? 'bg-emerald-600 text-white shadow-2xl shadow-emerald-500/40 translate-x-2' : 'text-slate-500 hover:bg-emerald-50 hover:text-emerald-700'
                     }`}
                 >
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-5">
                         {link.icon}
-                        {link.name}
+                        <span className="text-xl tracking-tight">{link.name}</span>
                     </div>
-                    {location.pathname !== link.path && <ChevronRight size={16} className="text-slate-300" />}
+                    {location.pathname !== link.path && <ChevronRight size={18} className="text-slate-300" />}
                 </button>
             ))}
         </div>
 
-        <div className="p-6 border-t border-slate-50">
+        <div className="p-8 mb-6">
             <button 
                 onClick={handleLogout}
-                className="flex items-center gap-4 w-full p-4 rounded-2xl text-red-600 font-black hover:bg-red-50 transition-all"
+                className="flex items-center justify-center gap-4 w-full p-6 rounded-[2rem] bg-slate-900 text-red-400 font-black hover:bg-red-500 hover:text-white shadow-2xl shadow-slate-900/10 transition-all duration-500"
             >
-                <LogOut size={20} /> Sign Out
+                <LogOut size={22} /> <span className="text-lg">Sign Out</span>
             </button>
         </div>
       </div>

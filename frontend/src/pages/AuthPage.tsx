@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
-import { Mail, Lock, User, ArrowRight, Eye, EyeOff, ArrowLeft } from 'lucide-react';
+import { Mail, Lock, User, ArrowRight, Eye, EyeOff, ArrowLeft, Phone } from 'lucide-react';
+
 import logo from '../assets/logo.png';
 
 interface AuthPageProps {
@@ -12,7 +13,8 @@ const AuthPage = ({ setAuth }: AuthPageProps) => {
   const location = useLocation();
   const [isLogin, setIsLogin] = useState(location.state?.mode !== 'signup');
   const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState({ name: '', email: '', password: '' });
+  const [formData, setFormData] = useState({ name: '', email: '', password: '', phone: '' });
+
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -26,7 +28,8 @@ const AuthPage = ({ setAuth }: AuthPageProps) => {
   const handleToggle = () => {
     setIsLogin(!isLogin);
     setError('');
-    setFormData({ name: '', email: '', password: '' });
+    setFormData({ name: '', email: '', password: '', phone: '' });
+
   };
 
   const validatePassword = (password: string) => {
@@ -59,13 +62,21 @@ const AuthPage = ({ setAuth }: AuthPageProps) => {
         localStorage.setItem('token', res.data.token);
         localStorage.setItem('user', JSON.stringify(res.data.user));
         setAuth(true);
-        navigate(res.data.user.profileComplete ? '/dashboard' : '/onboarding');
+        
+        if (formData.email === 'nutriwithdietex@gmail.com') {
+          navigate('/admin');
+        } else {
+          navigate(res.data.user.profileComplete ? '/dashboard' : '/onboarding');
+        }
+
       } else {
         await axios.post('http://localhost:5001/api/users', {
           name: formData.name,
           email: formData.email,
-          password: formData.password
+          password: formData.password,
+          phone: formData.phone
         });
+
         const res = await axios.post('http://localhost:5001/api/login', {
           email: formData.email,
           password: formData.password
@@ -150,6 +161,22 @@ const AuthPage = ({ setAuth }: AuthPageProps) => {
                 />
               </div>
             </div>
+
+            <div className={`transition-all duration-300 overflow-hidden ${!isLogin ? 'max-h-16 opacity-100' : 'max-h-0 opacity-0 pointer-events-none'}`}>
+              <div className="relative">
+                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                <input
+                  type="tel"
+                  placeholder="Phone Number"
+                  className="input-field pl-12 py-3 text-sm"
+                  value={formData.phone}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  required={!isLogin}
+                />
+              </div>
+            </div>
+
+
 
             <div className="relative">
               <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />

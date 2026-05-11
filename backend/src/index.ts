@@ -2,6 +2,7 @@ import 'dotenv/config';
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import authRoutes from './routes/authRoutes';
+import paymentRoutes from './routes/paymentRoutes';
 import { authMiddleware } from './middleware/authMiddleware';
 
 const app = express();
@@ -14,6 +15,8 @@ app.use(express.json());
 app.post('/api/test', (req, res) => res.json({ ok: true }));
 console.log('authRoutes:', typeof authRoutes);
 app.use('/api', authRoutes);
+app.use('/api', paymentRoutes);
+
 
 // Protected Sample Route
 app.get('/api/profile', authMiddleware, (req: Request, res: Response) => {

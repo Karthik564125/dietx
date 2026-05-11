@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import axios from 'axios';
-import { User, Mail, Shield, Save, CheckCircle, ArrowLeft, Activity } from 'lucide-react';
+import { User, Mail, Shield, Save, CheckCircle, ArrowLeft, Activity, Phone } from 'lucide-react';
+
 
 interface ProfileProps {
   setIsAuthenticated: (val: boolean) => void;
@@ -12,7 +13,8 @@ const Profile = ({ setIsAuthenticated }: ProfileProps) => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ 
     name: JSON.parse(localStorage.getItem('user') || '{}').name || '', 
-    email: JSON.parse(localStorage.getItem('user') || '{}').email || '' 
+    email: JSON.parse(localStorage.getItem('user') || '{}').email || '',
+    phone: JSON.parse(localStorage.getItem('user') || '{}').phone || '' 
   });
   const [healthStats, setHealthStats] = useState<any>(null);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -29,8 +31,10 @@ const Profile = ({ setIsAuthenticated }: ProfileProps) => {
       .then(res => {
         setFormData({
           name: res.data.name || formData.name,
-          email: res.data.email || formData.email
+          email: res.data.email || formData.email,
+          phone: res.data.phone || formData.phone
         });
+
         if (res.data.health) {
           setHealthStats(res.data.health);
         }
@@ -74,21 +78,24 @@ const Profile = ({ setIsAuthenticated }: ProfileProps) => {
           <div className="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
         </div>
       ) : (
-        <main className="flex-1 p-6 sm:p-10 max-w-4xl mx-auto w-full space-y-12 py-12">
-        <header className="space-y-4">
-          <button 
-            onClick={() => navigate('/dashboard')}
-            className="flex items-center gap-2 text-slate-500 hover:text-slate-900 font-bold transition-all group"
-          >
-            <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" /> Back to Dashboard
-          </button>
-          <div className="space-y-1">
-            <h1 className="text-4xl sm:text-6xl font-black text-slate-900 tracking-tight">
+        <main className="flex-1 p-6 sm:p-10 max-w-7xl mx-auto w-full space-y-12 py-12">
+        <header className="space-y-6 text-center">
+          <div className="flex justify-center">
+            <button 
+              onClick={() => navigate('/dashboard')}
+              className="flex items-center gap-2 px-6 py-2 bg-white/50 backdrop-blur-xl border border-white/50 rounded-full text-slate-500 hover:text-slate-900 font-black text-[10px] uppercase tracking-widest transition-all group"
+            >
+              <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" /> Back to Dashboard
+            </button>
+          </div>
+          <div className="space-y-2">
+            <h1 className="text-5xl sm:text-7xl font-black text-slate-900 tracking-tighter leading-none">
               Account <span className="text-emerald-600">Settings</span>
             </h1>
-            <p className="text-slate-500 font-medium text-lg">Manage your personal information and account security.</p>
+            <p className="text-slate-500 font-bold text-lg sm:text-xl uppercase tracking-widest">Profile Control Center</p>
           </div>
         </header>
+
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
            {/* Info Sidebar */}
@@ -174,7 +181,23 @@ const Profile = ({ setIsAuthenticated }: ProfileProps) => {
                           />
                        </div>
                     </div>
+
+                    <div className="space-y-2">
+                       <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Phone Number</label>
+
+                       <div className="relative">
+                          <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
+                          <input 
+                            type="tel" 
+                            className="input-field pl-12"
+                            value={formData.phone}
+                            onChange={e => setFormData({ ...formData, phone: e.target.value })}
+                            placeholder="Your Phone Number"
+                          />
+                       </div>
+                    </div>
                  </div>
+
 
                  <div className="pt-4 flex items-center gap-4">
                     <button 

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
+import PremiumNutritionCard from '../components/PremiumNutritionCard';
 import axios from 'axios';
 import { ArrowLeft, Salad, Flame, PieChart, Info, ChevronRight } from 'lucide-react';
 
@@ -11,6 +12,7 @@ interface NutritionDetailProps {
 const NutritionDetail = ({ setIsAuthenticated }: NutritionDetailProps) => {
   const navigate = useNavigate();
   const [health, setHealth] = useState<any>(null);
+  const [user, setUser] = useState<any>(null);
   const [activeDiet, setActiveDiet] = useState<'veg'|'nonVeg'>('veg');
 
   const recipes = {
@@ -39,7 +41,17 @@ const NutritionDetail = ({ setIsAuthenticated }: NutritionDetailProps) => {
     axios.get('http://localhost:5001/api/health-profile', {
       headers: { Authorization: `Bearer ${token}` }
     })
-      .then(res => setHealth(res.data.health))
+      .then(res => {
+        setHealth(res.data.health);
+        setUser({
+          id: res.data.userId || '', 
+          name: res.data.name,
+          email: res.data.email,
+          phone: res.data.phone,
+          isPremium: res.data.isPremium
+        });
+
+      })
       .catch(console.error);
   }, []);
 
@@ -47,21 +59,24 @@ const NutritionDetail = ({ setIsAuthenticated }: NutritionDetailProps) => {
     <div className="min-h-screen flex flex-col bg-premium">
       <Navbar setIsAuthenticated={setIsAuthenticated} />
 
-      <main className="flex-1 p-6 sm:p-10 max-w-5xl mx-auto w-full space-y-12 py-12">
-        <header className="space-y-4">
-          <button 
-            onClick={() => navigate('/dashboard')}
-            className="flex items-center gap-2 text-slate-500 hover:text-slate-900 font-bold transition-all group"
-          >
-            <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" /> Back to Dashboard
-          </button>
-          <div className="space-y-1">
-            <h1 className="text-4xl sm:text-6xl font-black text-slate-900 tracking-tight">
+      <main className="flex-1 p-6 sm:p-10 max-w-7xl mx-auto w-full space-y-16 py-12 sm:py-24">
+        <header className="space-y-6 text-center">
+          <div className="flex justify-center">
+            <button 
+              onClick={() => navigate('/dashboard')}
+              className="flex items-center gap-2 px-6 py-2 bg-white/50 backdrop-blur-xl border border-white/50 rounded-full text-slate-500 hover:text-slate-900 font-black text-[10px] uppercase tracking-widest transition-all group"
+            >
+              <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" /> Back to Dashboard
+            </button>
+          </div>
+          <div className="space-y-2">
+            <h1 className="text-5xl sm:text-7xl font-black text-slate-900 tracking-tighter leading-none">
               Nutrition <span className="text-emerald-600">Strategy</span>
             </h1>
-            <p className="text-slate-500 font-medium text-lg">Your personalized fuel guide based on your {health?.bmiCategory} profile.</p>
+            <p className="text-slate-500 font-bold text-lg sm:text-xl uppercase tracking-widest">Personalized Fuel Protocol</p>
           </div>
         </header>
+
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
            {/* Calorie Card */}
@@ -135,7 +150,7 @@ const NutritionDetail = ({ setIsAuthenticated }: NutritionDetailProps) => {
                 </div>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
                 {recipes[activeDiet].map((recipe, i) => (
                     <div key={i} className={`glass-card p-6 flex flex-col justify-between border-transparent hover:border-${activeDiet === 'veg' ? 'emerald' : 'red'}-100 transition-all group`}>
                         <div>
@@ -157,23 +172,9 @@ const NutritionDetail = ({ setIsAuthenticated }: NutritionDetailProps) => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12 pt-12 border-t-2 border-slate-100">
-                <div className="glass-card p-8 bg-slate-50 border-emerald-100 flex flex-col justify-center items-center text-center space-y-6">
-                    <div className="w-16 h-16 bg-white rounded-[1.5rem] flex items-center justify-center shadow-sm">
-                        <Info className="text-emerald-500" size={24} />
-                    </div>
-                    <div className="space-y-2">
-                        <h4 className="text-lg font-black text-slate-900">Custom Nutrition Plan</h4>
-                        <p className="text-slate-500 font-medium text-sm">Need a month-long detailed chart? Book a session with our expert nutritionists.</p>
-                    </div>
-                    <button 
-                      onClick={() => navigate('/sessions')}
-                      className="px-6 py-3 bg-slate-900 text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-emerald-600 transition-all"
-                    >
-                        Go to Sessions
-                    </button>
-                </div>
+                <PremiumNutritionCard user={user || { name: 'User', email: '', id: '' }} />
                 
-                <div className="flex flex-col justify-center p-8 bg-amber-50/50 rounded-3xl border border-amber-100">
+                <div className="flex flex-col justify-center p-8 bg-amber-50/50 rounded-3xl border border-amber-100 h-full">
                     <h4 className="text-amber-900 font-black text-sm uppercase tracking-widest mb-3 flex items-center gap-2">
                       <span className="text-xl">⚠️</span> Medical Disclaimer
                     </h4>

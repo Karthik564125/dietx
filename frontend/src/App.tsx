@@ -8,9 +8,15 @@ import Sessions from './pages/Sessions.tsx';
 import HealthDetail from './pages/HealthDetail.tsx';
 import NutritionDetail from './pages/NutritionDetail.tsx';
 import Profile from './pages/Profile.tsx';
+import AdminDashboard from './pages/AdminDashboard.tsx';
+import WhoAreWe from './pages/WhoAreWe.tsx';
+
 import { useEffect, useState } from 'react';
 
+import { Toaster } from 'react-hot-toast';
+
 function App() {
+
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
   useEffect(() => {
@@ -22,9 +28,13 @@ function App() {
 
   return (
     <Router>
+      <Toaster position="top-center" />
       <Routes>
+
         <Route path="/" element={<LandingPage />} />
+        <Route path="/who-are-we" element={<WhoAreWe setIsAuthenticated={setIsAuthenticated} />} />
         <Route path="/about" element={<AboutUs setIsAuthenticated={setIsAuthenticated} />} />
+
         <Route
           path="/auth"
           element={<AuthPage setAuth={setIsAuthenticated} />}
@@ -53,7 +63,12 @@ function App() {
           path="/profile"
           element={isAuthenticated ? <Profile setIsAuthenticated={setIsAuthenticated} /> : <Navigate to="/auth" />}
         />
+        <Route
+          path="/admin"
+          element={isAuthenticated ? <AdminDashboard setIsAuthenticated={setIsAuthenticated} /> : <Navigate to="/auth" />}
+        />
       </Routes>
+
     </Router>
   );
 }

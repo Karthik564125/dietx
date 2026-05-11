@@ -1,14 +1,12 @@
-import { PrismaClient } from './generated/prisma/client';
-import { PrismaMariaDb } from '@prisma/adapter-mariadb';
+import { PrismaClient } from './generated/prisma';
+
+import { PrismaPg } from '@prisma/adapter-pg';
+import { Pool } from 'pg';
 import 'dotenv/config';
 
-const databaseUrl = process.env.DATABASE_URL;
-if (!databaseUrl) {
-  throw new Error('DATABASE_URL is not defined in environment variables');
-}
-
-const adapter = new PrismaMariaDb(databaseUrl);
-
+const connectionString = `${process.env.DATABASE_URL}`;
+const pool = new Pool({ connectionString });
+const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
 export default prisma;

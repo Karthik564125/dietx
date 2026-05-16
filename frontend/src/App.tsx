@@ -9,7 +9,7 @@ import HealthDetail from './pages/HealthDetail.tsx';
 import NutritionDetail from './pages/NutritionDetail.tsx';
 import Profile from './pages/Profile.tsx';
 import AdminDashboard from './pages/AdminDashboard.tsx';
-import WhoAreWe from './pages/WhoAreWe.tsx';
+
 
 import { useEffect, useState } from 'react';
 
@@ -32,7 +32,7 @@ function App() {
       <Routes>
 
         <Route path="/" element={<LandingPage />} />
-        <Route path="/who-are-we" element={<WhoAreWe setIsAuthenticated={setIsAuthenticated} />} />
+
         <Route path="/about" element={<AboutUs setIsAuthenticated={setIsAuthenticated} />} />
 
         <Route

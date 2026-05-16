@@ -4,6 +4,7 @@ import axios from 'axios';
 import { Mail, Lock, User, ArrowRight, Eye, EyeOff, ArrowLeft, Phone } from 'lucide-react';
 
 import logo from '../assets/logo.png';
+import AestheticBackground from '../components/AestheticBackground';
 
 interface AuthPageProps {
   setAuth: (val: boolean) => void;
@@ -96,9 +97,7 @@ const AuthPage = ({ setAuth }: AuthPageProps) => {
   return (
     <div className="h-screen h-[100dvh] bg-premium relative overflow-hidden flex flex-col items-center justify-center p-4">
       
-      {/* Decorative Orbs */}
-      <div className="absolute top-0 right-0 w-64 h-64 sm:w-96 sm:h-96 bg-emerald-500/5 rounded-full blur-3xl -mr-32 -mt-32" />
-      <div className="absolute bottom-0 left-0 w-64 h-64 sm:w-96 sm:h-96 bg-blue-500/5 rounded-full blur-3xl -ml-32 -mb-32" />
+      <AestheticBackground />
 
       {/* Back Button */}
       <button

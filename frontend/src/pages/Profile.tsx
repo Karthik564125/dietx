@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import axios from 'axios';
 import { User, Mail, Shield, Save, CheckCircle, ArrowLeft, Activity, Phone } from 'lucide-react';
+import AestheticBackground from '../components/AestheticBackground';
 
 
 interface ProfileProps {
@@ -70,8 +71,9 @@ const Profile = ({ setIsAuthenticated }: ProfileProps) => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-premium">
+    <div className="min-h-screen flex flex-col bg-premium relative overflow-hidden">
       <Navbar setIsAuthenticated={setIsAuthenticated} />
+      <AestheticBackground />
 
       {loading ? (
         <div className="flex-1 flex items-center justify-center">

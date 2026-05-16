@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import axios from 'axios';
 import { ArrowLeft, TrendingUp, Activity, User, Target } from 'lucide-react';
+import AestheticBackground from '../components/AestheticBackground';
 
 interface HealthDetailProps {
   setIsAuthenticated: (val: boolean) => void;
@@ -24,8 +25,9 @@ const HealthDetail = ({ setIsAuthenticated }: HealthDetailProps) => {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col bg-premium">
+    <div className="min-h-screen flex flex-col bg-premium relative overflow-hidden">
       <Navbar setIsAuthenticated={setIsAuthenticated} />
+      <AestheticBackground />
 
       <main className="flex-1 p-6 sm:p-10 max-w-5xl mx-auto w-full space-y-12 py-12">
         <header className="space-y-4">

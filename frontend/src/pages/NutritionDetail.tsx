@@ -4,6 +4,7 @@ import Navbar from '../components/Navbar';
 import PremiumNutritionCard from '../components/PremiumNutritionCard';
 import axios from 'axios';
 import { ArrowLeft, Salad, Flame, PieChart, Info, ChevronRight } from 'lucide-react';
+import AestheticBackground from '../components/AestheticBackground';
 
 interface NutritionDetailProps {
   setIsAuthenticated: (val: boolean) => void;
@@ -56,8 +57,9 @@ const NutritionDetail = ({ setIsAuthenticated }: NutritionDetailProps) => {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col bg-premium">
+    <div className="min-h-screen flex flex-col bg-premium relative overflow-hidden">
       <Navbar setIsAuthenticated={setIsAuthenticated} />
+      <AestheticBackground />
 
       <main className="flex-1 p-6 sm:p-10 max-w-7xl mx-auto w-full space-y-16 py-12 sm:py-24">
         <header className="space-y-6 text-center">
@@ -123,6 +125,32 @@ const NutritionDetail = ({ setIsAuthenticated }: NutritionDetailProps) => {
                  ))}
               </div>
            </div>
+        </div>
+
+        {/* Important Health Notice Card */}
+        <div className="glass-card p-6 md:p-8 bg-blue-50/50 border-blue-100 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative overflow-hidden group">
+            <div className="absolute top-0 right-0 p-12 opacity-[0.03] pointer-events-none group-hover:scale-110 transition-transform duration-1000">
+               <Info size={140} className="text-blue-600" />
+            </div>
+            <div className="flex items-start md:items-center gap-5 relative z-10 flex-1">
+                <div className="p-4 bg-blue-100 text-blue-600 rounded-2xl shrink-0 shadow-sm hidden sm:block">
+                    <Info size={24} />
+                </div>
+                <div className="space-y-1">
+                    <h3 className="text-lg font-black text-slate-900 tracking-tight">Important Health Notice</h3>
+                    <p className="text-sm font-bold text-slate-500 leading-relaxed max-w-3xl">
+                        These recommendations are for individuals with <span className="text-slate-800">normal health</span>. If you have any medical conditions such as High BP, Diabetes, or others, kindly consult us personally for a tailored plan.
+                    </p>
+                </div>
+            </div>
+            <div className="relative z-10 shrink-0 w-full md:w-auto mt-2 md:mt-0">
+                <button
+                    onClick={() => navigate('/sessions')}
+                    className="w-full md:w-auto px-6 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all shadow-lg shadow-blue-600/20 hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-2"
+                >
+                    Consult Personally <ChevronRight size={14} />
+                </button>
+            </div>
         </div>
 
         {/* Nutrition Tips Section */}

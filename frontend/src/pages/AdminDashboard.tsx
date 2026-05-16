@@ -26,6 +26,7 @@ import {
 } from 'lucide-react';
 
 import logo from '../assets/logo.png';
+import AestheticBackground from '../components/AestheticBackground';
 
 const AdminDashboard = ({ setIsAuthenticated }: { setIsAuthenticated: (val: boolean) => void }) => {
   const navigate = useNavigate();
@@ -90,7 +91,8 @@ const AdminDashboard = ({ setIsAuthenticated }: { setIsAuthenticated: (val: bool
 
   if (loading) {
     return (
-      <div className="h-screen flex items-center justify-center bg-slate-50">
+      <div className="h-screen flex items-center justify-center bg-slate-50 relative overflow-hidden">
+        <AestheticBackground />
         <div className="relative">
            <div className="w-20 h-20 border-4 border-emerald-100 rounded-full" />
            <div className="absolute inset-0 w-20 h-20 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin" />
@@ -112,7 +114,8 @@ const AdminDashboard = ({ setIsAuthenticated }: { setIsAuthenticated: (val: bool
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 flex font-sans">
+    <div className="min-h-screen bg-slate-50 flex font-sans relative overflow-hidden">
+      <AestheticBackground />
       
       {/* ── Sidebar ─────────────────────────────────────────── */}
       <aside className="w-72 bg-white border-r border-slate-200 hidden xl:flex flex-col sticky top-0 h-screen z-30">

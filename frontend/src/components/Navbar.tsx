@@ -133,7 +133,7 @@ const Navbar = ({ setIsAuthenticated }: NavbarProps) => {
         <div className="flex-1 px-8 space-y-4 mt-10">
             {[
                 { name: 'Dashboard', path: '/dashboard', icon: <LayoutDashboard size={22} /> },
-                { name: 'Who Are We', path: '/who-are-we', icon: <Users size={22} /> },
+
                 { name: 'About Us', path: '/about', icon: <Info size={22} /> },
                 { name: 'My Profile', path: '/profile', icon: <User size={22} /> },
             ].map((link) => (

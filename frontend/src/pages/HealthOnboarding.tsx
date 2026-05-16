@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import logo from '../assets/logo.png';
+import AestheticBackground from '../components/AestheticBackground';
 
 type Gender = 'male' | 'female' | 'other' | '';
 type ActivityLevel = 'sedentary' | 'light' | 'moderate' | 'active' | 'veryActive' | '';
@@ -178,7 +179,8 @@ export default function HealthOnboarding() {
     const pct   = bmiPercent(results.bmi);
 
     return (
-      <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #f0fdf4 0%, #e0f2fe 50%, #f5f3ff 100%)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '24px 16px' }}>
+      <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '24px 16px', position: 'relative', overflow: 'hidden' }}>
+        <AestheticBackground />
         <div style={{ maxWidth: 560, width: '100%' }}>
           {/* Brand */}
           <div style={{ textAlign: 'center', marginBottom: 28 }}>
@@ -270,7 +272,8 @@ export default function HealthOnboarding() {
   const stepLabels = ['Personal', 'Body', 'Activity'];
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #f0fdf4 0%, #e0f2fe 50%, #f5f3ff 100%)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '24px 16px' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '24px 16px', position: 'relative', overflow: 'hidden' }}>
+      <AestheticBackground />
       <div style={{ maxWidth: 520, width: '100%' }}>
         {/* Brand */}
         <div style={{ textAlign: 'center', marginBottom: 24 }}>

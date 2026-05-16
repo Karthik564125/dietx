@@ -1,5 +1,6 @@
 import React from 'react';
 import Navbar from '../components/Navbar';
+import AestheticBackground from '../components/AestheticBackground';
 
 interface AboutUsProps {
   setIsAuthenticated: (val: boolean) => void;
@@ -7,8 +8,9 @@ interface AboutUsProps {
 
 const AboutUs: React.FC<AboutUsProps> = ({ setIsAuthenticated }) => {
   return (
-    <div className="min-h-screen bg-premium flex flex-col">
+    <div className="min-h-screen bg-premium flex flex-col relative overflow-hidden">
       <Navbar setIsAuthenticated={setIsAuthenticated} />
+      <AestheticBackground />
 
       <main className="max-w-7xl mx-auto px-6 flex-1 flex flex-col justify-center py-12 sm:py-20 animate-in fade-in duration-700">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">

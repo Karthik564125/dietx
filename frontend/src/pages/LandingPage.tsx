@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Leaf, Shield, Zap, Heart, Sparkles } from 'lucide-react';
 import logo from '../assets/logo.png';
+import AestheticBackground from '../components/AestheticBackground';
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -9,11 +10,7 @@ const LandingPage = () => {
   return (
     <div className="min-h-screen lg:h-screen lg:overflow-hidden bg-premium flex flex-col relative">
       
-      {/* Background Decor */}
-      <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden">
-        <div className="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] bg-emerald-500/5 blur-[120px] rounded-full animate-pulse" />
-        <div className="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] bg-amber-500/5 blur-[120px] rounded-full" />
-      </div>
+      <AestheticBackground />
 
       {/* Navigation */}
       <nav className="relative z-50 max-w-7xl mx-auto w-full px-6 py-4 sm:py-8 flex justify-between items-center shrink-0">
@@ -24,12 +21,7 @@ const LandingPage = () => {
             <span className="text-xl font-black text-slate-900 tracking-tighter">DIET<span className="text-emerald-600">X</span></span>
          </div>
          <div className="flex items-center gap-4 sm:gap-8">
-            <button 
-              onClick={() => navigate('/who-are-we')}
-              className="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-900 transition-all"
-            >
-              Who Are We
-            </button>
+
             <button 
               onClick={() => navigate('/auth', { state: { mode: 'login' } })}
               className="px-5 sm:px-6 py-2 sm:py-2.5 bg-slate-900 text-white rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-emerald-600 transition-all shadow-xl shadow-slate-900/10"

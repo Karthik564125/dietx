@@ -5,6 +5,7 @@ import PremiumNutritionCard from '../components/PremiumNutritionCard';
 import axios from 'axios';
 import { ArrowLeft, Salad, Flame, PieChart, Info, ChevronRight } from 'lucide-react';
 import AestheticBackground from '../components/AestheticBackground';
+import bgDashboard from '../assets/dashboard.jpeg';
 
 interface NutritionDetailProps {
   setIsAuthenticated: (val: boolean) => void;
@@ -59,7 +60,7 @@ const NutritionDetail = ({ setIsAuthenticated }: NutritionDetailProps) => {
   return (
     <div className="min-h-screen flex flex-col bg-premium relative overflow-hidden">
       <Navbar setIsAuthenticated={setIsAuthenticated} />
-      <AestheticBackground />
+      <AestheticBackground bgImage={bgDashboard} />
 
       <main className="flex-1 p-6 sm:p-10 max-w-7xl mx-auto w-full space-y-16 py-12 sm:py-24">
         <header className="space-y-6 text-center">
@@ -72,10 +73,10 @@ const NutritionDetail = ({ setIsAuthenticated }: NutritionDetailProps) => {
             </button>
           </div>
           <div className="space-y-2">
-            <h1 className="text-5xl sm:text-7xl font-black text-slate-900 tracking-tighter leading-none">
-              Nutrition <span className="text-emerald-600">Strategy</span>
+            <h1 className="text-5xl sm:text-7xl font-black text-white tracking-tighter leading-none">
+              Nutrition <span className="text-emerald-400">Strategy</span>
             </h1>
-            <p className="text-slate-500 font-bold text-lg sm:text-xl uppercase tracking-widest">Personalized Fuel Protocol</p>
+            <p className="text-white/60 font-bold text-lg sm:text-xl uppercase tracking-widest">Personalized Fuel Protocol</p>
           </div>
         </header>
 
@@ -99,8 +100,8 @@ const NutritionDetail = ({ setIsAuthenticated }: NutritionDetailProps) => {
            {/* Macro Split Card */}
            <div className="md:col-span-2 glass-card p-10 flex flex-col justify-between">
               <div className="flex justify-between items-center mb-8">
-                <h3 className="text-sm font-black text-slate-400 uppercase tracking-widest">Macro-Nutrient Split</h3>
-                <PieChart className="text-emerald-600" size={24} />
+                <h3 className="text-sm font-black text-white/60 uppercase tracking-widest">Macro-Nutrient Split</h3>
+                <PieChart className="text-emerald-400" size={24} />
               </div>
 
               <div className="grid grid-cols-3 gap-8">

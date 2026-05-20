@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { MessageCircle, ArrowLeft, Zap } from 'lucide-react';
 import AestheticBackground from '../components/AestheticBackground';
+import bgDashboard from '../assets/dashboard.jpeg';
 
 interface SessionsProps {
   setIsAuthenticated: (val: boolean) => void;
@@ -13,7 +14,7 @@ const Sessions = ({ setIsAuthenticated }: SessionsProps) => {
   return (
     <div className="min-h-screen flex flex-col bg-premium relative overflow-hidden">
       <Navbar setIsAuthenticated={setIsAuthenticated} />
-      <AestheticBackground />
+      <AestheticBackground bgImage={bgDashboard} />
 
       <main className="flex-1 p-6 sm:p-8 max-w-5xl mx-auto w-full space-y-12 py-10 sm:py-16">
 
@@ -27,10 +28,10 @@ const Sessions = ({ setIsAuthenticated }: SessionsProps) => {
             </button>
           </div>
           <div className="space-y-2">
-            <h1 className="text-4xl sm:text-6xl font-black text-slate-900 tracking-tighter leading-none">
-              Direct <span className="text-emerald-600">Consultation</span>
+            <h1 className="text-4xl sm:text-6xl font-black text-white tracking-tighter leading-none">
+              Direct <span className="text-emerald-400">Consultation</span>
             </h1>
-            <p className="text-slate-500 font-bold text-base sm:text-lg uppercase tracking-widest">Connect with Dt. Madhavi Latha</p>
+            <p className="text-white/60 font-bold text-base sm:text-lg uppercase tracking-widest">Connect with Dt. Madhavi Latha</p>
           </div>
         </header>
 
@@ -91,11 +92,11 @@ const Sessions = ({ setIsAuthenticated }: SessionsProps) => {
 
 
         {/* Info Section */}
-        <section className="glass-card p-8 mt-8 text-center border-emerald-50/50">
-            <p className="text-slate-500 font-medium leading-relaxed max-w-2xl mx-auto italic text-base">
+        <section className="glass-card p-8 mt-8 text-center">
+            <p className="text-white/70 font-medium leading-relaxed max-w-2xl mx-auto italic text-base">
                 "Healing is a journey of small steps taken consistently every single day."
             </p>
-            <p className="text-emerald-600 font-black mt-4 uppercase tracking-[0.3em] text-[11px]">DietX Holistic Wellness</p>
+            <p className="text-emerald-400 font-black mt-4 uppercase tracking-[0.3em] text-[11px]">DietX Holistic Wellness</p>
         </section>
       </main>
     </div>

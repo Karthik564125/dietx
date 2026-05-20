@@ -6,6 +6,7 @@ import { Calendar, Salad, TrendingUp, Plus, ChevronRight, Droplet, Activity, Zap
 import { FOOD_DATA, type Food } from '../data/foods';
 import AestheticBackground from '../components/AestheticBackground';
 import { motion, AnimatePresence } from 'framer-motion';
+import bgDashboard from '../assets/dashboard.jpeg';
 
 interface DashboardProps { setIsAuthenticated: (val: boolean) => void; }
 
@@ -226,7 +227,7 @@ const Dashboard = ({ setIsAuthenticated }: DashboardProps) => {
     <div className="min-h-screen flex flex-col relative overflow-hidden">
       <Navbar setIsAuthenticated={setIsAuthenticated} />
       
-      <AestheticBackground />
+      <AestheticBackground bgImage={bgDashboard} />
 
       <main className="flex-1 max-w-7xl mx-auto w-full p-4 sm:p-10 space-y-10 relative z-10 py-12">
         <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-8">
@@ -253,15 +254,15 @@ const Dashboard = ({ setIsAuthenticated }: DashboardProps) => {
           <motion.div 
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="flex items-center gap-6 p-4 bg-white/40 backdrop-blur-xl rounded-[2rem] border border-white/60 shadow-sm"
+            className="flex items-center gap-6 p-4 bg-white/10 backdrop-blur-xl rounded-[2rem] border border-white/20 shadow-sm"
           >
-             <div className="flex flex-col items-end pr-6 border-r border-slate-100">
-                <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Current BMI</span>
-                <span className="text-2xl font-black text-slate-900">{health.bmi.toFixed(1)}</span>
+             <div className="flex flex-col items-end pr-6 border-r border-white/20">
+                <span className="text-[9px] font-black text-white/50 uppercase tracking-widest">Current BMI</span>
+                <span className="text-2xl font-black text-white">{health.bmi.toFixed(1)}</span>
              </div>
              <div className="flex flex-col items-end">
-                <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Weight Status</span>
-                <span className={`text-xs font-black uppercase tracking-tighter ${health.bmiCategory === 'Normal' ? 'text-emerald-500' : 'text-amber-500'}`}>{health.bmiCategory}</span>
+                <span className="text-[9px] font-black text-white/50 uppercase tracking-widest">Weight Status</span>
+                <span className={`text-xs font-black uppercase tracking-tighter ${health.bmiCategory === 'Normal' ? 'text-emerald-400' : 'text-amber-400'}`}>{health.bmiCategory}</span>
              </div>
           </motion.div>
         </header>
@@ -303,7 +304,7 @@ const Dashboard = ({ setIsAuthenticated }: DashboardProps) => {
                   <header className="flex justify-between items-center">
                     <div className="flex items-center gap-4">
                         <div className="w-2 h-8 bg-emerald-500 rounded-full shadow-[0_0_15px_rgba(16,185,129,0.4)]"></div>
-                        <h2 className="text-2xl font-black text-slate-900 tracking-tight uppercase text-xs tracking-[0.2em]">Calorie Counter</h2>
+                        <h2 className="text-2xl font-black text-white tracking-tight uppercase text-xs tracking-[0.2em]">Calorie Counter</h2>
                     </div>
                     <button 
                       onClick={() => setShowAddFood(!showAddFood)} 
@@ -337,7 +338,7 @@ const Dashboard = ({ setIsAuthenticated }: DashboardProps) => {
                                    
                                    <div className="flex-1 space-y-6 text-center sm:text-left">
                                       <div className="space-y-1">
-                                         <p className="text-4xl font-black text-slate-900 tracking-tighter leading-none">{calRemaining}</p>
+                                         <p className="text-4xl font-black text-white tracking-tighter leading-none">{calRemaining}</p>
                                          <p className="text-[10px] font-black text-emerald-600 tracking-[0.2em] uppercase">Calories Remaining</p>
                                       </div>
                                       <div className="flex items-center gap-6 justify-center sm:justify-start">
@@ -739,7 +740,7 @@ const Dashboard = ({ setIsAuthenticated }: DashboardProps) => {
                    <Sparkles size={32} className="animate-pulse" />
                 </div>
                 <div className="max-w-2xl mx-auto space-y-4">
-                   <p className="text-2xl font-black italic text-slate-800 leading-relaxed tracking-tight">"Healing is a matter of time, but it is sometimes also a matter of opportunity."</p>
+                   <p className="text-2xl font-black italic text-white/90 leading-relaxed tracking-tight">"Healing is a matter of time, but it is sometimes also a matter of opportunity."</p>
                    <div className="flex flex-col items-center">
                       <p className="text-xs font-black text-emerald-600 uppercase tracking-[0.4em]">Dt. Madhavi Latha</p>
                       <p className="text-[10px] font-bold text-slate-300 uppercase tracking-widest mt-1">Chief Nutritionist · DietX</p>

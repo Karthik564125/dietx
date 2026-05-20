@@ -1,10 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import axios from 'axios';
-import { User, Mail, Shield, Save, CheckCircle, ArrowLeft, Activity, Phone } from 'lucide-react';
+import { User, Mail, Shield, Save, CheckCircle, ArrowLeft, Activity, Phone, Camera, Trash2, Upload } from 'lucide-react';
 import AestheticBackground from '../components/AestheticBackground';
+import bgDashboard from '../assets/dashboard.jpeg';
 
+const PROFILE_PIC_KEY = 'dietx_profile_pic';
 
 interface ProfileProps {
   setIsAuthenticated: (val: boolean) => void;
@@ -12,6 +14,8 @@ interface ProfileProps {
 
 const Profile = ({ setIsAuthenticated }: ProfileProps) => {
   const navigate = useNavigate();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const [formData, setFormData] = useState({ 
     name: JSON.parse(localStorage.getItem('user') || '{}').name || '', 
     email: JSON.parse(localStorage.getItem('user') || '{}').email || '',
@@ -21,6 +25,12 @@ const Profile = ({ setIsAuthenticated }: ProfileProps) => {
   const [isUpdating, setIsUpdating] = useState(false);
   const [loading, setLoading] = useState(true);
   const [success, setSuccess] = useState(false);
+
+  // Profile picture state
+  const [profilePic, setProfilePic] = useState<string | null>(
+    localStorage.getItem(PROFILE_PIC_KEY)
+  );
+  const [picHover, setPicHover] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -35,14 +45,9 @@ const Profile = ({ setIsAuthenticated }: ProfileProps) => {
           email: res.data.email || formData.email,
           phone: res.data.phone || formData.phone
         });
-
-        if (res.data.health) {
-          setHealthStats(res.data.health);
-        }
+        if (res.data.health) setHealthStats(res.data.health);
       })
-      .catch(err => {
-        console.error('Profile fetch error:', err);
-      })
+      .catch(err => console.error('Profile fetch error:', err))
       .finally(() => setLoading(false));
   }, [navigate]);
 
@@ -58,8 +63,6 @@ const Profile = ({ setIsAuthenticated }: ProfileProps) => {
       });
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
-      
-      // Update local storage name if changed
       const user = JSON.parse(localStorage.getItem('user') || '{}');
       user.name = formData.name;
       localStorage.setItem('user', JSON.stringify(user));
@@ -70,10 +73,42 @@ const Profile = ({ setIsAuthenticated }: ProfileProps) => {
     }
   };
 
+  const handlePicUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Image must be under 5MB');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = reader.result as string;
+      setProfilePic(base64);
+      localStorage.setItem(PROFILE_PIC_KEY, base64);
+    };
+    reader.readAsDataURL(file);
+    // Reset input so same file can be re-uploaded
+    e.target.value = '';
+  };
+
+  const handleRemovePic = () => {
+    setProfilePic(null);
+    localStorage.removeItem(PROFILE_PIC_KEY);
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-premium relative overflow-hidden">
       <Navbar setIsAuthenticated={setIsAuthenticated} />
-      <AestheticBackground />
+      <AestheticBackground bgImage={bgDashboard} />
+
+      {/* Hidden file input */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={handlePicUpload}
+      />
 
       {loading ? (
         <div className="flex-1 flex items-center justify-center">
@@ -81,162 +116,213 @@ const Profile = ({ setIsAuthenticated }: ProfileProps) => {
         </div>
       ) : (
         <main className="flex-1 p-6 sm:p-10 max-w-7xl mx-auto w-full space-y-12 py-12">
-        <header className="space-y-6 text-center">
-          <div className="flex justify-center">
-            <button 
-              onClick={() => navigate('/dashboard')}
-              className="flex items-center gap-2 px-6 py-2 bg-white/50 backdrop-blur-xl border border-white/50 rounded-full text-slate-500 hover:text-slate-900 font-black text-[10px] uppercase tracking-widest transition-all group"
-            >
-              <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" /> Back to Dashboard
-            </button>
-          </div>
-          <div className="space-y-2">
-            <h1 className="text-5xl sm:text-7xl font-black text-slate-900 tracking-tighter leading-none">
-              Account <span className="text-emerald-600">Settings</span>
-            </h1>
-            <p className="text-slate-500 font-bold text-lg sm:text-xl uppercase tracking-widest">Profile Control Center</p>
-          </div>
-        </header>
+          <header className="space-y-6 text-center">
+            <div className="flex justify-center">
+              <button 
+                onClick={() => navigate('/dashboard')}
+                className="flex items-center gap-2 px-6 py-2 bg-white/15 backdrop-blur-xl border border-white/20 rounded-full text-white/70 hover:text-white font-black text-[10px] uppercase tracking-widest transition-all group"
+              >
+                <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" /> Back to Dashboard
+              </button>
+            </div>
+            <div className="space-y-2">
+              <h1 className="text-5xl sm:text-7xl font-black text-white tracking-tighter leading-none">
+                Account <span className="text-emerald-400">Settings</span>
+              </h1>
+              <p className="text-white/60 font-bold text-lg sm:text-xl uppercase tracking-widest">Profile Control Center</p>
+            </div>
+          </header>
 
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Info Sidebar */}
+            <div className="md:col-span-1 space-y-6">
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-           {/* Info Sidebar */}
-           <div className="md:col-span-1 space-y-6">
-              <div className="glass-card p-8 flex flex-col items-center text-center space-y-4">
-                 <div className="w-24 h-24 bg-emerald-50 text-emerald-600 rounded-[2rem] flex items-center justify-center text-3xl font-black shadow-inner">
-                    {formData.name?.charAt(0) || 'U'}
-                 </div>
-                 <div>
-                    <h3 className="font-black text-xl text-slate-900">{formData.name}</h3>
-                    <p className="text-sm font-bold text-slate-400">{formData.email}</p>
-                 </div>
-                 <div className="px-4 py-1.5 bg-slate-900 text-white rounded-full text-[10px] font-black uppercase tracking-widest">
-                    Verified User
-                 </div>
-              </div>
-
-              <div className="glass-card p-6 space-y-4">
-                 <div className="flex items-center gap-3 text-slate-900 border-b border-slate-50 pb-3">
-                    <Activity size={18} className="text-emerald-600" />
-                    <span className="text-sm font-black uppercase tracking-widest">Bio-Vitals Summary</span>
-                 </div>
-                 <div className="space-y-4">
-                    <div className="flex justify-between items-center">
-                       <span className="text-xs font-bold text-slate-400">BMI Index</span>
-                       <span className="text-sm font-black text-slate-900">{healthStats?.bmi || '--'}</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                       <span className="text-xs font-bold text-slate-400">Weight</span>
-                       <span className="text-sm font-black text-slate-900">{healthStats?.weight || '--'} kg</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                       <span className="text-xs font-bold text-slate-400">Ideal Weight</span>
-                       <span className="text-sm font-black text-emerald-600">{healthStats?.idealWeight ? `${healthStats.idealWeight} kg` : '--'}</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                       <span className="text-xs font-bold text-slate-400">Daily Goal</span>
-                       <span className="text-sm font-black text-slate-900">{healthStats?.dailyCalories || '--'} kcal</span>
-                    </div>
-                 </div>
-              </div>
-
-              <div className="glass-card p-6 space-y-4">
-                 <div className="flex items-center gap-3 text-slate-900">
-                    <Shield size={18} className="text-emerald-600" />
-                    <span className="text-sm font-bold">Privacy Secured</span>
-                 </div>
-                 <p className="text-xs text-slate-400 font-medium leading-relaxed">
-                    Your health data is encrypted and only used to personalize your diet plans.
-                 </p>
-              </div>
-           </div>
-
-           {/* Edit Form */}
-           <div className="md:col-span-2 glass-card p-10">
-              <form onSubmit={handleUpdate} className="space-y-8">
-                 <div className="space-y-6">
-                    <div className="space-y-2">
-                       <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Full Name</label>
-                       <div className="relative">
-                          <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
-                          <input 
-                            type="text" 
-                            className="input-field pl-12"
-                            value={formData.name}
-                            onChange={e => setFormData({ ...formData, name: e.target.value })}
-                            placeholder="Your Name"
-                            required
-                          />
-                       </div>
-                    </div>
-
-                    <div className="space-y-2">
-                       <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Email Address</label>
-                       <div className="relative">
-                          <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
-                          <input 
-                            type="email" 
-                            className="input-field pl-12 bg-slate-50/50 cursor-not-allowed"
-                            value={formData.email}
-                            disabled
-                            placeholder="Email"
-                          />
-                       </div>
-                    </div>
-
-                    <div className="space-y-2">
-                       <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Phone Number</label>
-
-                       <div className="relative">
-                          <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
-                          <input 
-                            type="tel" 
-                            className="input-field pl-12"
-                            value={formData.phone}
-                            onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                            placeholder="Your Phone Number"
-                          />
-                       </div>
-                    </div>
-                 </div>
-
-
-                 <div className="pt-4 flex items-center gap-4">
-                    <button 
-                      type="submit"
-                      disabled={isUpdating}
-                      className="flex-1 btn-primary"
-                    >
-                       {isUpdating ? 'Updating...' : (
-                         <>
-                           <Save size={18} /> Update Profile
-                         </>
-                       )}
-                    </button>
-                    {success && (
-                       <div className="flex items-center gap-2 text-emerald-600 font-black text-sm animate-in fade-in slide-in-from-left-4">
-                          <CheckCircle size={20} /> Success!
-                       </div>
+              {/* ── PROFILE PICTURE CARD ── */}
+              <div className="glass-card p-8 flex flex-col items-center text-center space-y-5">
+                {/* Avatar with hover overlay */}
+                <div
+                  className="relative cursor-pointer group/avatar"
+                  onMouseEnter={() => setPicHover(true)}
+                  onMouseLeave={() => setPicHover(false)}
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  <div className="w-28 h-28 rounded-[2rem] overflow-hidden shadow-lg border-2 border-white/20 relative">
+                    {profilePic ? (
+                      <img
+                        src={profilePic}
+                        alt="Profile"
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover/avatar:scale-110"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-4xl font-black">
+                        {formData.name?.charAt(0)?.toUpperCase() || 'U'}
+                      </div>
                     )}
-                 </div>
+                    {/* Hover overlay */}
+                    <div className={`absolute inset-0 bg-black/50 flex items-center justify-center transition-opacity duration-300 ${picHover ? 'opacity-100' : 'opacity-0'}`}>
+                      <Camera size={28} className="text-white" />
+                    </div>
+                  </div>
+                  {/* Pulsing ring when no pic */}
+                  {!profilePic && (
+                    <div className="absolute -inset-1 rounded-[2.5rem] border-2 border-dashed border-emerald-400/40 animate-pulse" />
+                  )}
+                </div>
+
+                {/* Name & Email */}
+                <div>
+                  <h3 className="font-black text-xl text-white">{formData.name}</h3>
+                  <p className="text-sm font-bold text-white/50">{formData.email}</p>
+                </div>
+
+                <div className="px-4 py-1.5 bg-emerald-500/20 text-emerald-300 rounded-full text-[10px] font-black uppercase tracking-widest border border-emerald-400/30">
+                  Verified User
+                </div>
+
+                {/* Picture action buttons */}
+                <div className="flex gap-3 w-full pt-2 border-t border-white/10">
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 rounded-2xl text-[10px] font-black uppercase tracking-widest border border-emerald-400/20 transition-all"
+                  >
+                    <Upload size={12} />
+                    {profilePic ? 'Change' : 'Upload'}
+                  </button>
+                  {profilePic && (
+                    <button
+                      onClick={handleRemovePic}
+                      className="flex items-center justify-center gap-2 px-4 py-2.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-2xl text-[10px] font-black uppercase tracking-widest border border-red-400/20 transition-all"
+                    >
+                      <Trash2 size={12} />
+                    </button>
+                  )}
+                </div>
+                <p className="text-[9px] text-white/30 font-medium">
+                  JPG, PNG or WebP · Max 5MB
+                </p>
+              </div>
+
+              {/* Bio-Vitals Summary */}
+              <div className="glass-card p-6 space-y-4">
+                <div className="flex items-center gap-3 text-white border-b border-white/10 pb-3">
+                  <Activity size={18} className="text-emerald-400" />
+                  <span className="text-sm font-black uppercase tracking-widest">Bio-Vitals Summary</span>
+                </div>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs font-bold text-white/50">BMI Index</span>
+                    <span className="text-sm font-black text-white">{healthStats?.bmi || '--'}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs font-bold text-white/50">Weight</span>
+                    <span className="text-sm font-black text-white">{healthStats?.weight || '--'} kg</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs font-bold text-white/50">Ideal Weight</span>
+                    <span className="text-sm font-black text-emerald-400">{healthStats?.idealWeight ? `${healthStats.idealWeight} kg` : '--'}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs font-bold text-white/50">Daily Goal</span>
+                    <span className="text-sm font-black text-white">{healthStats?.dailyCalories || '--'} kcal</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="glass-card p-6 space-y-4">
+                <div className="flex items-center gap-3 text-white">
+                  <Shield size={18} className="text-emerald-400" />
+                  <span className="text-sm font-bold">Privacy Secured</span>
+                </div>
+                <p className="text-xs text-white/50 font-medium leading-relaxed">
+                  Your health data is encrypted and only used to personalize your diet plans.
+                </p>
+              </div>
+            </div>
+
+            {/* Edit Form */}
+            <div className="md:col-span-2 glass-card p-10">
+              <form onSubmit={handleUpdate} className="space-y-8">
+                <div className="space-y-6">
+                  <div className="space-y-2">
+                    <label className="text-xs font-black text-white/50 uppercase tracking-widest ml-1">Full Name</label>
+                    <div className="relative">
+                      <User className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" size={18} />
+                      <input 
+                        type="text" 
+                        className="input-field pl-12"
+                        value={formData.name}
+                        onChange={e => setFormData({ ...formData, name: e.target.value })}
+                        placeholder="Your Name"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-xs font-black text-white/50 uppercase tracking-widest ml-1">Email Address</label>
+                    <div className="relative">
+                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" size={18} />
+                      <input 
+                        type="email" 
+                        className="input-field pl-12 opacity-50 cursor-not-allowed"
+                        value={formData.email}
+                        disabled
+                        placeholder="Email"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-xs font-black text-white/50 uppercase tracking-widest ml-1">Phone Number</label>
+                    <div className="relative">
+                      <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" size={18} />
+                      <input 
+                        type="tel" 
+                        className="input-field pl-12"
+                        value={formData.phone}
+                        onChange={e => setFormData({ ...formData, phone: e.target.value })}
+                        placeholder="Your Phone Number"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-4 flex items-center gap-4">
+                  <button 
+                    type="submit"
+                    disabled={isUpdating}
+                    className="flex-1 btn-primary"
+                  >
+                    {isUpdating ? 'Updating...' : (
+                      <>
+                        <Save size={18} /> Update Profile
+                      </>
+                    )}
+                  </button>
+                  {success && (
+                    <div className="flex items-center gap-2 text-emerald-400 font-black text-sm animate-in fade-in slide-in-from-left-4">
+                      <CheckCircle size={20} /> Saved!
+                    </div>
+                  )}
+                </div>
               </form>
 
-              <div className="mt-12 pt-10 border-t-2 border-slate-100 space-y-8">
-                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-                    <div className="space-y-1">
-                       <h4 className="text-xl font-black text-slate-900">Health Bio Specs</h4>
-                       <p className="text-sm font-medium text-slate-500">Update your physical metrics like Height, Weight, and Activity Level.</p>
-                    </div>
-                    <button 
-                      onClick={() => navigate('/onboarding', { state: { from: '/profile' } })}
-                      className="px-8 py-4 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-emerald-600 transition-all flex items-center gap-2 group whitespace-nowrap shadow-lg shadow-slate-200"
-                    >
-                       <Activity size={18} className="group-hover:animate-pulse" /> Update Bio Metrics
-                    </button>
-                 </div>
+              <div className="mt-12 pt-10 border-t-2 border-white/10 space-y-8">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+                  <div className="space-y-1">
+                    <h4 className="text-xl font-black text-white">Health Bio Specs</h4>
+                    <p className="text-sm font-medium text-white/50">Update your physical metrics like Height, Weight, and Activity Level.</p>
+                  </div>
+                  <button 
+                    onClick={() => navigate('/onboarding', { state: { from: '/profile' } })}
+                    className="px-8 py-4 bg-emerald-600/80 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-emerald-500 transition-all flex items-center gap-2 group whitespace-nowrap shadow-lg shadow-emerald-900/20 border border-emerald-400/30"
+                  >
+                    <Activity size={18} className="group-hover:animate-pulse" /> Update Bio Metrics
+                  </button>
+                </div>
               </div>
-           </div>
-        </div>
+            </div>
+          </div>
         </main>
       )}
     </div>

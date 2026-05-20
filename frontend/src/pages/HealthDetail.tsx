@@ -4,6 +4,7 @@ import Navbar from '../components/Navbar';
 import axios from 'axios';
 import { ArrowLeft, TrendingUp, Activity, User, Target } from 'lucide-react';
 import AestheticBackground from '../components/AestheticBackground';
+import bgDashboard from '../assets/dashboard.jpeg';
 
 interface HealthDetailProps {
   setIsAuthenticated: (val: boolean) => void;
@@ -27,21 +28,21 @@ const HealthDetail = ({ setIsAuthenticated }: HealthDetailProps) => {
   return (
     <div className="min-h-screen flex flex-col bg-premium relative overflow-hidden">
       <Navbar setIsAuthenticated={setIsAuthenticated} />
-      <AestheticBackground />
+      <AestheticBackground bgImage={bgDashboard} />
 
       <main className="flex-1 p-6 sm:p-10 max-w-5xl mx-auto w-full space-y-12 py-12">
         <header className="space-y-4">
           <button 
             onClick={() => navigate('/dashboard')}
-            className="flex items-center gap-2 text-slate-500 hover:text-slate-900 font-bold transition-all group"
+            className="flex items-center gap-2 text-white/70 hover:text-white font-bold transition-all group"
           >
             <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" /> Back to Dashboard
           </button>
           <div className="space-y-1">
-            <h1 className="text-4xl sm:text-6xl font-black text-slate-900 tracking-tight">
-              Health <span className="text-emerald-600">Analytics</span>
+            <h1 className="text-4xl sm:text-6xl font-black text-white tracking-tight">
+              Health <span className="text-emerald-400">Analytics</span>
             </h1>
-            <p className="text-slate-500 font-medium text-lg">Comprehensive view of your body metrics and trends.</p>
+            <p className="text-white/60 font-medium text-lg">Comprehensive view of your body metrics and trends.</p>
           </div>
         </header>
 
@@ -50,13 +51,13 @@ const HealthDetail = ({ setIsAuthenticated }: HealthDetailProps) => {
           <div className="md:col-span-2 glass-card p-10 space-y-8">
             <div className="flex justify-between items-start">
                <div>
-                 <h3 className="text-sm font-black text-slate-400 uppercase tracking-widest">Body Mass Index</h3>
+                 <h3 className="text-sm font-black text-white/60 uppercase tracking-widest">Body Mass Index</h3>
                  <div className="flex items-baseline gap-4 mt-2">
-                    <span className="text-7xl font-black text-slate-900">{health?.bmi || '--'}</span>
-                    <span className="px-4 py-1.5 rounded-full text-sm font-bold bg-emerald-50 text-emerald-600">{health?.bmiCategory}</span>
+                    <span className="text-7xl font-black text-white">{health?.bmi || '--'}</span>
+                    <span className="px-4 py-1.5 rounded-full text-sm font-bold bg-emerald-500/20 text-emerald-300">{health?.bmiCategory}</span>
                  </div>
                </div>
-               <div className="p-4 bg-emerald-50 text-emerald-600 rounded-2xl">
+               <div className="p-4 bg-emerald-500/20 text-emerald-400 rounded-2xl">
                  <Activity size={24} />
                </div>
             </div>

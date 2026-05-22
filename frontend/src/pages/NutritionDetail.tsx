@@ -3,9 +3,16 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import PremiumNutritionCard from '../components/PremiumNutritionCard';
 import axios from 'axios';
-import { ArrowLeft, Salad, Flame, PieChart, Info, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Salad, Flame, PieChart, Info, ChevronRight, Lock, Sparkles, Loader2, CheckCircle2 } from 'lucide-react';
 import AestheticBackground from '../components/AestheticBackground';
 import bgDashboard from '../assets/dashboard.jpeg';
+import toast from 'react-hot-toast';
+
+declare global {
+  interface Window {
+    Razorpay: any;
+  }
+}
 
 interface NutritionDetailProps {
   setIsAuthenticated: (val: boolean) => void;
@@ -16,6 +23,8 @@ const NutritionDetail = ({ setIsAuthenticated }: NutritionDetailProps) => {
   const [health, setHealth] = useState<any>(null);
   const [user, setUser] = useState<any>(null);
   const [activeDiet, setActiveDiet] = useState<'veg'|'nonVeg'>('veg');
+  const [recipesLoading, setRecipesLoading] = useState(false);
+  const [consultancyLoading, setConsultancyLoading] = useState(false);
 
   const recipes = {
     veg: [
@@ -36,6 +45,97 @@ const NutritionDetail = ({ setIsAuthenticated }: NutritionDetailProps) => {
     ]
   };
 
+  const handlePayment = async (amount: number) => {
+    if (amount === 99) {
+      setRecipesLoading(true);
+    } else {
+      setConsultancyLoading(true);
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        toast.error('Please log in to make a payment');
+        return;
+      }
+
+      // 1. Create Order in Backend
+      const { data } = await axios.post(
+        'http://localhost:5001/api/payment/create-order',
+        { amount },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      const { order } = data;
+
+      // 2. Open Razorpay Checkout
+      const options = {
+        key: 'rzp_test_SnyXd605r6Yfse', // Test Key
+        amount: order.amount,
+        currency: order.currency,
+        name: amount === 99 ? 'Diet X Suggested Recipes' : 'Diet X Premium',
+        description: amount === 99 ? 'Unlock Curated Suggested Recipes' : 'Personalized Dietician Consultation',
+        order_id: order.id,
+        handler: async (response: any) => {
+          try {
+            // 3. Verify Payment in Backend
+            const verifyRes = await axios.post(
+              'http://localhost:5001/api/payment/verify',
+              {
+                ...response,
+                userId: user?.id,
+                email: user?.email,
+                phone: user?.phone || response.contact,
+                amount,
+              },
+              { headers: { Authorization: `Bearer ${token}` } }
+            );
+
+            if (verifyRes.data.success) {
+              toast.success('Payment Successful!');
+              // Re-fetch health profile to update states
+              axios.get('http://localhost:5001/api/health-profile', {
+                headers: { Authorization: `Bearer ${token}` }
+              })
+                .then(res => {
+                  setHealth(res.data.health);
+                  setUser({
+                    id: res.data.userId || '', 
+                    name: res.data.name,
+                    email: res.data.email,
+                    phone: res.data.phone,
+                    isPremium: res.data.isPremium,
+                    isRecipesUnlocked: res.data.isRecipesUnlocked
+                  });
+                })
+                .catch(console.error);
+            }
+          } catch (err) {
+            console.error(err);
+            toast.error('Payment verification failed');
+          }
+        },
+        prefill: {
+          name: user?.name || '',
+          email: user?.email || '',
+          contact: user?.phone || '',
+        },
+        theme: {
+          color: '#10b981', // Emerald 600
+        },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    } catch (error) {
+      console.error('Payment initiation failed', error);
+      toast.error('Failed to initiate payment');
+    } finally {
+      setRecipesLoading(false);
+      setConsultancyLoading(false);
+    }
+  };
+
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) return;
@@ -50,7 +150,8 @@ const NutritionDetail = ({ setIsAuthenticated }: NutritionDetailProps) => {
           name: res.data.name,
           email: res.data.email,
           phone: res.data.phone,
-          isPremium: res.data.isPremium
+          isPremium: res.data.isPremium,
+          isRecipesUnlocked: res.data.isRecipesUnlocked
         });
 
       })
@@ -128,31 +229,6 @@ const NutritionDetail = ({ setIsAuthenticated }: NutritionDetailProps) => {
            </div>
         </div>
 
-        {/* Important Health Notice Card */}
-        <div className="glass-card p-6 md:p-8 bg-blue-50/50 border-blue-100 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative overflow-hidden group">
-            <div className="absolute top-0 right-0 p-12 opacity-[0.03] pointer-events-none group-hover:scale-110 transition-transform duration-1000">
-               <Info size={140} className="text-blue-600" />
-            </div>
-            <div className="flex items-start md:items-center gap-5 relative z-10 flex-1">
-                <div className="p-4 bg-blue-100 text-blue-600 rounded-2xl shrink-0 shadow-sm hidden sm:block">
-                    <Info size={24} />
-                </div>
-                <div className="space-y-1">
-                    <h3 className="text-lg font-black text-slate-900 tracking-tight">Important Health Notice</h3>
-                    <p className="text-sm font-bold text-slate-500 leading-relaxed max-w-3xl">
-                        These recommendations are for individuals with <span className="text-slate-800">normal health</span>. If you have any medical conditions such as High BP, Diabetes, or others, kindly consult us personally for a tailored plan.
-                    </p>
-                </div>
-            </div>
-            <div className="relative z-10 shrink-0 w-full md:w-auto mt-2 md:mt-0">
-                <button
-                    onClick={() => navigate('/sessions')}
-                    className="w-full md:w-auto px-6 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all shadow-lg shadow-blue-600/20 hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-2"
-                >
-                    Consult Personally <ChevronRight size={14} />
-                </button>
-            </div>
-        </div>
 
         {/* Nutrition Tips Section */}
         <section className="space-y-8">
@@ -163,54 +239,180 @@ const NutritionDetail = ({ setIsAuthenticated }: NutritionDetailProps) => {
                 </h2>
                 
                 {/* Veg/Non-Veg Toggle */}
-                <div className="flex bg-slate-100 p-1 rounded-xl w-fit">
-                    <button 
-                      onClick={() => setActiveDiet('veg')}
-                      className={`px-6 py-2.5 rounded-lg font-black text-xs uppercase tracking-widest transition-all ${activeDiet === 'veg' ? 'bg-white text-emerald-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
-                    >
-                      Vegetarian
-                    </button>
-                    <button 
-                      onClick={() => setActiveDiet('nonVeg')}
-                      className={`px-6 py-2.5 rounded-lg font-black text-xs uppercase tracking-widest transition-all ${activeDiet === 'nonVeg' ? 'bg-white text-red-500 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
-                    >
-                      Non-Vegetarian
-                    </button>
-                </div>
-            </div>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
-                {recipes[activeDiet].map((recipe, i) => (
-                    <div key={i} className={`glass-card p-6 flex flex-col justify-between border-transparent hover:border-${activeDiet === 'veg' ? 'emerald' : 'red'}-100 transition-all group`}>
-                        <div>
-                            <div className="flex justify-between items-start mb-4">
-                                <h4 className="text-lg font-black text-slate-900">{recipe.name}</h4>
-                                <div className="px-3 py-1 bg-slate-100 text-slate-600 rounded-full text-[10px] font-black uppercase tracking-widest whitespace-nowrap">
-                                    {recipe.cal}
-                                </div>
-                            </div>
-                            <p className="text-slate-500 font-medium text-sm leading-relaxed mb-6">{recipe.desc}</p>
-                        </div>
-                        <div className="pt-4 border-t border-slate-100 flex justify-between items-center">
-                            <span className={`text-[11px] font-black uppercase tracking-widest ${activeDiet === 'veg' ? 'text-emerald-600' : 'text-red-500'}`}>
-                                {recipe.macros}
-                            </span>
-                        </div>
-                    </div>
-                ))}
+                {user?.isRecipesUnlocked && (
+                  <div className="flex bg-slate-100 p-1 rounded-xl w-fit">
+                      <button 
+                        onClick={() => setActiveDiet('veg')}
+                        className={`px-6 py-2.5 rounded-lg font-black text-xs uppercase tracking-widest transition-all ${activeDiet === 'veg' ? 'bg-white text-emerald-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                      >
+                        Vegetarian
+                      </button>
+                      <button 
+                        onClick={() => setActiveDiet('nonVeg')}
+                        className={`px-6 py-2.5 rounded-lg font-black text-xs uppercase tracking-widest transition-all ${activeDiet === 'nonVeg' ? 'bg-white text-red-500 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                      >
+                        Non-Vegetarian
+                      </button>
+                  </div>
+                )}
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12 pt-12 border-t-2 border-slate-100">
-                <PremiumNutritionCard user={user || { name: 'User', email: '', id: '' }} />
-                
-                <div className="flex flex-col justify-center p-8 bg-amber-50/50 rounded-3xl border border-amber-100 h-full">
-                    <h4 className="text-amber-900 font-black text-sm uppercase tracking-widest mb-3 flex items-center gap-2">
-                      <span className="text-xl">⚠️</span> Medical Disclaimer
-                    </h4>
-                    <p className="text-amber-800/80 font-medium text-sm leading-relaxed">
-                        Please consult with a qualified healthcare professional or doctor before starting any new diet, nutrition plan, or drastically changing your eating habits. These recipes are suggestions and may need to be tailored to your specific medical needs and allergies.
-                    </p>
+            {!user?.isRecipesUnlocked ? (
+              /* Locked State: 2 Cards Side-by-Side */
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* Card A: Unlock Suggested Recipes (₹99) */}
+                <div className="glass-card p-10 bg-gradient-to-br from-slate-900 via-slate-900 to-emerald-950/30 text-white border-transparent relative overflow-hidden group flex flex-col justify-between min-h-[350px] shadow-2xl">
+                  <div className="absolute -top-24 -right-24 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl group-hover:bg-emerald-500/20 transition-all duration-700 pointer-events-none" />
+                  <div className="relative z-10 flex flex-col h-full justify-between space-y-6">
+                    <div className="flex justify-between items-start">
+                      <div className="w-14 h-14 bg-emerald-500/20 rounded-2xl flex items-center justify-center border border-emerald-500/30">
+                        <Lock className="text-emerald-400" size={28} />
+                      </div>
+                      <div className="bg-emerald-500/10 text-emerald-400 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border border-emerald-500/20">
+                        Suggested Recipes
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      <h4 className="text-2xl sm:text-3xl font-black tracking-tight">Suggested Recipes Plan</h4>
+                      <p className="text-slate-400 font-medium text-sm leading-relaxed">
+                        Unlock access to our complete, calorie-calibrated recipe guides configured perfectly for your daily targets. Optimized vegetarian & non-vegetarian protocol.
+                      </p>
+                    </div>
+
+                    <div className="pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-6 mt-auto">
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-4xl font-black">₹99</span>
+                        <span className="text-slate-500 font-bold line-through text-base">₹199</span>
+                      </div>
+                      
+                      <button
+                        onClick={() => handlePayment(99)}
+                        disabled={recipesLoading || consultancyLoading}
+                        className="w-full sm:w-auto px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-white rounded-2xl font-black text-xs uppercase tracking-widest transition-all hover:scale-105 active:scale-95 disabled:opacity-50 flex items-center justify-center gap-3 shadow-xl shadow-emerald-500/20"
+                      >
+                        {recipesLoading ? <Loader2 className="animate-spin" size={16} /> : 'Unlock Recipes'}
+                      </button>
+                    </div>
+                  </div>
                 </div>
+
+                {/* Card B: Personal Consultancy (₹299) */}
+                <div className="glass-card p-10 bg-gradient-to-br from-slate-900 to-slate-950 text-white border-transparent relative overflow-hidden group flex flex-col justify-between min-h-[350px] shadow-2xl">
+                  <div className="absolute -top-24 -right-24 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl group-hover:bg-amber-500/20 transition-all duration-700 pointer-events-none" />
+                  <div className="relative z-10 flex flex-col h-full justify-between space-y-6">
+                    <div className="flex justify-between items-start">
+                      <div className="w-14 h-14 bg-amber-500/20 rounded-2xl flex items-center justify-center border border-amber-500/30">
+                        <Sparkles className="text-amber-400" size={28} />
+                      </div>
+                      <div className="bg-amber-500/10 text-amber-400 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border border-amber-500/20">
+                        Premium Access
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      <h4 className="text-2xl sm:text-3xl font-black tracking-tight">Unlock Personal Nutrition Plan</h4>
+                      <p className="text-slate-400 font-medium text-sm leading-relaxed">
+                        Get a tailored 4-week meal plan, 1-on-1 expert consultation, and daily habit tracking with our senior dieticians.
+                      </p>
+                    </div>
+
+                    <div className="pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-6 mt-auto">
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-4xl font-black">₹299</span>
+                        <span className="text-slate-500 font-bold line-through text-base">₹999</span>
+                      </div>
+                      
+                      <button
+                        onClick={() => handlePayment(299)}
+                        disabled={recipesLoading || consultancyLoading}
+                        className="w-full sm:w-auto px-8 py-4 bg-amber-500 hover:bg-amber-400 text-white rounded-2xl font-black text-xs uppercase tracking-widest transition-all hover:scale-105 active:scale-95 disabled:opacity-50 flex items-center justify-center gap-3 shadow-xl shadow-amber-500/20"
+                      >
+                        {consultancyLoading ? <Loader2 className="animate-spin" size={16} /> : 'Unlock Now'}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              /* Unlocked State: Disclaimer notice and recipes grid */
+              <div className="space-y-8">
+                <div className="glass-card p-6 md:p-8 bg-amber-50/50 border-amber-100 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative overflow-hidden group">
+                    <div className="flex items-start md:items-center gap-5 relative z-10 flex-1">
+                        <div className="p-4 bg-amber-100 text-amber-700 rounded-2xl shrink-0 shadow-sm">
+                            <Info size={24} />
+                        </div>
+                        <div className="space-y-1">
+                            <h3 className="text-lg font-black text-slate-900 tracking-tight">Normal Health Notice</h3>
+                            <p className="text-sm font-bold text-slate-600 leading-relaxed">
+                                These suggested recipes are curated only for individuals with <span className="text-slate-900">no active health issues</span>. If you require a custom diet protocol for specific medical conditions (e.g., High BP, Diabetes, PCOD, etc.), please try our 1-on-1 Personal Consultancy.
+                            </p>
+                        </div>
+                    </div>
+                    {!user?.isPremium && (
+                      <div className="relative z-10 shrink-0 w-full md:w-auto mt-2 md:mt-0">
+                          <button
+                              onClick={() => handlePayment(299)}
+                              disabled={recipesLoading || consultancyLoading}
+                              className="w-full md:w-auto px-6 py-4 bg-amber-500 hover:bg-amber-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all shadow-lg shadow-amber-500/20 hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-2"
+                          >
+                              {consultancyLoading ? <Loader2 className="animate-spin" size={14} /> : <>Upgrade to Consultancy (₹299) <ChevronRight size={14} /></>}
+                          </button>
+                      </div>
+                    )}
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
+                    {recipes[activeDiet].map((recipe, i) => (
+                        <div key={i} className={`glass-card p-6 flex flex-col justify-between bg-slate-950/70 border-white/10 hover:border-${activeDiet === 'veg' ? 'emerald-500/30' : 'red-500/30'} transition-all duration-300 group`}>
+                            <div>
+                                <div className="flex justify-between items-start mb-4">
+                                    <h4 className="text-lg font-black text-white">{recipe.name}</h4>
+                                    <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest whitespace-nowrap border ${
+                                      activeDiet === 'veg' 
+                                        ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/25' 
+                                        : 'bg-red-500/15 text-red-300 border-red-500/25'
+                                    }`}>
+                                        {recipe.cal}
+                                    </div>
+                                </div>
+                                <p className="text-slate-300 font-medium text-sm leading-relaxed mb-6">{recipe.desc}</p>
+                            </div>
+                            <div className="pt-4 border-t border-white/10 flex justify-between items-center">
+                                <span className={`text-[11px] font-black uppercase tracking-widest ${activeDiet === 'veg' ? 'text-emerald-400' : 'text-red-400'}`}>
+                                    {recipe.macros}
+                                </span>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12 pt-12 border-t-2 border-slate-100">
+                {user?.isRecipesUnlocked ? (
+                  <>
+                    <PremiumNutritionCard user={user || { name: 'User', email: '', id: '' }} />
+                    
+                    <div className="flex flex-col justify-center p-8 bg-amber-50/50 rounded-3xl border border-amber-100 h-full">
+                        <h4 className="text-amber-900 font-black text-sm uppercase tracking-widest mb-3 flex items-center gap-2">
+                          <span className="text-xl">⚠️</span> Medical Disclaimer
+                        </h4>
+                        <p className="text-amber-800/80 font-medium text-sm leading-relaxed">
+                            Please consult with a qualified healthcare professional or doctor before starting any new diet, nutrition plan, or drastically changing your eating habits. These recipes are suggestions and may need to be tailored to your specific medical needs and allergies.
+                        </p>
+                    </div>
+                  </>
+                ) : (
+                  <div className="md:col-span-2 flex flex-col justify-center p-8 bg-amber-50/50 rounded-3xl border border-amber-100 h-full">
+                      <h4 className="text-amber-900 font-black text-sm uppercase tracking-widest mb-3 flex items-center gap-2">
+                        <span className="text-xl">⚠️</span> Medical Disclaimer
+                      </h4>
+                      <p className="text-amber-800/80 font-medium text-sm leading-relaxed">
+                          Please consult with a qualified healthcare professional or doctor before starting any new diet, nutrition plan, or drastically changing your eating habits. These recipes are suggestions and may need to be tailored to your specific medical needs and allergies.
+                      </p>
+                  </div>
+                )}
             </div>
         </section>
       </main>

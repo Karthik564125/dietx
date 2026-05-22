@@ -64,10 +64,10 @@ export const verifyPayment = async (req: Request, res: Response) => {
       });
     }
 
-    // Trigger Email Notification (Non-blocking or handled)
+    // Trigger Email Notification (Non-blocking or handled) - Only for Personal Consultancy (amount >= 299)
     try {
       const fullUser = await (prisma as any).user.findUnique({ where: { id: userId } });
-      if (fullUser) {
+      if (Number(amount) >= 299 && fullUser) {
         await MailService.sendConsultationMail({
           user: {
             id: fullUser.id,

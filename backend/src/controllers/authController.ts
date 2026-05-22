@@ -73,9 +73,14 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
       { expiresIn: '7d' }
     );
 
-    // Check if user has a premium purchase
-    const purchase = await (prisma as any).nutritionPlanPurchase.findFirst({
-      where: { userId: user.id, status: 'completed' }
+    // Check if user has a premium purchase (personal consultancy)
+    const consultancyPurchase = await (prisma as any).nutritionPlanPurchase.findFirst({
+      where: { userId: user.id, status: 'completed', amount: { in: [299, 499] } }
+    });
+
+    // Check if user has unlocked recipes
+    const recipesPurchase = await (prisma as any).nutritionPlanPurchase.findFirst({
+      where: { userId: user.id, status: 'completed', amount: { in: [99, 299, 499] } }
     });
 
     res.json({ 
@@ -87,7 +92,8 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
         email: user.email, 
         phone: user.phone,
         profileComplete: user.profileComplete,
-        isPremium: !!purchase
+        isPremium: !!consultancyPurchase,
+        isRecipesUnlocked: !!recipesPurchase
       } 
     });
 

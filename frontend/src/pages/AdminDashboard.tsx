@@ -107,6 +107,14 @@ const AdminDashboard = ({ setIsAuthenticated }: { setIsAuthenticated: (val: bool
     u.phone?.includes(searchTerm)
   );
 
+  const filteredPurchases = data?.purchases.filter((p: any) => 
+    p.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    p.phone?.includes(searchTerm) ||
+    p.razorpayPaymentId?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    p.razorpayOrderId?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (p.amount < 200 ? 'suggested recipes' : 'personal consultancy').includes(searchTerm.toLowerCase())
+  );
+
   const stats = [
     { label: 'Total Users', value: data?.stats.totalUsers, icon: <Users size={24} />, color: 'text-blue-600', bg: 'bg-blue-50' },
     { label: 'Total Sales', value: data?.stats.totalPurchases, icon: <ShoppingBag size={24} />, color: 'text-emerald-600', bg: 'bg-emerald-50' },
@@ -241,7 +249,9 @@ const AdminDashboard = ({ setIsAuthenticated }: { setIsAuthenticated: (val: bool
                              <>
                                 <th className="px-10 py-6">Transaction</th>
                                 <th className="px-10 py-6">Customer</th>
+                                <th className="px-10 py-6">Plan Info</th>
                                 <th className="px-10 py-6">Revenue</th>
+                                <th className="px-10 py-6">Date</th>
                                 <th className="px-10 py-6 text-right">Status</th>
                              </>
                           )}
@@ -288,18 +298,30 @@ const AdminDashboard = ({ setIsAuthenticated }: { setIsAuthenticated: (val: bool
                              </tr>
                           ))
                        ) : (
-                          data?.purchases.map((p: any) => (
+                          filteredPurchases.map((p: any) => (
                              <tr key={p.id} className="hover:bg-slate-50/50 transition-colors">
                                 <td className="px-10 py-8">
-                                   <p className="font-mono text-xs font-black text-slate-900 tracking-wider uppercase">#{p.razorpayPaymentId.slice(-10)}</p>
-                                   <p className="text-[9px] font-black text-slate-400 uppercase mt-1">Ref: {p.razorpayOrderId.slice(-6)}</p>
+                                   <p className="font-mono text-xs font-black text-slate-900 tracking-wider uppercase">#{p.razorpayPaymentId ? p.razorpayPaymentId.slice(-10) : 'N/A'}</p>
+                                   <p className="text-[9px] font-black text-slate-400 uppercase mt-1">Ref: {p.razorpayOrderId ? p.razorpayOrderId.slice(-6) : 'N/A'}</p>
                                 </td>
                                 <td className="px-10 py-8">
                                    <p className="font-black text-slate-900">{p.email}</p>
-                                   <p className="text-[10px] font-bold text-slate-400 mt-0.5">{p.phone}</p>
+                                   <p className="text-[10px] font-bold text-slate-400 mt-0.5">{p.phone || 'N/A'}</p>
+                                </td>
+                                <td className="px-10 py-8">
+                                   <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border ${
+                                      p.amount < 200 
+                                         ? 'bg-blue-50 text-blue-600 border-blue-100' 
+                                         : 'bg-amber-50 text-amber-600 border-amber-100'
+                                   }`}>
+                                      {p.amount < 200 ? 'Suggested Recipes' : 'Personal Consultancy'}
+                                   </span>
                                 </td>
                                 <td className="px-10 py-8">
                                    <p className="text-2xl font-black text-slate-900 tracking-tighter">₹{p.amount}</p>
+                                </td>
+                                <td className="px-10 py-8">
+                                   <p className="text-sm text-slate-500">{new Date(p.createdAt).toLocaleDateString('en-IN')}</p>
                                 </td>
                                 <td className="px-10 py-8 text-right">
                                    <span className="px-4 py-2 bg-emerald-500 text-white rounded-full text-[9px] font-black uppercase tracking-widest shadow-xl shadow-emerald-500/20">Success</span>

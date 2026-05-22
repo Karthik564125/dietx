@@ -32,15 +32,15 @@ const PremiumNutritionCard: React.FC<PremiumNutritionCardProps> = ({ user }) => 
 
 
 
-  const handlePayment = async () => {
+  const handlePayment = async (amount: number) => {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
       
-      // 1. Create Order in Backend
+      // 1. Create Order in Backend with dynamic amount
       const { data } = await axios.post(
         'http://localhost:5001/api/payment/create-order',
-        { amount: 499 },
+        { amount },
 
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -65,7 +65,7 @@ const PremiumNutritionCard: React.FC<PremiumNutritionCardProps> = ({ user }) => 
                 userId: user.id,
                 email: user.email,
                 phone: user.phone || response.contact, // Use provided phone or checkout contact
-                amount: 499,
+                amount,
               },
 
               { headers: { Authorization: `Bearer ${token}` } }
@@ -139,7 +139,7 @@ const PremiumNutritionCard: React.FC<PremiumNutritionCardProps> = ({ user }) => 
 
         <div className="pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="flex items-baseline gap-2">
-            <span className="text-4xl font-black">₹499</span>
+            <span className="text-4xl font-black">₹299</span>
 
             <span className="text-slate-400 font-bold line-through text-lg">₹999</span>
           </div>

@@ -1,12 +1,11 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import axios from 'axios';
-import { User, Mail, Shield, Save, CheckCircle, ArrowLeft, Activity, Phone, Camera, Trash2, Upload } from 'lucide-react';
+import { Mail, Shield, Save, CheckCircle, ArrowLeft, Activity, Phone, User } from 'lucide-react';
+import toast from 'react-hot-toast';
 import AestheticBackground from '../components/AestheticBackground';
 import bgDashboard from '../assets/dashboard.jpeg';
-
-const PROFILE_PIC_KEY = 'dietx_profile_pic';
 
 interface ProfileProps {
   setIsAuthenticated: (val: boolean) => void;
@@ -14,7 +13,6 @@ interface ProfileProps {
 
 const Profile = ({ setIsAuthenticated }: ProfileProps) => {
   const navigate = useNavigate();
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [formData, setFormData] = useState({ 
     name: JSON.parse(localStorage.getItem('user') || '{}').name || '', 
@@ -25,12 +23,6 @@ const Profile = ({ setIsAuthenticated }: ProfileProps) => {
   const [isUpdating, setIsUpdating] = useState(false);
   const [loading, setLoading] = useState(true);
   const [success, setSuccess] = useState(false);
-
-  // Profile picture state
-  const [profilePic, setProfilePic] = useState<string | null>(
-    localStorage.getItem(PROFILE_PIC_KEY)
-  );
-  const [picHover, setPicHover] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -66,49 +58,19 @@ const Profile = ({ setIsAuthenticated }: ProfileProps) => {
       const user = JSON.parse(localStorage.getItem('user') || '{}');
       user.name = formData.name;
       localStorage.setItem('user', JSON.stringify(user));
+      toast.success('Profile updated successfully!');
     } catch (err) {
       console.error('Update failed', err);
+      toast.error('Failed to update profile');
     } finally {
       setIsUpdating(false);
     }
-  };
-
-  const handlePicUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    if (file.size > 5 * 1024 * 1024) {
-      alert('Image must be under 5MB');
-      return;
-    }
-    const reader = new FileReader();
-    reader.onload = () => {
-      const base64 = reader.result as string;
-      setProfilePic(base64);
-      localStorage.setItem(PROFILE_PIC_KEY, base64);
-    };
-    reader.readAsDataURL(file);
-    // Reset input so same file can be re-uploaded
-    e.target.value = '';
-  };
-
-  const handleRemovePic = () => {
-    setProfilePic(null);
-    localStorage.removeItem(PROFILE_PIC_KEY);
   };
 
   return (
     <div className="min-h-screen flex flex-col bg-premium relative overflow-hidden">
       <Navbar setIsAuthenticated={setIsAuthenticated} />
       <AestheticBackground bgImage={bgDashboard} />
-
-      {/* Hidden file input */}
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="image/*"
-        className="hidden"
-        onChange={handlePicUpload}
-      />
 
       {loading ? (
         <div className="flex-1 flex items-center justify-center">
@@ -137,69 +99,13 @@ const Profile = ({ setIsAuthenticated }: ProfileProps) => {
             {/* Info Sidebar */}
             <div className="md:col-span-1 space-y-6">
 
-              {/* ── PROFILE PICTURE CARD ── */}
+              {/* User Info Card */}
               <div className="glass-card p-8 flex flex-col items-center text-center space-y-5">
-                {/* Avatar with hover overlay */}
-                <div
-                  className="relative cursor-pointer group/avatar"
-                  onMouseEnter={() => setPicHover(true)}
-                  onMouseLeave={() => setPicHover(false)}
-                  onClick={() => fileInputRef.current?.click()}
-                >
-                  <div className="w-28 h-28 rounded-[2rem] overflow-hidden shadow-lg border-2 border-white/20 relative">
-                    {profilePic ? (
-                      <img
-                        src={profilePic}
-                        alt="Profile"
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover/avatar:scale-110"
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-4xl font-black">
-                        {formData.name?.charAt(0)?.toUpperCase() || 'U'}
-                      </div>
-                    )}
-                    {/* Hover overlay */}
-                    <div className={`absolute inset-0 bg-black/50 flex items-center justify-center transition-opacity duration-300 ${picHover ? 'opacity-100' : 'opacity-0'}`}>
-                      <Camera size={28} className="text-white" />
-                    </div>
-                  </div>
-                  {/* Pulsing ring when no pic */}
-                  {!profilePic && (
-                    <div className="absolute -inset-1 rounded-[2.5rem] border-2 border-dashed border-emerald-400/40 animate-pulse" />
-                  )}
-                </div>
-
-                {/* Name & Email */}
-                <div>
-                  <h3 className="font-black text-xl text-white">{formData.name}</h3>
-                  <p className="text-sm font-bold text-white/50">{formData.email}</p>
-                </div>
-
+                <h3 className="font-black text-xl text-white">{formData.name}</h3>
+                <p className="text-sm font-bold text-white/50">{formData.email}</p>
                 <div className="px-4 py-1.5 bg-emerald-500/20 text-emerald-300 rounded-full text-[10px] font-black uppercase tracking-widest border border-emerald-400/30">
                   Verified User
                 </div>
-
-                {/* Picture action buttons */}
-                <div className="flex gap-3 w-full pt-2 border-t border-white/10">
-                  <button
-                    onClick={() => fileInputRef.current?.click()}
-                    className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 rounded-2xl text-[10px] font-black uppercase tracking-widest border border-emerald-400/20 transition-all"
-                  >
-                    <Upload size={12} />
-                    {profilePic ? 'Change' : 'Upload'}
-                  </button>
-                  {profilePic && (
-                    <button
-                      onClick={handleRemovePic}
-                      className="flex items-center justify-center gap-2 px-4 py-2.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-2xl text-[10px] font-black uppercase tracking-widest border border-red-400/20 transition-all"
-                    >
-                      <Trash2 size={12} />
-                    </button>
-                  )}
-                </div>
-                <p className="text-[9px] text-white/30 font-medium">
-                  JPG, PNG or WebP · Max 5MB
-                </p>
               </div>
 
               {/* Bio-Vitals Summary */}

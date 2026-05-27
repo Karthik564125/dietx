@@ -31,6 +31,7 @@ export const registerUser = async (req: Request, res: Response): Promise<void> =
         email,
         password: hashedPassword,
         phone: phone || null,
+        gender: req.body.gender || null,
       },
     });
 
@@ -91,6 +92,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
         name: user.name, 
         email: user.email, 
         phone: user.phone,
+        gender: user.gender,
         profileComplete: user.profileComplete,
         isPremium: !!consultancyPurchase,
         isRecipesUnlocked: !!recipesPurchase

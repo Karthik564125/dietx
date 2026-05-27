@@ -1,31 +1,37 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { LogOut, Info, Menu, X, LayoutDashboard, User, ChevronRight } from 'lucide-react';
+import { LogOut, Info, Menu, X, LayoutDashboard, User, ChevronRight, Heart } from 'lucide-react';
 import logo from '../assets/logo.png';
 
-const PROFILE_PIC_KEY = 'dietx_profile_pic';
+
 
 interface NavbarProps {
   setIsAuthenticated: (val: boolean) => void;
 }
 
 const Navbar = ({ setIsAuthenticated }: NavbarProps) => {
+  const [isFemale, setIsFemale] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const [profilePic, setProfilePic] = useState<string | null>(
-    localStorage.getItem(PROFILE_PIC_KEY)
-  );
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false);
+
+  useEffect(() => {
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      try {
+        const user = JSON.parse(userStr);
+        setIsFemale(user.gender === 'female');
+      } catch {}
+    }
+  }, []);
+  // Removed profile picture state
+
   const navigate = useNavigate();
   const location = useLocation();
 
-  useEffect(() => {
-    const sync = () => setProfilePic(localStorage.getItem(PROFILE_PIC_KEY));
-    window.addEventListener('storage', sync);
-    sync();
-    setIsOpen(false); // close mobile menu on route change
-    return () => window.removeEventListener('storage', sync);
-  }, [location]);
+  // Removed profile picture sync effect
 
-  const handleLogout = () => {
+
+  const confirmLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setIsAuthenticated(false);
@@ -59,6 +65,8 @@ const Navbar = ({ setIsAuthenticated }: NavbarProps) => {
             {[
                 { name: 'Dashboard', path: '/dashboard', icon: <LayoutDashboard size={14} /> },
                 { name: 'About', path: '/about', icon: <Info size={14} /> },
+                // PCOD Consultancy appears for female users
+                ...(isFemale ? [{ name: 'PCOD', path: '/pcod-consultancy', icon: <Heart size={14} /> }] : []),
             ].map((link) => (
                 <button 
                   key={link.path}
@@ -84,20 +92,12 @@ const Navbar = ({ setIsAuthenticated }: NavbarProps) => {
                 : 'border-white/10 text-white/70 hover:bg-white/10 hover:text-white'
               }`}
             >
-                <div className={`w-9 h-9 rounded-xl flex items-center justify-center overflow-hidden ${
-                    location.pathname === '/profile' ? 'ring-2 ring-emerald-400' : 'bg-white/10 border border-white/15'
-                }`}>
-                    {profilePic ? (
-                      <img src={profilePic} alt="Profile" className="w-full h-full object-cover" />
-                    ) : (
-                      <User size={18} className="text-white/60" />
-                    )}
-                </div>
+                <User size={18} className="text-white/60" />
                 <span className="text-sm font-black">Profile</span>
             </button>
 
             <button 
-              onClick={handleLogout}
+              onClick={() => { setShowLogoutDialog(true); setIsOpen(false); }}
               className="ml-2 p-3 text-white/40 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-all group"
               title="Logout"
             >
@@ -130,14 +130,8 @@ const Navbar = ({ setIsAuthenticated }: NavbarProps) => {
       }`}>
         <div className="p-10 flex justify-between items-center border-b border-white/10">
              <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 rounded-2xl overflow-hidden border-2 border-white/20">
-                    {profilePic ? (
-                      <img src={profilePic} alt="Profile" className="w-full h-full object-cover" />
-                    ) : (
-                      <div className="w-full h-full bg-white/10 flex items-center justify-center">
-                        <img src={logo} alt="DietX" className="w-full h-full object-contain p-2" />
-                      </div>
-                    )}
+                  <div className="w-14 h-14 rounded-2xl overflow-hidden border-2 border-white/20 flex items-center justify-center bg-white/10">
+                    <User size={28} className="text-white/60" />
                   </div>
                   <div className="flex flex-col">
                     <span className="font-black text-2xl tracking-tighter text-white leading-none">DIET<span className="text-emerald-400">X</span></span>
@@ -173,13 +167,40 @@ const Navbar = ({ setIsAuthenticated }: NavbarProps) => {
 
         <div className="p-8 mb-6">
             <button 
-                onClick={handleLogout}
+                onClick={() => { setShowLogoutDialog(true); setIsOpen(false); }}
                 className="flex items-center justify-center gap-4 w-full p-6 rounded-[2rem] bg-red-500/10 text-red-400 font-black hover:bg-red-500/20 border border-red-400/20 transition-all duration-500"
             >
                 <LogOut size={22} /> <span className="text-lg">Sign Out</span>
             </button>
         </div>
       </div>
+      {/* Logout Confirmation Dialog */}
+      {showLogoutDialog && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm animate-in fade-in" onClick={() => setShowLogoutDialog(false)} />
+          <div className="relative bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl animate-in zoom-in-95 flex flex-col items-center text-center">
+            <div className="w-16 h-16 bg-red-100 text-red-500 rounded-full flex items-center justify-center mb-6 shadow-inner">
+              <LogOut size={32} />
+            </div>
+            <h3 className="text-2xl font-black text-slate-900 mb-2">Sign Out</h3>
+            <p className="text-slate-500 font-medium mb-8">Are you sure you want to log out of your account?</p>
+            <div className="flex gap-4 w-full">
+              <button 
+                onClick={() => setShowLogoutDialog(false)}
+                className="flex-1 py-3 px-4 rounded-xl font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={confirmLogout}
+                className="flex-1 py-3 px-4 rounded-xl font-bold text-white bg-red-500 hover:bg-red-600 transition-colors shadow-lg shadow-red-500/30"
+              >
+                Yes, log out
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };

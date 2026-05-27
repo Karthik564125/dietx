@@ -35,6 +35,7 @@ const AdminDashboard = ({ setIsAuthenticated }: { setIsAuthenticated: (val: bool
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState<'users' | 'purchases'>('users');
   const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false);
 
   const fetchData = async () => {
     const token = localStorage.getItem('token');
@@ -57,7 +58,7 @@ const AdminDashboard = ({ setIsAuthenticated }: { setIsAuthenticated: (val: bool
     fetchData();
   }, []);
 
-  const handleLogout = () => {
+  const confirmLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setIsAuthenticated(false);
@@ -160,7 +161,7 @@ const AdminDashboard = ({ setIsAuthenticated }: { setIsAuthenticated: (val: bool
 
         <div className="p-8 space-y-4">
            <button 
-             onClick={handleLogout}
+             onClick={() => setShowLogoutDialog(true)}
              className="w-full flex items-center gap-4 px-6 py-4 rounded-2xl font-black text-sm text-red-500 hover:bg-red-50 transition-all duration-300"
            >
              <LogOut size={20} /> Sign Out
@@ -450,6 +451,34 @@ const AdminDashboard = ({ setIsAuthenticated }: { setIsAuthenticated: (val: bool
 
               </div>
            </div>
+        </div>
+      )}
+
+      {/* Logout Confirmation Dialog */}
+      {showLogoutDialog && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm animate-in fade-in" onClick={() => setShowLogoutDialog(false)} />
+          <div className="relative bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl animate-in zoom-in-95 flex flex-col items-center text-center">
+            <div className="w-16 h-16 bg-red-100 text-red-500 rounded-full flex items-center justify-center mb-6 shadow-inner">
+              <LogOut size={32} />
+            </div>
+            <h3 className="text-2xl font-black text-slate-900 mb-2">Sign Out</h3>
+            <p className="text-slate-500 font-medium mb-8">Are you sure you want to log out of your account?</p>
+            <div className="flex gap-4 w-full">
+              <button 
+                onClick={() => setShowLogoutDialog(false)}
+                className="flex-1 py-3 px-4 rounded-xl font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={confirmLogout}
+                className="flex-1 py-3 px-4 rounded-xl font-bold text-white bg-red-500 hover:bg-red-600 transition-colors shadow-lg shadow-red-500/30"
+              >
+                Yes, log out
+              </button>
+            </div>
+          </div>
         </div>
       )}
 

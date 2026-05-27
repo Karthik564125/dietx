@@ -100,20 +100,19 @@ const PremiumNutritionCard: React.FC<PremiumNutritionCardProps> = ({ user }) => 
     }
   };
 
-  if (isSuccess) {
-    return (
-      <div className="glass-card p-10 bg-emerald-50 border-emerald-200 flex flex-col items-center text-center space-y-6 animate-in fade-in zoom-in duration-500">
-        <div className="w-20 h-20 bg-emerald-500 rounded-full flex items-center justify-center shadow-lg shadow-emerald-200">
-          <CheckCircle2 className="text-white" size={40} />
+  if (isSuccess)      return (
+        <div className="glass-card p-10 bg-emerald-50 border-emerald-200 flex flex-col items-center text-center space-y-6 animate-in fade-in zoom-in duration-500">
+          <div className="w-20 h-20 bg-emerald-500 rounded-full flex items-center justify-center shadow-lg shadow-emerald-200">
+            <CheckCircle2 className="text-white" size={40} />
+          </div>
+          <div className="space-y-2">
+            <h4 className="text-2xl font-black text-slate-900">Payment Successful!</h4>
+            <p className="text-emerald-800 font-bold text-lg">"Our dietician will contact you soon."</p>
+            <p className="text-slate-500 text-sm">A confirmation has been sent to {user.email}</p>
+
+          </div>
         </div>
-        <div className="space-y-2">
-          <h4 className="text-2xl font-black text-slate-900">Payment Successful!</h4>
-          <p className="text-emerald-800 font-bold text-lg">"Our dietician will contact you soon."</p>
-          <p className="text-slate-500 text-sm">A confirmation has been sent to {user.email}</p>
-        </div>
-      </div>
-    );
-  }
+      );
 
   return (
     <div className="glass-card p-10 bg-gradient-to-br from-slate-900 to-slate-800 text-white border-transparent relative overflow-hidden group">
@@ -145,7 +144,7 @@ const PremiumNutritionCard: React.FC<PremiumNutritionCardProps> = ({ user }) => 
           </div>
           
           <button
-            onClick={handlePayment}
+            onClick={() => handlePayment(299)}
             disabled={loading}
             className="w-full sm:w-auto px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-white rounded-2xl font-black text-sm uppercase tracking-widest transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100 flex items-center justify-center gap-3 shadow-xl shadow-emerald-500/20"
           >

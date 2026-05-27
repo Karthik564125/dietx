@@ -1,13 +1,15 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
-import { Mail, Lock, User, ArrowRight, Eye, EyeOff, ArrowLeft, Phone, Camera, Trash2 } from 'lucide-react';
+import toast from 'react-hot-toast';
+import { Mail, Lock, User, ArrowRight, Eye, EyeOff, ArrowLeft, Phone } from 'lucide-react';
 
 import logo from '../assets/logo.png';
 import AestheticBackground from '../components/AestheticBackground';
 import bgLanding from '../assets/landingpage.jpeg';
 
-const PROFILE_PIC_KEY = 'dietx_profile_pic';
+
+
 
 interface AuthPageProps {
   setAuth: (val: boolean) => void;
@@ -17,15 +19,13 @@ const AuthPage = ({ setAuth }: AuthPageProps) => {
   const location = useLocation();
   const [isLogin, setIsLogin] = useState(location.state?.mode !== 'signup');
   const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState({ name: '', email: '', password: '', phone: '' });
+  const [formData, setFormData] = useState({ name: '', email: '', password: '', phone: '', gender: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   // Profile picture
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [profilePic, setProfilePic] = useState<string | null>(null);
-  const [picHover, setPicHover] = useState(false);
+  // Profile picture state removed
 
   useEffect(() => {
     if (location.state?.mode) {
@@ -36,19 +36,10 @@ const AuthPage = ({ setAuth }: AuthPageProps) => {
   const handleToggle = () => {
     setIsLogin(!isLogin);
     setError('');
-    setFormData({ name: '', email: '', password: '', phone: '' });
-    setProfilePic(null);
+    setFormData({ name: '', email: '', password: '', phone: '', gender: '' });
   };
 
-  const handlePicUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    if (file.size > 5 * 1024 * 1024) { alert('Image must be under 5MB'); return; }
-    const reader = new FileReader();
-    reader.onload = () => setProfilePic(reader.result as string);
-    reader.readAsDataURL(file);
-    e.target.value = '';
-  };
+// Profile picture upload handler removed
 
   const validatePassword = (password: string) => {
     if (password.length < 8) return "Password must be at least 8 characters long";
@@ -79,8 +70,10 @@ const AuthPage = ({ setAuth }: AuthPageProps) => {
         setAuth(true);
 
         if (formData.email === 'nutriwithdietex@gmail.com') {
+          toast.success('Welcome Admin!');
           navigate('/admin');
         } else {
+          toast.success(`Welcome back, ${res.data.user.name}!`);
           navigate(res.data.user.profileComplete ? '/dashboard' : '/onboarding');
         }
 
@@ -89,7 +82,8 @@ const AuthPage = ({ setAuth }: AuthPageProps) => {
           name: formData.name,
           email: formData.email,
           password: formData.password,
-          phone: formData.phone
+          phone: formData.phone,
+          gender: formData.gender
         });
 
         const res = await axios.post('http://localhost:5001/api/login', {
@@ -99,16 +93,16 @@ const AuthPage = ({ setAuth }: AuthPageProps) => {
         localStorage.setItem('token', res.data.token);
         localStorage.setItem('user', JSON.stringify(res.data.user));
 
-        // Save profile pic if user uploaded one
-        if (profilePic) {
-          localStorage.setItem(PROFILE_PIC_KEY, profilePic);
-        }
+// Profile picture storage removed
 
         setAuth(true);
+        toast.success(`Account created! Welcome, ${formData.name}`);
         navigate('/onboarding');
       }
     } catch (err: any) {
-      setError(err.response?.data?.error || 'An error occurred. Please try again.');
+      const msg = err.response?.data?.error || 'An error occurred. Please try again.';
+      setError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -119,14 +113,7 @@ const AuthPage = ({ setAuth }: AuthPageProps) => {
       
       <AestheticBackground bgImage={bgLanding} />
 
-      {/* Hidden file input */}
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="image/*"
-        className="hidden"
-        onChange={handlePicUpload}
-      />
+
 
       {/* Back Button */}
       <button
@@ -170,61 +157,6 @@ const AuthPage = ({ setAuth }: AuthPageProps) => {
             </div>
           )}
 
-          {/* ── PROFILE PICTURE (Sign Up only) ── */}
-          <div className={`transition-all duration-500 overflow-hidden ${!isLogin ? 'max-h-48 opacity-100' : 'max-h-0 opacity-0 pointer-events-none'}`}>
-            <div className="flex flex-col items-center gap-3 py-2">
-              {/* Avatar */}
-              <div
-                className="relative cursor-pointer group/avatar"
-                onMouseEnter={() => setPicHover(true)}
-                onMouseLeave={() => setPicHover(false)}
-                onClick={() => fileInputRef.current?.click()}
-              >
-                <div className="w-20 h-20 rounded-[1.5rem] overflow-hidden border-2 border-white/20 shadow-lg relative">
-                  {profilePic ? (
-                    <img
-                      src={profilePic}
-                      alt="Profile preview"
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover/avatar:scale-110"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-white/10 flex items-center justify-center">
-                      <Camera size={28} className="text-white/40" />
-                    </div>
-                  )}
-                  {/* Hover overlay */}
-                  <div className={`absolute inset-0 bg-black/50 flex items-center justify-center transition-opacity duration-300 ${picHover ? 'opacity-100' : 'opacity-0'}`}>
-                    <Camera size={22} className="text-white" />
-                  </div>
-                </div>
-                {/* Dashed ring when empty */}
-                {!profilePic && (
-                  <div className="absolute -inset-1 rounded-[2rem] border-2 border-dashed border-emerald-400/40 animate-pulse" />
-                )}
-              </div>
-
-              {/* Label + remove */}
-              <div className="flex items-center gap-3">
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="text-[10px] font-black text-emerald-400 hover:text-emerald-300 uppercase tracking-widest transition-colors"
-                >
-                  {profilePic ? 'Change photo' : 'Add photo (optional)'}
-                </button>
-                {profilePic && (
-                  <button
-                    type="button"
-                    onClick={() => setProfilePic(null)}
-                    className="text-[10px] font-black text-red-400/70 hover:text-red-400 uppercase tracking-widest transition-colors flex items-center gap-1"
-                  >
-                    <Trash2 size={10} /> Remove
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
-
           <form onSubmit={handleSubmit} className="flex flex-col gap-3">
 
             <div className={`transition-all duration-300 overflow-hidden ${!isLogin ? 'max-h-16 opacity-100' : 'max-h-0 opacity-0 pointer-events-none'}`}>
@@ -252,7 +184,36 @@ const AuthPage = ({ setAuth }: AuthPageProps) => {
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                   required={!isLogin}
                 />
-              </div>
+                          </div>
+{!isLogin && (
+  <div className="flex items-center gap-4">
+    <label className="text-white/70 font-black text-sm">Gender</label>
+    <div className="flex gap-2">
+      <label className="flex items-center gap-1 text-white/70">
+        <input
+          type="radio"
+          name="gender"
+          value="male"
+          checked={formData.gender === 'male'}
+          onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
+          className="accent-emerald-500"
+        />
+        Male
+      </label>
+      <label className="flex items-center gap-1 text-white/70">
+        <input
+          type="radio"
+          name="gender"
+          value="female"
+          checked={formData.gender === 'female'}
+          onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
+          className="accent-emerald-500"
+        />
+        Female
+      </label>
+    </div>
+  </div>
+)}
             </div>
 
             <div className="relative">

@@ -12,13 +12,13 @@ export interface Food {
 
 export const FOOD_DATA: Food[] = [
   // SOUTH INDIAN
-  { id: 'si1', name: 'Idli', category: 'Breakfast', cuisine: 'South Indian', unit: 'piece', caloriesPerUnit: 58, protein: 1.6, carbs: 12, fats: 0.1 },
+  { id: 'si1', name: 'Idli', category: 'Breakfast', cuisine: 'South Indian', unit: 'piece', caloriesPerUnit: 100, protein: 1.6, carbs: 12, fats: 0.1 },
   { id: 'si2', name: 'Plain Dosa', category: 'Breakfast', cuisine: 'South Indian', unit: 'piece', caloriesPerUnit: 120, protein: 2, carbs: 24, fats: 2 },
   { id: 'si3', name: 'Masala Dosa', category: 'Breakfast', cuisine: 'South Indian', unit: 'piece', caloriesPerUnit: 250, protein: 4, carbs: 45, fats: 6 },
   { id: 'si4', name: 'Medhu Vada', category: 'Breakfast', cuisine: 'South Indian', unit: 'piece', caloriesPerUnit: 97, protein: 2, carbs: 12, fats: 5 },
   { id: 'si5', name: 'Ven Pongal', category: 'Breakfast', cuisine: 'South Indian', unit: 'cup', caloriesPerUnit: 212, protein: 6, carbs: 32, fats: 7 },
-  { id: 'si6', name: 'Upma', category: 'Breakfast', cuisine: 'South Indian', unit: 'cup', caloriesPerUnit: 192, protein: 4, carbs: 30, fats: 6 },
-  { id: 'si7', name: 'Sambar', category: 'General', cuisine: 'South Indian', unit: 'cup', caloriesPerUnit: 120, protein: 5, carbs: 18, fats: 3 },
+  { id: 'si6', name: 'Upma', category: 'Breakfast', cuisine: 'South Indian', unit: 'cup', caloriesPerUnit: 250, protein: 4, carbs: 30, fats: 6 },
+  { id: 'si7', name: 'Sambar', category: 'General', cuisine: 'South Indian', unit: 'cup', caloriesPerUnit: 150, protein: 5, carbs: 18, fats: 3 },
   { id: 'si8', name: 'Coconut Chutney', category: 'General', cuisine: 'South Indian', unit: 'tbsp', caloriesPerUnit: 45, protein: 0.5, carbs: 2, fats: 4 },
   { id: 'si9', name: 'Appam', category: 'Breakfast', cuisine: 'South Indian', unit: 'piece', caloriesPerUnit: 120, protein: 2, carbs: 22, fats: 2 },
   { id: 'si10', name: 'Puttu', category: 'Breakfast', cuisine: 'South Indian', unit: 'cup', caloriesPerUnit: 250, protein: 5, carbs: 45, fats: 6 },

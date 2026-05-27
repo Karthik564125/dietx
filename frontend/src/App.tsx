@@ -9,6 +9,7 @@ import HealthDetail from './pages/HealthDetail.tsx';
 import NutritionDetail from './pages/NutritionDetail.tsx';
 import Profile from './pages/Profile.tsx';
 import AdminDashboard from './pages/AdminDashboard.tsx';
+import PcodConsultancy from './pages/PcodConsultancy.tsx';
 
 
 import { useEffect, useState } from 'react';
@@ -28,7 +29,34 @@ function App() {
 
   return (
     <Router>
-      <Toaster position="top-center" />
+      <Toaster 
+        position="top-center" 
+        toastOptions={{
+          style: {
+            background: 'rgba(15, 23, 42, 0.8)',
+            backdropFilter: 'blur(16px)',
+            color: '#fff',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            borderRadius: '1rem',
+            padding: '12px 20px',
+            fontSize: '14px',
+            fontWeight: '600',
+            boxShadow: '0 20px 40px -15px rgba(0,0,0,0.5)',
+          },
+          success: {
+            iconTheme: {
+              primary: '#10b981',
+              secondary: '#fff',
+            },
+          },
+          error: {
+            iconTheme: {
+              primary: '#f43f5e',
+              secondary: '#fff',
+            },
+          },
+        }}
+      />
       <Routes>
 
         <Route path="/" element={<LandingPage />} />
@@ -63,10 +91,14 @@ function App() {
           path="/profile"
           element={isAuthenticated ? <Profile setIsAuthenticated={setIsAuthenticated} /> : <Navigate to="/auth" />}
         />
-        <Route
-          path="/admin"
-          element={isAuthenticated ? <AdminDashboard setIsAuthenticated={setIsAuthenticated} /> : <Navigate to="/auth" />}
-        />
+          <Route
+            path="/pcod-consultancy"
+            element={isAuthenticated ? <PcodConsultancy /> : <Navigate to="/auth" />}
+          />
+          <Route
+            path="/admin"
+            element={isAuthenticated ? <AdminDashboard setIsAuthenticated={setIsAuthenticated} /> : <Navigate to="/auth" />}
+          />
       </Routes>
 
     </Router>

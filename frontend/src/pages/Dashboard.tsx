@@ -6,7 +6,9 @@ import { Calendar, Salad, TrendingUp, Plus, ChevronRight, Droplet, Activity, Zap
 import { FOOD_DATA, type Food } from '../data/foods';
 import AestheticBackground from '../components/AestheticBackground';
 import { motion, AnimatePresence } from 'framer-motion';
+import toast from 'react-hot-toast';
 import bgDashboard from '../assets/dashboard.jpeg';
+import CalorieReferenceGuide from '../components/CalorieReferenceGuide';
 
 interface DashboardProps { setIsAuthenticated: (val: boolean) => void; }
 
@@ -169,8 +171,10 @@ const Dashboard = ({ setIsAuthenticated }: DashboardProps) => {
       }, {
         headers: { Authorization: `Bearer ${token}` }
       });
+      toast.success(`${type === 'water' ? 'Hydration' : 'Sleep'} log saved!`);
     } catch (err) {
       console.error('Save tracking error', err);
+      toast.error('Failed to save tracking log');
     } finally {
       setSavingTracking(null);
     }
@@ -196,6 +200,7 @@ const Dashboard = ({ setIsAuthenticated }: DashboardProps) => {
     const updated = [...foodLog, entry];
     setFoodLog(updated);
     writeLog(updated);
+    toast.success(`Added ${selectedFood.name} to log!`);
     setSelectedFood(null);
     setSearchQuery('');
     setQuantity('1');
@@ -206,6 +211,7 @@ const Dashboard = ({ setIsAuthenticated }: DashboardProps) => {
     const updated = foodLog.filter(f => f.id !== id);
     setFoodLog(updated);
     writeLog(updated);
+    toast.success('Food entry removed.');
   };
 
   const totals = foodLog.reduce((acc, f) => ({
@@ -357,23 +363,26 @@ const Dashboard = ({ setIsAuthenticated }: DashboardProps) => {
                             </div>
                         </div>
 
-                        {/* Daily Accumulation (Integrated at top) */}
+                        {/* Daily Accumulation (Enhanced UI) */}
                         <div className="lg:col-span-4">
-                            <div className="p-8 bg-slate-950 text-white rounded-[3.5rem] h-full flex flex-col justify-between relative overflow-hidden shadow-2xl border border-white/5">
-                                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-amber-500 to-rose-500"></div>
-                                <div className="space-y-8">
-                                    <div className="flex justify-between items-start">
-                                        <div className="space-y-1">
-                                           <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">Daily Accumulation</span>
-                                           <div className="flex items-baseline gap-2">
-                                              <span className="text-4xl font-black leading-none text-emerald-400">{totals.calories}</span>
-                                              <span className="text-[10px] font-bold opacity-30 uppercase tracking-widest">Kcal Total</span>
-                                           </div>
-                                        </div>
-                                        <div className="p-4 bg-white/5 rounded-3xl border border-white/10">
-                                           <TrendingUp size={24} className="text-emerald-500" />
-                                        </div>
-                                    </div>
+                             <div className="glass-card p-8 bg-slate-950/30 text-white rounded-[3.5rem] h-full flex flex-col justify-between relative overflow-hidden shadow-2xl border border-white/5 backdrop-blur-xl">
+                                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-amber-500 to-rose-500"></div>
+                                 <div className="space-y-8">
+                                     <div className="flex justify-between items-start">
+                                         <div className="space-y-1">
+                                            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">Daily Accumulation</span>
+                                            <div className="flex items-baseline gap-2">
+                                               <span className="text-4xl font-black leading-none text-emerald-400">{totals.calories}</span>
+                                               <span className="text-[10px] font-bold opacity-30 uppercase tracking-widest">Kcal Total</span>
+                                            </div>
+                                            {/* Calorie badge */}
+                                            <p className="badge badge-calorie mt-2">{totals.calories} kcal</p>
+                                         </div>
+                                         <div className="p-4 bg-white/5 rounded-3xl border border-white/10">
+                                            <TrendingUp size={24} className="text-emerald-500" />
+                                         </div>
+                                     </div>      
+                                 </div>
 
                                     <div className="space-y-5">
                                         {[
@@ -395,7 +404,6 @@ const Dashboard = ({ setIsAuthenticated }: DashboardProps) => {
                                 </div>
                             </div>
                         </div>
-                    </div>
 
                     {/* Meal Breakdown Row */}
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
@@ -729,24 +737,8 @@ const Dashboard = ({ setIsAuthenticated }: DashboardProps) => {
                 </motion.section>
              </div>
           </div>
-          <div className="space-y-10">
-             <motion.footer 
-               initial={{ opacity: 0 }}
-               whileInView={{ opacity: 1 }}
-               viewport={{ once: true }}
-               className="glass-card p-12 text-center space-y-6 border-dashed border-slate-200"
-             >
-                <div className="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-full mx-auto flex items-center justify-center border-4 border-white shadow-lg">
-                   <Sparkles size={32} className="animate-pulse" />
-                </div>
-                <div className="max-w-2xl mx-auto space-y-4">
-                   <p className="text-2xl font-black italic text-white/90 leading-relaxed tracking-tight">"Healing is a matter of time, but it is sometimes also a matter of opportunity."</p>
-                   <div className="flex flex-col items-center">
-                      <p className="text-xs font-black text-emerald-600 uppercase tracking-[0.4em]">Dt. Madhavi Latha</p>
-                      <p className="text-[10px] font-bold text-slate-300 uppercase tracking-widest mt-1">Chief Nutritionist · DietX</p>
-                   </div>
-                </div>
-             </motion.footer>
+          <div className="h-full flex flex-col min-h-[600px]">
+             <CalorieReferenceGuide />
           </div>
         </div>
       </main>

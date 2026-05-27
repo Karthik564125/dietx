@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
+import toast from 'react-hot-toast';
 import logo from '../assets/logo.png';
 import AestheticBackground from '../components/AestheticBackground';
 
@@ -165,6 +166,7 @@ export default function HealthOnboarding() {
         ...stored, profileComplete: true,
         bmi: res.data.bmi, dailyCalories: res.data.dailyCalories, bmiCategory: res.data.bmiCategory, idealWeight: res.data.idealWeight
       }));
+      toast.success('Health profile updated successfully!');
       setResults(res.data);
     } catch (e: unknown) {
       const err = e as { response?: { data?: { error?: string } } };

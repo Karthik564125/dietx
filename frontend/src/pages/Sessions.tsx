@@ -38,27 +38,27 @@ const Sessions = ({ setIsAuthenticated }: SessionsProps) => {
         <div className="flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-16">
           
           {/* Left: Branding & Info */}
-          <div className="flex-1 space-y-6 text-center lg:text-left max-w-md">
+          <div className="flex-1 glass-card p-8 sm:p-10 border border-white/10 space-y-8 text-center lg:text-left max-w-md shadow-2xl backdrop-blur-2xl bg-slate-900/40">
              <div className="space-y-4">
-                <h2 className="text-2xl sm:text-3xl font-black text-slate-900 leading-tight">
+                <h2 className="text-3xl sm:text-4xl font-black text-white leading-tight tracking-tight">
                    Personalized care, <br />
-                   <span className="text-emerald-600">just a message away.</span>
+                   <span className="text-emerald-400">just a message away.</span>
                 </h2>
-                <p className="text-slate-500 font-bold text-base leading-relaxed">
+                <p className="text-slate-300 font-bold text-base leading-relaxed">
                    Get your doubts cleared and plans customized in real-time through our dedicated WhatsApp support channel.
                 </p>
              </div>
              
-             <div className="flex flex-col gap-4">
+             <div className="flex flex-col gap-5">
                 {[
                    "Science-backed Nutrition Plans",
                    "Weekly Progress Checks",
                    "Expert Recipe Suggestions",
                    "Direct WhatsApp Support"
                 ].map((item, i) => (
-                   <div key={i} className="flex items-center gap-3 justify-center lg:justify-start">
-                      <div className="w-6 h-6 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center"><Zap size={14} /></div>
-                      <span className="font-bold text-slate-700">{item}</span>
+                   <div key={i} className="flex items-center gap-4 justify-center lg:justify-start">
+                      <div className="w-10 h-10 bg-emerald-500/20 text-emerald-400 rounded-xl flex items-center justify-center shadow-inner border border-emerald-500/20"><Zap size={18} /></div>
+                      <span className="font-bold text-white/90 text-sm tracking-wide">{item}</span>
                    </div>
                 ))}
              </div>

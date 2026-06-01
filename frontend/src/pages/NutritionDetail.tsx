@@ -258,10 +258,10 @@ const NutritionDetail = ({ setIsAuthenticated }: NutritionDetailProps) => {
             </div>
 
             {!user?.isRecipesUnlocked ? (
-              /* Locked State: 2 Cards Side-by-Side */
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              /* Locked State: Single beautifully centered Recipe Unlock Card */
+              <div className="flex justify-center w-full">
                 {/* Card A: Unlock Suggested Recipes (₹99) */}
-                <div className="glass-card p-10 bg-gradient-to-br from-slate-900 via-slate-900 to-emerald-950/30 text-white border-transparent relative overflow-hidden group flex flex-col justify-between min-h-[350px] shadow-2xl">
+                <div className="glass-card p-10 bg-gradient-to-br from-slate-900 via-slate-900 to-emerald-950/30 text-white border-transparent relative overflow-hidden group flex flex-col justify-between min-h-[350px] shadow-2xl max-w-2xl w-full">
                   <div className="absolute -top-24 -right-24 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl group-hover:bg-emerald-500/20 transition-all duration-700 pointer-events-none" />
                   <div className="relative z-10 flex flex-col h-full justify-between space-y-6">
                     <div className="flex justify-between items-start">
@@ -288,47 +288,10 @@ const NutritionDetail = ({ setIsAuthenticated }: NutritionDetailProps) => {
                       
                       <button
                         onClick={() => handlePayment(99)}
-                        disabled={recipesLoading || consultancyLoading}
+                        disabled={recipesLoading}
                         className="w-full sm:w-auto px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-white rounded-2xl font-black text-xs uppercase tracking-widest transition-all hover:scale-105 active:scale-95 disabled:opacity-50 flex items-center justify-center gap-3 shadow-xl shadow-emerald-500/20"
                       >
                         {recipesLoading ? <Loader2 className="animate-spin" size={16} /> : 'Unlock Recipes'}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Card B: Personal Consultancy (₹299) */}
-                <div className="glass-card p-10 bg-gradient-to-br from-slate-900 to-slate-950 text-white border-transparent relative overflow-hidden group flex flex-col justify-between min-h-[350px] shadow-2xl">
-                  <div className="absolute -top-24 -right-24 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl group-hover:bg-amber-500/20 transition-all duration-700 pointer-events-none" />
-                  <div className="relative z-10 flex flex-col h-full justify-between space-y-6">
-                    <div className="flex justify-between items-start">
-                      <div className="w-14 h-14 bg-amber-500/20 rounded-2xl flex items-center justify-center border border-amber-500/30">
-                        <Sparkles className="text-amber-400" size={28} />
-                      </div>
-                      <div className="bg-amber-500/10 text-amber-400 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border border-amber-500/20">
-                        Premium Access
-                      </div>
-                    </div>
-
-                    <div className="space-y-3">
-                      <h4 className="text-2xl sm:text-3xl font-black tracking-tight">Unlock Personal Nutrition Plan</h4>
-                      <p className="text-slate-400 font-medium text-sm leading-relaxed">
-                        Get a tailored 4-week meal plan, 1-on-1 expert consultation, and daily habit tracking with our senior dieticians.
-                      </p>
-                    </div>
-
-                    <div className="pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-6 mt-auto">
-                      <div className="flex items-baseline gap-2">
-                        <span className="text-4xl font-black">₹299</span>
-                        <span className="text-slate-500 font-bold line-through text-base">₹999</span>
-                      </div>
-                      
-                      <button
-                        onClick={() => handlePayment(299)}
-                        disabled={recipesLoading || consultancyLoading}
-                        className="w-full sm:w-auto px-8 py-4 bg-amber-500 hover:bg-amber-400 text-white rounded-2xl font-black text-xs uppercase tracking-widest transition-all hover:scale-105 active:scale-95 disabled:opacity-50 flex items-center justify-center gap-3 shadow-xl shadow-amber-500/20"
-                      >
-                        {consultancyLoading ? <Loader2 className="animate-spin" size={16} /> : 'Unlock Now'}
                       </button>
                     </div>
                   </div>
@@ -345,21 +308,10 @@ const NutritionDetail = ({ setIsAuthenticated }: NutritionDetailProps) => {
                         <div className="space-y-1">
                             <h3 className="text-lg font-black text-slate-900 tracking-tight">Normal Health Notice</h3>
                             <p className="text-sm font-bold text-slate-600 leading-relaxed">
-                                These suggested recipes are curated only for individuals with <span className="text-slate-900">no active health issues</span>. If you require a custom diet protocol for specific medical conditions (e.g., High BP, Diabetes, PCOD, etc.), please try our 1-on-1 Personal Consultancy.
+                                These suggested recipes are curated only for individuals with <span className="text-slate-900">no active health issues</span>. If you require a custom diet protocol for specific medical conditions (e.g., High BP, Diabetes, PCOD, etc.), please check out our 1-on-1 Personal Consultancy on the Sessions tab.
                             </p>
                         </div>
                     </div>
-                    {!user?.isPremium && (
-                      <div className="relative z-10 shrink-0 w-full md:w-auto mt-2 md:mt-0">
-                          <button
-                              onClick={() => handlePayment(299)}
-                              disabled={recipesLoading || consultancyLoading}
-                              className="w-full md:w-auto px-6 py-4 bg-amber-500 hover:bg-amber-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all shadow-lg shadow-amber-500/20 hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-2"
-                          >
-                              {consultancyLoading ? <Loader2 className="animate-spin" size={14} /> : <>Upgrade to Consultancy (₹299) <ChevronRight size={14} /></>}
-                          </button>
-                      </div>
-                    )}
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">

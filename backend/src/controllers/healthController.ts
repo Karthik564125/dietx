@@ -106,12 +106,12 @@ export const getHealthProfile = async (req: Request, res: Response): Promise<voi
 
     // Check if user has a premium purchase (personal consultancy)
     const consultancyPurchase = await (prisma as any).nutritionPlanPurchase.findFirst({
-      where: { userId, status: 'completed', amount: { in: [299, 499] } }
+      where: { userId, status: 'completed', amount: { in: [299, 499, 1499] } }
     });
 
     // Check if user has unlocked recipes
     const recipesPurchase = await (prisma as any).nutritionPlanPurchase.findFirst({
-      where: { userId, status: 'completed', amount: { in: [99, 299, 499] } }
+      where: { userId, status: 'completed', amount: { in: [99, 299, 499, 1499] } }
     });
 
     res.json({
@@ -136,7 +136,6 @@ export const getHealthProfile = async (req: Request, res: Response): Promise<voi
         dailyCalories: user.dailyCalories,
         bmiCategory: user.bmi ? getBmiCategory(user.bmi) : null,
         idealWeight: user.height ? parseFloat(calculateIdealWeight(user.gender || 'female', user.height).toFixed(1)) : null,
-        waterIntake: user.waterIntake,
         sleepHours: user.sleepHours,
         lastEntryDate: user.lastEntryDate,
       },
@@ -150,12 +149,11 @@ export const getHealthProfile = async (req: Request, res: Response): Promise<voi
 export const updateDailyTracking = async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = (req as any).user.userId;
-    const { waterIntake, sleepHours, date } = req.body;
+    const { sleepHours, date } = req.body;
 
     await prisma.user.update({
       where: { id: userId },
       data: {
-        waterIntake: parseInt(waterIntake),
         sleepHours: parseFloat(sleepHours),
         lastEntryDate: date,
       },

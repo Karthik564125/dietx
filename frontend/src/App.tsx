@@ -12,20 +12,15 @@ import AdminDashboard from './pages/AdminDashboard.tsx';
 import PcodConsultancy from './pages/PcodConsultancy.tsx';
 
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { Toaster } from 'react-hot-toast';
 
 function App() {
 
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      setIsAuthenticated(true);
-    }
-  }, []);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
+    return typeof window !== 'undefined' ? !!localStorage.getItem('token') : false;
+  });
 
   return (
     <Router>

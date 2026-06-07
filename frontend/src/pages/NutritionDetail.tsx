@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import PremiumNutritionCard from '../components/PremiumNutritionCard';
 import axios from 'axios';
-import { ArrowLeft, Salad, Flame, PieChart, Info, ChevronRight, Lock, Sparkles, Loader2, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, Salad, Flame, PieChart, Info, Lock, Loader2 } from 'lucide-react';
 import AestheticBackground from '../components/AestheticBackground';
 import bgDashboard from '../assets/dashboard.jpg';
 import toast from 'react-hot-toast';
@@ -24,13 +24,55 @@ const NutritionDetail = ({ setIsAuthenticated }: NutritionDetailProps) => {
   const navigate = useNavigate();
   const [health, setHealth] = useState<any>(null);
   const [user, setUser] = useState<any>(null);
-  const [activeDiet, setActiveDiet] = useState<'veg' | 'nonVeg'>('veg');
+  const [activeCategory, setActiveCategory] = useState<string>('mrng_breakfast');
   const [recipesLoading, setRecipesLoading] = useState(false);
-  const [consultancyLoading, setConsultancyLoading] = useState(false);
+
+  const getCategoriesForFood = (name: string, catTitle: string): string[] => {
+    const nameLower = name.toLowerCase();
+    const catLower = catTitle.toLowerCase();
+    const res: string[] = [];
+
+    if (nameLower.includes("11 am") || nameLower === "average fruit bowl") {
+      return ['11_mrng_snacks'];
+    }
+    if (catLower.includes("breakfast")) {
+      res.push('mrng_breakfast');
+    }
+    if (catLower.includes("lunch")) {
+      res.push('noon_lunch');
+    }
+    if (catLower.includes("north indian recipes")) {
+      res.push('noon_lunch');
+      res.push('nyt_dinner');
+    }
+    if (catLower.includes("snacks")) {
+      res.push('snacks');
+    }
+    if (catLower.includes("dinner") || catLower.includes("soup")) {
+      res.push('nyt_dinner');
+    }
+    if (catLower.includes("non-vegetarian")) {
+      if (nameLower.includes("burji") || nameLower.includes("egg")) {
+        res.push('mrng_breakfast');
+      } else {
+        res.push('noon_lunch');
+        res.push('nyt_dinner');
+      }
+    }
+    if (res.length === 0) {
+      res.push('noon_lunch');
+    }
+    return res;
+  };
 
   const recipes = (() => {
-    const vegItems: { name: string; macros: string; desc: string; cal: string }[] = [];
-    const nonVegItems: { name: string; macros: string; desc: string; cal: string }[] = [];
+    const categories: Record<string, { name: string; macros: string; desc: string; cal: string; isNonVeg: boolean }[]> = {
+      mrng_breakfast: [],
+      '11_mrng_snacks': [],
+      noon_lunch: [],
+      snacks: [],
+      nyt_dinner: []
+    };
 
     CALORIE_REFERENCE_DATA.forEach(cat => {
       cat.items.forEach(item => {
@@ -42,24 +84,27 @@ const NutritionDetail = ({ setIsAuthenticated }: NutritionDetailProps) => {
           nameLower.includes("mutton") ||
           nameLower.includes("beef") ||
           nameLower.includes("prawn") ||
-          nameLower.includes("pork");
+          nameLower.includes("pork") ||
+          nameLower.includes("bone");
 
         const mappedRecipe = {
           name: item.name,
           macros: `Portion: ${item.qty}`,
           desc: `Calorie reference food suggestion. Standard serving portion size is ${item.qty}.`,
-          cal: `${item.kcal} kcal`
+          cal: `${item.kcal} kcal`,
+          isNonVeg
         };
 
-        if (isNonVeg) {
-          nonVegItems.push(mappedRecipe);
-        } else {
-          vegItems.push(mappedRecipe);
-        }
+        const targetCats = getCategoriesForFood(item.name, cat.title);
+        targetCats.forEach(c => {
+          if (categories[c]) {
+            categories[c].push(mappedRecipe);
+          }
+        });
       });
     });
 
-    const makeUnique = (arr: typeof vegItems) => {
+    const makeUnique = (arr: typeof categories.mrng_breakfast) => {
       const seen = new Set<string>();
       return arr.filter(item => {
         if (seen.has(item.name)) return false;
@@ -69,16 +114,17 @@ const NutritionDetail = ({ setIsAuthenticated }: NutritionDetailProps) => {
     };
 
     return {
-      veg: makeUnique(vegItems),
-      nonVeg: makeUnique(nonVegItems)
+      mrng_breakfast: makeUnique(categories.mrng_breakfast),
+      '11_mrng_snacks': makeUnique(categories['11_mrng_snacks']),
+      noon_lunch: makeUnique(categories.noon_lunch),
+      snacks: makeUnique(categories.snacks),
+      nyt_dinner: makeUnique(categories.nyt_dinner)
     };
   })();
 
   const handlePayment = async (amount: number) => {
     if (amount === 99) {
       setRecipesLoading(true);
-    } else {
-      setConsultancyLoading(true);
     }
 
     try {
@@ -161,7 +207,6 @@ const NutritionDetail = ({ setIsAuthenticated }: NutritionDetailProps) => {
       toast.error('Failed to initiate payment');
     } finally {
       setRecipesLoading(false);
-      setConsultancyLoading(false);
     }
   };
 
@@ -267,21 +312,28 @@ const NutritionDetail = ({ setIsAuthenticated }: NutritionDetailProps) => {
               Suggested Recipes
             </h2>
 
-            {/* Veg/Non-Veg Toggle */}
+            {/* Category Tabs */}
             {user?.isRecipesUnlocked && (
-              <div className="flex bg-slate-100 p-1 rounded-xl w-fit">
-                <button
-                  onClick={() => setActiveDiet('veg')}
-                  className={`px-6 py-2.5 rounded-lg font-black text-xs uppercase tracking-widest transition-all ${activeDiet === 'veg' ? 'bg-white text-emerald-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
-                >
-                  Vegetarian
-                </button>
-                <button
-                  onClick={() => setActiveDiet('nonVeg')}
-                  className={`px-6 py-2.5 rounded-lg font-black text-xs uppercase tracking-widest transition-all ${activeDiet === 'nonVeg' ? 'bg-white text-red-500 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
-                >
-                  Non-Vegetarian
-                </button>
+              <div className="flex overflow-x-auto bg-slate-100 p-1 rounded-xl gap-1 w-full sm:w-fit whitespace-nowrap no-scrollbar">
+                {[
+                  { id: 'mrng_breakfast', label: 'mrng breakfast' },
+                  { id: '11_mrng_snacks', label: '11 mrng snacks' },
+                  { id: 'noon_lunch', label: 'noon lunch' },
+                  { id: 'snacks', label: 'snacks' },
+                  { id: 'nyt_dinner', label: 'nyt dinner' }
+                ].map(cat => (
+                  <button
+                    key={cat.id}
+                    onClick={() => setActiveCategory(cat.id)}
+                    className={`px-4 py-2.5 rounded-lg font-black text-[10px] sm:text-xs uppercase tracking-wider transition-all shrink-0 ${
+                      activeCategory === cat.id 
+                        ? 'bg-white text-emerald-600 shadow-sm scale-105' 
+                        : 'text-slate-400 hover:text-slate-600'
+                    }`}
+                  >
+                    {cat.label}
+                  </button>
+                ))}
               </div>
             )}
           </div>
@@ -344,14 +396,25 @@ const NutritionDetail = ({ setIsAuthenticated }: NutritionDetailProps) => {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
-                {recipes[activeDiet].map((recipe, i) => (
-                  <div key={i} className={`glass-card p-6 flex flex-col justify-between bg-slate-950/70 border-white/10 hover:border-${activeDiet === 'veg' ? 'emerald-500/30' : 'red-500/30'} transition-all duration-300 group`}>
+                {recipes[activeCategory as keyof typeof recipes]?.map((recipe, i) => (
+                  <div key={i} className={`glass-card p-6 flex flex-col justify-between bg-slate-950/70 border-white/10 hover:border-${recipe.isNonVeg ? 'red-500/30' : 'emerald-500/30'} transition-all duration-300 group`}>
                     <div>
                       <div className="flex justify-between items-start mb-4">
-                        <h4 className="text-lg font-black text-white">{recipe.name}</h4>
-                        <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest whitespace-nowrap border ${activeDiet === 'veg'
-                            ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/25'
-                            : 'bg-red-500/15 text-red-300 border-red-500/25'
+                        <div className="flex items-center gap-2">
+                          {recipe.isNonVeg ? (
+                            <div className="w-4 h-4 border-2 border-red-500/50 rounded flex items-center justify-center shrink-0" title="Non-Vegetarian">
+                              <div className="w-1.5 h-1.5 bg-red-500 rounded-full" />
+                            </div>
+                          ) : (
+                            <div className="w-4 h-4 border-2 border-emerald-500/50 rounded flex items-center justify-center shrink-0" title="Vegetarian">
+                              <div className="w-1.5 h-1.5 bg-emerald-50 rounded-full" />
+                            </div>
+                          )}
+                          <h4 className="text-lg font-black text-white">{recipe.name}</h4>
+                        </div>
+                        <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest whitespace-nowrap border ${recipe.isNonVeg
+                          ? 'bg-red-500/15 text-red-300 border-red-500/25'
+                          : 'bg-emerald-500/15 text-emerald-300 border-emerald-500/25'
                           }`}>
                           {recipe.cal}
                         </div>
@@ -359,7 +422,7 @@ const NutritionDetail = ({ setIsAuthenticated }: NutritionDetailProps) => {
                       <p className="text-slate-300 font-medium text-sm leading-relaxed mb-6">{recipe.desc}</p>
                     </div>
                     <div className="pt-4 border-t border-white/10 flex justify-between items-center">
-                      <span className={`text-[11px] font-black uppercase tracking-widest ${activeDiet === 'veg' ? 'text-emerald-400' : 'text-red-400'}`}>
+                      <span className={`text-[11px] font-black uppercase tracking-widest ${recipe.isNonVeg ? 'text-red-400' : 'text-emerald-400'}`}>
                         {recipe.macros}
                       </span>
                     </div>

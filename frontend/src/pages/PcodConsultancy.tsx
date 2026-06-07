@@ -1,6 +1,6 @@
 import Navbar from '../components/Navbar';
 import AestheticBackground from '../components/AestheticBackground';
-import { ArrowRight, Heart, Leaf, Activity, Moon, Baby, Pill, Info, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, Heart, Leaf, Moon, Baby, Pill, Info, CheckCircle2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import pcodBg from '../assets/pcod.jpg';
 
@@ -54,11 +54,6 @@ const ROADMAP = [
   },
   {
     step: '04',
-    title: 'Targeted Supplements',
-    desc: 'Myo-Inositol + D-Chiro (40:1), Omega-3, Vitamin D3, Magnesium, and Spearmint tea — guided, not guessed.',
-  },
-  {
-    step: '05',
     title: 'Cycle & Hormone Tracking',
     desc: 'Monitor menstrual regularity, AMH, LH/FSH ratios, and metabolic markers to gauge reversal progress monthly.',
   },
@@ -230,12 +225,12 @@ export default function PcodConsultancy() {
               </div>
               <div className="space-y-2">
                 <h3 className="text-lg font-black text-white tracking-tight">
-                  Why was PCOD renamed to PCOS?
+                  Why was PCOS renamed to PMOS?
                 </h3>
                 <p className="text-pink-100 text-sm leading-relaxed">
                   The medical community has globally shifted from the term{' '}
-                  <strong className="text-pink-300">PCOD (Polycystic Ovarian Disease)</strong> to{' '}
-                  <strong className="text-pink-300">PCOS (Polycystic Ovary Syndrome)</strong>. Here's why this matters:
+                  <strong className="text-pink-300">PCOS (Polycystic Ovarian Syndrome)</strong> to{' '}
+                  <strong className="text-pink-300">PMOS (Polyendocrine metabolic ovarian syndrome)</strong>. Here's why this matters:
                 </p>
               </div>
             </div>
@@ -244,15 +239,15 @@ export default function PcodConsultancy() {
               {[
                 {
                   title: '"Disease" vs "Syndrome"',
-                  desc: 'PCOD implied a singular disease with a specific cause. PCOS better reflects that it is a complex hormonal syndrome — a cluster of symptoms rather than one defined disease.',
+                  desc: 'PCOS implied a singular disease with a specific cause. PMOS better reflects that it is a complex hormonal syndrome — a cluster of symptoms rather than one defined disease.',
                 },
                 {
                   title: 'Broader Recognition',
-                  desc: 'The term PCOS is now internationally adopted (WHO, ESHRE, Endocrine Society) ensuring women worldwide get consistent diagnosis, treatment, and research standards.',
+                  desc: 'The term PMOS is now internationally adopted (WHO, ESHRE, Endocrine Society) ensuring women worldwide get consistent diagnosis, treatment, and research standards.',
                 },
                 {
                   title: 'Not All Have Cysts',
-                  desc: 'Many women with PCOS do not actually have ovarian cysts detectable by ultrasound. The new term focuses on the hormonal and metabolic picture rather than just structural findings.',
+                  desc: 'Many women with PMOS do not actually have ovarian cysts detectable by ultrasound. The new term focuses on the hormonal and metabolic picture rather than just structural findings.',
                 },
               ].map((point, i) => (
                 <div

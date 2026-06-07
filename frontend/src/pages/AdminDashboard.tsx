@@ -6,7 +6,6 @@ import {
   CreditCard, 
   TrendingUp, 
   Search, 
-  ArrowLeft, 
   Download, 
   LogOut,
   Mail,
@@ -15,12 +14,9 @@ import {
   Ruler,
   Zap,
   Activity,
-  ChevronRight,
   X,
   User as UserIcon,
   ShoppingBag,
-  Bell,
-  Settings,
   Filter,
   Leaf
 } from 'lucide-react';

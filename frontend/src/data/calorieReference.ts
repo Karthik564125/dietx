@@ -126,4 +126,28 @@ export const CALORIE_REFERENCE_DATA: CalorieCategory[] = [
       { name: "Fish Curry", qty: "100 Gms", kcal: 175 },
     ],
   },
+  {
+    title: "Snacks",
+    items: [
+      { name: "Murmura", qty: "15 Gms", kcal: 50 },
+      { name: "Chidva", qty: "15 Gms", kcal: 60 },
+      { name: "Roasted Peanuts", qty: "15 Gms", kcal: 80 },
+      { name: "Makhana", qty: "15 Gms", kcal: 54 },
+      { name: "Dry Fruit Laddu", qty: "100 Gms", kcal: 160 },
+      { name: "Til Laddu", qty: "30 Gms", kcal: 110 },
+      { name: "Peanut Laddo", qty: "30 Gms", kcal: 110 },
+      { name: "Ragi/Jowar Flakes", qty: "30 Gms", kcal: 110 },
+      { name: "Sweet Potato Chaat", qty: "150 Gms", kcal: 200 },
+      { name: "Average Fruit Bowl (11 AM)", qty: "1 Cup", kcal: 200 },
+    ],
+  },
+  {
+    title: "Soups for Dinner",
+    items: [
+      { name: "Chicken Clear Soup", qty: "1 Cup", kcal: 170 },
+      { name: "Bone Soup", qty: "1 Cup", kcal: 50 },
+      { name: "Black Chenna Soup", qty: "1 Cup", kcal: 170 },
+      { name: "Vegetable Soup", qty: "1 Cup", kcal: 100 },
+    ],
+  },
 ];

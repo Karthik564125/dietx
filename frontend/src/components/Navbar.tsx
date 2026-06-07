@@ -142,6 +142,7 @@ const Navbar = ({ setIsAuthenticated }: NavbarProps) => {
             { name: 'Dashboard', path: '/dashboard', icon: <LayoutDashboard size={22} /> },
             { name: 'About Us', path: '/about', icon: <Info size={22} /> },
             { name: 'My Profile', path: '/profile', icon: <User size={22} /> },
+            ...(isFemale ? [{ name: 'Women Health', path: '/pcod-consultancy', icon: <Heart size={22} /> }] : []),
           ].map((link) => (
             <button
               key={link.path}

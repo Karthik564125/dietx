@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import { MessageCircle, ArrowLeft, Zap, Sparkles, Loader2, CheckCircle2, Clock, Heart, Leaf, UserCheck, ChevronRight } from 'lucide-react';
+import { MessageCircle, ArrowLeft, Sparkles, Loader2, CheckCircle2, Clock, Heart, Leaf, UserCheck, ChevronRight } from 'lucide-react';
 import AestheticBackground from '../components/AestheticBackground';
 import bgDashboard from '../assets/dashboard.jpg';
 

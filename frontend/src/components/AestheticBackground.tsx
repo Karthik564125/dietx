@@ -2,7 +2,7 @@ interface AestheticBackgroundProps {
   bgImage?: string;
 }
 
-import bgDefault from '../assets/dashboard.jpeg';
+import bgDefault from '../assets/dashboard.jpg';
 
 const AestheticBackground: React.FC<AestheticBackgroundProps> = ({ bgImage }) => {
   const image = bgImage ?? bgDefault;

@@ -5,7 +5,7 @@ import PremiumNutritionCard from '../components/PremiumNutritionCard';
 import axios from 'axios';
 import { ArrowLeft, Salad, Flame, PieChart, Info, ChevronRight, Lock, Sparkles, Loader2, CheckCircle2 } from 'lucide-react';
 import AestheticBackground from '../components/AestheticBackground';
-import bgDashboard from '../assets/dashboard.jpeg';
+import bgDashboard from '../assets/dashboard.jpg';
 import toast from 'react-hot-toast';
 
 declare global {
@@ -13,6 +13,8 @@ declare global {
     Razorpay: any;
   }
 }
+
+import { CALORIE_REFERENCE_DATA } from '../data/calorieReference';
 
 interface NutritionDetailProps {
   setIsAuthenticated: (val: boolean) => void;
@@ -22,28 +24,55 @@ const NutritionDetail = ({ setIsAuthenticated }: NutritionDetailProps) => {
   const navigate = useNavigate();
   const [health, setHealth] = useState<any>(null);
   const [user, setUser] = useState<any>(null);
-  const [activeDiet, setActiveDiet] = useState<'veg'|'nonVeg'>('veg');
+  const [activeDiet, setActiveDiet] = useState<'veg' | 'nonVeg'>('veg');
   const [recipesLoading, setRecipesLoading] = useState(false);
   const [consultancyLoading, setConsultancyLoading] = useState(false);
 
-  const recipes = {
-    veg: [
-      { name: 'Paneer Tikka Salad', macros: 'P: 22g | C: 12g | F: 18g', desc: 'Grilled cottage cheese with fresh greens and mint chutney dressing.', cal: '320 kcal' },
-      { name: 'Quinoa & Black Bean Bowl', macros: 'P: 18g | C: 45g | F: 10g', desc: 'Protein-packed quinoa with spiced black beans, corn, and avocado.', cal: '410 kcal' },
-      { name: 'Oats & Veggie Chilla', macros: 'P: 15g | C: 35g | F: 8g', desc: 'Savory Indian pancakes made with oats, besan, and mixed vegetables.', cal: '280 kcal' },
-      { name: 'Lentil (Dal) Power Soup', macros: 'P: 20g | C: 40g | F: 5g', desc: 'Comforting yellow dal tempered with ghee, cumin, and garlic.', cal: '350 kcal' },
-      { name: 'Greek Yogurt & Berries', macros: 'P: 15g | C: 20g | F: 4g', desc: 'High-protein yogurt topped with fresh mixed berries and chia seeds.', cal: '180 kcal' },
-      { name: 'Tofu Stir-fry', macros: 'P: 24g | C: 15g | F: 14g', desc: 'Firm tofu tossed with bell peppers, broccoli, and a light soy-ginger glaze.', cal: '310 kcal' },
-    ],
-    nonVeg: [
-      { name: 'Grilled Lemon Herb Chicken', macros: 'P: 45g | C: 5g | F: 12g', desc: 'Lean chicken breast marinated in herbs, served with steamed broccoli.', cal: '340 kcal' },
-      { name: 'Baked Salmon with Asparagus', macros: 'P: 35g | C: 8g | F: 22g', desc: 'Rich in Omega-3s, baked to perfection with a light lemon drizzle.', cal: '420 kcal' },
-      { name: 'Turkey Meatballs & Zoodles', macros: 'P: 30g | C: 15g | F: 14g', desc: 'Healthy alternative to pasta using zucchini noodles and lean turkey.', cal: '360 kcal' },
-      { name: 'Egg White Veggie Omelette', macros: 'P: 24g | C: 5g | F: 8g', desc: '4 egg whites + 1 whole egg packed with spinach, mushrooms, and peppers.', cal: '210 kcal' },
-      { name: 'Tuna Salad Lettuce Wraps', macros: 'P: 28g | C: 4g | F: 10g', desc: 'Light tuna mixed with Greek yogurt, served in crisp romaine leaves.', cal: '250 kcal' },
-      { name: 'Chicken & Sweet Potato Mash', macros: 'P: 38g | C: 35g | F: 9g', desc: 'Shredded chicken breast with roasted sweet potatoes and green beans.', cal: '450 kcal' },
-    ]
-  };
+  const recipes = (() => {
+    const vegItems: { name: string; macros: string; desc: string; cal: string }[] = [];
+    const nonVegItems: { name: string; macros: string; desc: string; cal: string }[] = [];
+
+    CALORIE_REFERENCE_DATA.forEach(cat => {
+      cat.items.forEach(item => {
+        const nameLower = item.name.toLowerCase();
+        const isNonVeg = cat.title === "Non-Vegetarian" ||
+          nameLower.includes("egg") ||
+          nameLower.includes("chicken") ||
+          nameLower.includes("fish") ||
+          nameLower.includes("mutton") ||
+          nameLower.includes("beef") ||
+          nameLower.includes("prawn") ||
+          nameLower.includes("pork");
+
+        const mappedRecipe = {
+          name: item.name,
+          macros: `Portion: ${item.qty}`,
+          desc: `Calorie reference food suggestion. Standard serving portion size is ${item.qty}.`,
+          cal: `${item.kcal} kcal`
+        };
+
+        if (isNonVeg) {
+          nonVegItems.push(mappedRecipe);
+        } else {
+          vegItems.push(mappedRecipe);
+        }
+      });
+    });
+
+    const makeUnique = (arr: typeof vegItems) => {
+      const seen = new Set<string>();
+      return arr.filter(item => {
+        if (seen.has(item.name)) return false;
+        seen.add(item.name);
+        return true;
+      });
+    };
+
+    return {
+      veg: makeUnique(vegItems),
+      nonVeg: makeUnique(nonVegItems)
+    };
+  })();
 
   const handlePayment = async (amount: number) => {
     if (amount === 99) {
@@ -100,7 +129,7 @@ const NutritionDetail = ({ setIsAuthenticated }: NutritionDetailProps) => {
                 .then(res => {
                   setHealth(res.data.health);
                   setUser({
-                    id: res.data.userId || '', 
+                    id: res.data.userId || '',
                     name: res.data.name,
                     email: res.data.email,
                     phone: res.data.phone,
@@ -146,7 +175,7 @@ const NutritionDetail = ({ setIsAuthenticated }: NutritionDetailProps) => {
       .then(res => {
         setHealth(res.data.health);
         setUser({
-          id: res.data.userId || '', 
+          id: res.data.userId || '',
           name: res.data.name,
           email: res.data.email,
           phone: res.data.phone,
@@ -166,7 +195,7 @@ const NutritionDetail = ({ setIsAuthenticated }: NutritionDetailProps) => {
       <main className="flex-1 p-6 sm:p-10 max-w-7xl mx-auto w-full space-y-16 py-12 sm:py-24">
         <header className="space-y-6 text-center">
           <div className="flex justify-center">
-            <button 
+            <button
               onClick={() => navigate('/dashboard')}
               className="flex items-center gap-2 px-6 py-2 bg-white/50 backdrop-blur-xl border border-white/50 rounded-full text-slate-500 hover:text-slate-900 font-black text-[10px] uppercase tracking-widest transition-all group"
             >
@@ -183,189 +212,188 @@ const NutritionDetail = ({ setIsAuthenticated }: NutritionDetailProps) => {
 
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-           {/* Calorie Card */}
-           <div className="glass-card p-10 bg-emerald-600 text-white flex flex-col justify-between space-y-8">
-              <div>
-                <Flame size={32} className="mb-6 opacity-80" />
-                <h3 className="text-sm font-black text-emerald-100 uppercase tracking-widest">Recommended Daily Intake</h3>
-                <div className="flex items-baseline gap-2 mt-4">
-                  <span className="text-6xl font-black">{health?.dailyCalories || '2000'}</span>
-                  <span className="text-lg font-bold opacity-80">kcal</span>
+          {/* Calorie Card */}
+          <div className="glass-card p-10 bg-emerald-600 text-white flex flex-col justify-between space-y-8">
+            <div>
+              <Flame size={32} className="mb-6 opacity-80" />
+              <h3 className="text-sm font-black text-emerald-100 uppercase tracking-widest">Recommended Daily Intake</h3>
+              <div className="flex items-baseline gap-2 mt-4">
+                <span className="text-6xl font-black">{health?.dailyCalories || '2000'}</span>
+                <span className="text-lg font-bold opacity-80">kcal</span>
+              </div>
+            </div>
+            <p className="text-sm font-medium leading-relaxed opacity-90 border-t border-white/20 pt-6">
+              Calculated using the Mifflin-St Jeor equation, optimized for your {health?.activityLevel?.replace(/([A-Z])/g, ' $1').toLowerCase()} lifestyle.
+            </p>
+          </div>
+
+          {/* Macro Split Card */}
+          <div className="md:col-span-2 glass-card p-10 flex flex-col justify-between">
+            <div className="flex justify-between items-center mb-8">
+              <h3 className="text-sm font-black text-white/60 uppercase tracking-widest">Macro-Nutrient Split</h3>
+              <PieChart className="text-emerald-400" size={24} />
+            </div>
+
+            <div className="grid grid-cols-3 gap-8">
+              {[
+                { label: 'Protien', value: '30%', color: 'bg-emerald-500', desc: 'Repairs and builds tissue' },
+                { label: 'Carbs', value: '45%', color: 'bg-blue-500', desc: 'Main energy source' },
+                { label: 'Fats', value: '25%', color: 'bg-amber-500', desc: 'Hormonal & cell health' }
+              ].map((macro, i) => (
+                <div key={i} className="space-y-4">
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-3xl font-black text-slate-900">{macro.value}</span>
+                    <div className={`w-3 h-3 rounded-full ${macro.color}`} />
+                  </div>
+                  <div>
+                    <p className="text-sm font-black text-slate-900">{macro.label}</p>
+                    <p className="text-[10px] text-slate-400 font-bold uppercase">{macro.desc}</p>
+                  </div>
+                  <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                    <div className={`h-full ${macro.color} rounded-full`} style={{ width: macro.value }} />
+                  </div>
                 </div>
-              </div>
-              <p className="text-sm font-medium leading-relaxed opacity-90 border-t border-white/20 pt-6">
-                Calculated using the Mifflin-St Jeor equation, optimized for your {health?.activityLevel?.replace(/([A-Z])/g, ' $1').toLowerCase()} lifestyle.
-              </p>
-           </div>
-
-           {/* Macro Split Card */}
-           <div className="md:col-span-2 glass-card p-10 flex flex-col justify-between">
-              <div className="flex justify-between items-center mb-8">
-                <h3 className="text-sm font-black text-white/60 uppercase tracking-widest">Macro-Nutrient Split</h3>
-                <PieChart className="text-emerald-400" size={24} />
-              </div>
-
-              <div className="grid grid-cols-3 gap-8">
-                 {[
-                   { label: 'Protien', value: '30%', color: 'bg-emerald-500', desc: 'Repairs and builds tissue' },
-                   { label: 'Carbs', value: '45%', color: 'bg-blue-500', desc: 'Main energy source' },
-                   { label: 'Fats', value: '25%', color: 'bg-amber-500', desc: 'Hormonal & cell health' }
-                 ].map((macro, i) => (
-                   <div key={i} className="space-y-4">
-                      <div className="flex items-baseline gap-2">
-                        <span className="text-3xl font-black text-slate-900">{macro.value}</span>
-                        <div className={`w-3 h-3 rounded-full ${macro.color}`} />
-                      </div>
-                      <div>
-                        <p className="text-sm font-black text-slate-900">{macro.label}</p>
-                        <p className="text-[10px] text-slate-400 font-bold uppercase">{macro.desc}</p>
-                      </div>
-                      <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                        <div className={`h-full ${macro.color} rounded-full`} style={{ width: macro.value }} />
-                      </div>
-                   </div>
-                 ))}
-              </div>
-           </div>
+              ))}
+            </div>
+          </div>
         </div>
 
 
         {/* Nutrition Tips Section */}
         <section className="space-y-8">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                <h2 className="text-3xl font-black text-slate-900 flex items-center gap-3">
-                  <Salad className="text-emerald-600" size={32} />
-                  Suggested Recipes
-                </h2>
-                
-                {/* Veg/Non-Veg Toggle */}
-                {user?.isRecipesUnlocked && (
-                  <div className="flex bg-slate-100 p-1 rounded-xl w-fit">
-                      <button 
-                        onClick={() => setActiveDiet('veg')}
-                        className={`px-6 py-2.5 rounded-lg font-black text-xs uppercase tracking-widest transition-all ${activeDiet === 'veg' ? 'bg-white text-emerald-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
-                      >
-                        Vegetarian
-                      </button>
-                      <button 
-                        onClick={() => setActiveDiet('nonVeg')}
-                        className={`px-6 py-2.5 rounded-lg font-black text-xs uppercase tracking-widest transition-all ${activeDiet === 'nonVeg' ? 'bg-white text-red-500 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
-                      >
-                        Non-Vegetarian
-                      </button>
-                  </div>
-                )}
-            </div>
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <h2 className="text-3xl font-black text-slate-900 flex items-center gap-3">
+              <Salad className="text-emerald-600" size={32} />
+              Suggested Recipes
+            </h2>
 
-            {!user?.isRecipesUnlocked ? (
-              /* Locked State: Single beautifully centered Recipe Unlock Card */
-              <div className="flex justify-center w-full">
-                {/* Card A: Unlock Suggested Recipes (₹99) */}
-                <div className="glass-card p-10 bg-gradient-to-br from-slate-900 via-slate-900 to-emerald-950/30 text-white border-transparent relative overflow-hidden group flex flex-col justify-between min-h-[350px] shadow-2xl max-w-2xl w-full">
-                  <div className="absolute -top-24 -right-24 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl group-hover:bg-emerald-500/20 transition-all duration-700 pointer-events-none" />
-                  <div className="relative z-10 flex flex-col h-full justify-between space-y-6">
-                    <div className="flex justify-between items-start">
-                      <div className="w-14 h-14 bg-emerald-500/20 rounded-2xl flex items-center justify-center border border-emerald-500/30">
-                        <Lock className="text-emerald-400" size={28} />
-                      </div>
-                      <div className="bg-emerald-500/10 text-emerald-400 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border border-emerald-500/20">
-                        Suggested Recipes
-                      </div>
-                    </div>
-
-                    <div className="space-y-3">
-                      <h4 className="text-2xl sm:text-3xl font-black tracking-tight">Suggested Recipes Plan</h4>
-                      <p className="text-slate-400 font-medium text-sm leading-relaxed">
-                        Unlock access to our complete, calorie-calibrated recipe guides configured perfectly for your daily targets. Optimized vegetarian & non-vegetarian protocol.
-                      </p>
-                    </div>
-
-                    <div className="pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-6 mt-auto">
-                      <div className="flex items-baseline gap-2">
-                        <span className="text-4xl font-black">₹99</span>
-                        <span className="text-slate-500 font-bold line-through text-base">₹199</span>
-                      </div>
-                      
-                      <button
-                        onClick={() => handlePayment(99)}
-                        disabled={recipesLoading}
-                        className="w-full sm:w-auto px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-white rounded-2xl font-black text-xs uppercase tracking-widest transition-all hover:scale-105 active:scale-95 disabled:opacity-50 flex items-center justify-center gap-3 shadow-xl shadow-emerald-500/20"
-                      >
-                        {recipesLoading ? <Loader2 className="animate-spin" size={16} /> : 'Unlock Recipes'}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              /* Unlocked State: Disclaimer notice and recipes grid */
-              <div className="space-y-8">
-                <div className="glass-card p-6 md:p-8 bg-amber-50/50 border-amber-100 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative overflow-hidden group">
-                    <div className="flex items-start md:items-center gap-5 relative z-10 flex-1">
-                        <div className="p-4 bg-amber-100 text-amber-700 rounded-2xl shrink-0 shadow-sm">
-                            <Info size={24} />
-                        </div>
-                        <div className="space-y-1">
-                            <h3 className="text-lg font-black text-slate-900 tracking-tight">Normal Health Notice</h3>
-                            <p className="text-sm font-bold text-slate-600 leading-relaxed">
-                                These suggested recipes are curated only for individuals with <span className="text-slate-900">no active health issues</span>. If you require a custom diet protocol for specific medical conditions (e.g., High BP, Diabetes, PCOD, etc.), please check out our 1-on-1 Personal Consultancy on the Sessions tab.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
-                    {recipes[activeDiet].map((recipe, i) => (
-                        <div key={i} className={`glass-card p-6 flex flex-col justify-between bg-slate-950/70 border-white/10 hover:border-${activeDiet === 'veg' ? 'emerald-500/30' : 'red-500/30'} transition-all duration-300 group`}>
-                            <div>
-                                <div className="flex justify-between items-start mb-4">
-                                    <h4 className="text-lg font-black text-white">{recipe.name}</h4>
-                                    <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest whitespace-nowrap border ${
-                                      activeDiet === 'veg' 
-                                        ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/25' 
-                                        : 'bg-red-500/15 text-red-300 border-red-500/25'
-                                    }`}>
-                                        {recipe.cal}
-                                    </div>
-                                </div>
-                                <p className="text-slate-300 font-medium text-sm leading-relaxed mb-6">{recipe.desc}</p>
-                            </div>
-                            <div className="pt-4 border-t border-white/10 flex justify-between items-center">
-                                <span className={`text-[11px] font-black uppercase tracking-widest ${activeDiet === 'veg' ? 'text-emerald-400' : 'text-red-400'}`}>
-                                    {recipe.macros}
-                                </span>
-                            </div>
-                        </div>
-                    ))}
-                </div>
+            {/* Veg/Non-Veg Toggle */}
+            {user?.isRecipesUnlocked && (
+              <div className="flex bg-slate-100 p-1 rounded-xl w-fit">
+                <button
+                  onClick={() => setActiveDiet('veg')}
+                  className={`px-6 py-2.5 rounded-lg font-black text-xs uppercase tracking-widest transition-all ${activeDiet === 'veg' ? 'bg-white text-emerald-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                >
+                  Vegetarian
+                </button>
+                <button
+                  onClick={() => setActiveDiet('nonVeg')}
+                  className={`px-6 py-2.5 rounded-lg font-black text-xs uppercase tracking-widest transition-all ${activeDiet === 'nonVeg' ? 'bg-white text-red-500 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                >
+                  Non-Vegetarian
+                </button>
               </div>
             )}
+          </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12 pt-12 border-t-2 border-slate-100">
-                {user?.isRecipesUnlocked ? (
-                  <>
-                    <PremiumNutritionCard user={user || { name: 'User', email: '', id: '' }} />
-                    
-                    <div className="flex flex-col justify-center p-8 bg-amber-50/50 rounded-3xl border border-amber-100 h-full">
-                        <h4 className="text-amber-900 font-black text-sm uppercase tracking-widest mb-3 flex items-center gap-2">
-                          <span className="text-xl">⚠️</span> Medical Disclaimer
-                        </h4>
-                        <p className="text-amber-800/80 font-medium text-sm leading-relaxed">
-                            Please consult with a qualified healthcare professional or doctor before starting any new diet, nutrition plan, or drastically changing your eating habits. These recipes are suggestions and may need to be tailored to your specific medical needs and allergies.
-                        </p>
+          {!user?.isRecipesUnlocked ? (
+            /* Locked State: Single beautifully centered Recipe Unlock Card */
+            <div className="flex justify-center w-full">
+              {/* Card A: Unlock Suggested Recipes (₹99) */}
+              <div className="glass-card p-10 bg-gradient-to-br from-slate-900 via-slate-900 to-emerald-950/30 text-white border-transparent relative overflow-hidden group flex flex-col justify-between min-h-[350px] shadow-2xl max-w-2xl w-full">
+                <div className="absolute -top-24 -right-24 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl group-hover:bg-emerald-500/20 transition-all duration-700 pointer-events-none" />
+                <div className="relative z-10 flex flex-col h-full justify-between space-y-6">
+                  <div className="flex justify-between items-start">
+                    <div className="w-14 h-14 bg-emerald-500/20 rounded-2xl flex items-center justify-center border border-emerald-500/30">
+                      <Lock className="text-emerald-400" size={28} />
                     </div>
-                  </>
-                ) : (
-                  <div className="md:col-span-2 flex flex-col justify-center p-8 bg-amber-50/50 rounded-3xl border border-amber-100 h-full">
-                      <h4 className="text-amber-900 font-black text-sm uppercase tracking-widest mb-3 flex items-center gap-2">
-                        <span className="text-xl">⚠️</span> Medical Disclaimer
-                      </h4>
-                      <p className="text-amber-800/80 font-medium text-sm leading-relaxed">
-                          Please consult with a qualified healthcare professional or doctor before starting any new diet, nutrition plan, or drastically changing your eating habits. These recipes are suggestions and may need to be tailored to your specific medical needs and allergies.
-                      </p>
+                    <div className="bg-emerald-500/10 text-emerald-400 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border border-emerald-500/20">
+                      Suggested Recipes
+                    </div>
                   </div>
-                )}
+
+                  <div className="space-y-3">
+                    <h4 className="text-2xl sm:text-3xl font-black tracking-tight">Suggested Recipes Plan</h4>
+                    <p className="text-slate-400 font-medium text-sm leading-relaxed">
+                      Unlock access to our complete, calorie-calibrated recipe guides configured perfectly for your daily targets. Optimized vegetarian & non-vegetarian protocol.
+                    </p>
+                  </div>
+
+                  <div className="pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-6 mt-auto">
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-4xl font-black">₹99</span>
+                      <span className="text-slate-500 font-bold line-through text-base">₹199</span>
+                    </div>
+
+                    <button
+                      onClick={() => handlePayment(99)}
+                      disabled={recipesLoading}
+                      className="w-full sm:w-auto px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-white rounded-2xl font-black text-xs uppercase tracking-widest transition-all hover:scale-105 active:scale-95 disabled:opacity-50 flex items-center justify-center gap-3 shadow-xl shadow-emerald-500/20"
+                    >
+                      {recipesLoading ? <Loader2 className="animate-spin" size={16} /> : 'Unlock Recipes'}
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
+          ) : (
+            /* Unlocked State: Disclaimer notice and recipes grid */
+            <div className="space-y-8">
+              <div className="glass-card p-6 md:p-8 bg-amber-50/50 border-amber-100 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative overflow-hidden group">
+                <div className="flex items-start md:items-center gap-5 relative z-10 flex-1">
+                  <div className="p-4 bg-amber-100 text-amber-700 rounded-2xl shrink-0 shadow-sm">
+                    <Info size={24} />
+                  </div>
+                  <div className="space-y-1">
+                    <h3 className="text-lg font-black text-slate-900 tracking-tight">Normal Health Notice</h3>
+                    <p className="text-sm font-bold text-slate-600 leading-relaxed">
+                      These suggested recipes are curated only for individuals with <span className="text-slate-900">no active health issues</span>. If you require a custom diet protocol for specific medical conditions (e.g., High BP, Diabetes, PCOD, etc.), please check out our 1-on-1 Personal Consultancy on the One to One Consultancy tab.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
+                {recipes[activeDiet].map((recipe, i) => (
+                  <div key={i} className={`glass-card p-6 flex flex-col justify-between bg-slate-950/70 border-white/10 hover:border-${activeDiet === 'veg' ? 'emerald-500/30' : 'red-500/30'} transition-all duration-300 group`}>
+                    <div>
+                      <div className="flex justify-between items-start mb-4">
+                        <h4 className="text-lg font-black text-white">{recipe.name}</h4>
+                        <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest whitespace-nowrap border ${activeDiet === 'veg'
+                            ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/25'
+                            : 'bg-red-500/15 text-red-300 border-red-500/25'
+                          }`}>
+                          {recipe.cal}
+                        </div>
+                      </div>
+                      <p className="text-slate-300 font-medium text-sm leading-relaxed mb-6">{recipe.desc}</p>
+                    </div>
+                    <div className="pt-4 border-t border-white/10 flex justify-between items-center">
+                      <span className={`text-[11px] font-black uppercase tracking-widest ${activeDiet === 'veg' ? 'text-emerald-400' : 'text-red-400'}`}>
+                        {recipe.macros}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12 pt-12 border-t-2 border-slate-100">
+            {user?.isRecipesUnlocked ? (
+              <>
+                <PremiumNutritionCard user={user || { name: 'User', email: '', id: '' }} />
+
+                <div className="flex flex-col justify-center p-8 bg-amber-50/50 rounded-3xl border border-amber-100 h-full">
+                  <h4 className="text-amber-900 font-black text-sm uppercase tracking-widest mb-3 flex items-center gap-2">
+                    <span className="text-xl">⚠️</span> Medical Disclaimer
+                  </h4>
+                  <p className="text-amber-800/80 font-medium text-sm leading-relaxed">
+                    Please consult with a qualified healthcare professional or doctor before starting any new diet, nutrition plan, or drastically changing your eating habits. These recipes are suggestions and may need to be tailored to your specific medical needs and allergies.
+                  </p>
+                </div>
+              </>
+            ) : (
+              <div className="md:col-span-2 flex flex-col justify-center p-8 bg-amber-50/50 rounded-3xl border border-amber-100 h-full">
+                <h4 className="text-amber-900 font-black text-sm uppercase tracking-widest mb-3 flex items-center gap-2">
+                  <span className="text-xl">⚠️</span> Medical Disclaimer
+                </h4>
+                <p className="text-amber-800/80 font-medium text-sm leading-relaxed">
+                  Please consult with a qualified healthcare professional or doctor before starting any new diet, nutrition plan, or drastically changing your eating habits. These recipes are suggestions and may need to be tailored to your specific medical needs and allergies.
+                </p>
+              </div>
+            )}
+          </div>
         </section>
       </main>
     </div>

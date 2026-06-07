@@ -5,7 +5,7 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { MessageCircle, ArrowLeft, Zap, Sparkles, Loader2, CheckCircle2, Clock, Heart, Leaf, UserCheck, ChevronRight } from 'lucide-react';
 import AestheticBackground from '../components/AestheticBackground';
-import bgDashboard from '../assets/dashboard.jpeg';
+import bgDashboard from '../assets/dashboard.jpg';
 
 interface SessionsProps {
   setIsAuthenticated: (val: boolean) => void;
@@ -27,18 +27,14 @@ const consultationSteps = [
     title: 'Personalised Plan Creation',
     desc: 'You will receive a customised diet, lifestyle, and natural healing plan made just for your body.',
   },
+
   {
     num: '04',
-    title: 'Acupressure & Natural Guidance',
-    desc: 'I guide you with simple acupressure points, natural remedies, and easy daily practices.',
-  },
-  {
-    num: '05',
     title: 'Mind & Emotional Support',
     desc: 'We work on stress, emotions, mindset & habits for long-term inner healing.',
   },
   {
-    num: '06',
+    num: '05',
     title: 'Next Steps & Handholding',
     desc: 'You will know the exact next steps and how I can support you on your healing journey.',
   },
@@ -161,7 +157,7 @@ const Sessions = ({ setIsAuthenticated }: SessionsProps) => {
           </div>
           <div className="space-y-2">
             <h1 className="text-4xl sm:text-6xl font-black text-white tracking-tighter leading-none">
-              Sessions & <span className="text-emerald-400">Consultations</span>
+              <span className="text-emerald-400">Consultations</span>
             </h1>
             <p className="text-white/60 font-bold text-base sm:text-lg uppercase tracking-widest">1-2-1 with Dt. Madhavi Latha</p>
           </div>
@@ -207,7 +203,7 @@ const Sessions = ({ setIsAuthenticated }: SessionsProps) => {
               </div>
               <div className="text-left">
                 <p className="text-[10px] font-black text-amber-400 uppercase tracking-widest">Session Duration</p>
-                <p className="text-white font-black text-sm">45 – 60 Minutes</p>
+                <p className="text-white font-black text-sm">25 – 40 Minutes</p>
                 <p className="text-slate-400 text-xs font-medium">A dedicated time for YOU and your transformation.</p>
               </div>
             </div>
@@ -284,7 +280,7 @@ const Sessions = ({ setIsAuthenticated }: SessionsProps) => {
               /* Locked State */
               <div className="flex flex-col gap-8 h-full">
                 {/* Plan Card */}
-                <div className="glass-card p-8 sm:p-10 bg-gradient-to-br from-slate-900 to-slate-950 text-white border-transparent relative overflow-hidden group flex flex-col justify-between min-h-[360px] shadow-2xl rounded-[2rem]">
+                <div className="glass-card p-8 sm:p-10 bg-gradient-to-br from-slate-900 to-slate-950 text-white border-transparent relative overflow-hidden group flex flex-col justify-between shadow-2xl rounded-[2rem] h-full flex-1">
                   <div className="absolute -top-24 -right-24 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl group-hover:bg-amber-500/20 transition-all duration-700 pointer-events-none" />
 
                   <div className="relative z-10 flex flex-col h-full justify-between space-y-6">
@@ -300,15 +296,15 @@ const Sessions = ({ setIsAuthenticated }: SessionsProps) => {
                     <div className="space-y-3">
                       <h4 className="text-2xl sm:text-3xl font-black tracking-tight text-left">Book Your 1-2-1 Consultation</h4>
                       <p className="text-slate-400 font-medium text-sm leading-relaxed text-left">
-                        45–60 min personalised session with Dt. Madhavi Latha — root cause assessment, custom healing plan & natural guidance.
+                        25-40 min personalised session with Dt. Madhavi Latha — root cause assessment, custom healing plan & natural guidance.
                       </p>
 
                       {/* Mini feature list */}
                       <div className="flex flex-col gap-2 pt-2">
                         {[
                           'Root Cause Analysis',
-                          'Custom Diet & Lifestyle Plan',
-                          'Acupressure & Natural Remedies',
+                          'Custom Diet For One Month',
+                          'Natural Remedies',
                           'Mind & Emotional Support',
                         ].map((f, i) => (
                           <div key={i} className="flex items-center gap-2 text-sm text-slate-300 font-semibold">
@@ -321,8 +317,8 @@ const Sessions = ({ setIsAuthenticated }: SessionsProps) => {
 
                     <div className="pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-6 mt-auto w-full">
                       <div className="flex items-baseline gap-2 mr-auto">
-                        <span className="text-4xl font-black">₹499</span>
-                        <span className="text-slate-500 font-bold text-sm">/ session</span>
+                        <span className="text-4xl font-black">₹1499</span>
+                        <span className="text-slate-500 font-bold text-sm">/ month</span>
                       </div>
 
                       <button
@@ -333,33 +329,6 @@ const Sessions = ({ setIsAuthenticated }: SessionsProps) => {
                         {loading ? <Loader2 className="animate-spin" size={16} /> : 'Book Now'}
                       </button>
                     </div>
-                  </div>
-                </div>
-
-                {/* WhatsApp Chat Card */}
-                <div className="glass-card p-6 sm:p-8 flex flex-col items-center text-center space-y-6 border border-white/10 shadow-2xl bg-slate-900/40 rounded-[2rem]">
-                  <div className="flex items-center gap-4 w-full">
-                    <div className="w-12 h-12 bg-emerald-500/20 text-emerald-400 rounded-xl flex items-center justify-center shadow-inner border border-emerald-500/20 shrink-0">
-                      <MessageCircle size={24} />
-                    </div>
-                    <div className="text-left">
-                      <h4 className="font-black text-white text-sm">Have Questions First?</h4>
-                      <p className="text-xs text-slate-400 font-bold">Chat directly with us to clarify your doubts.</p>
-                    </div>
-                  </div>
-
-                  <div className="w-full">
-                    <a
-                      href="https://wa.me/919100101921?text=Hi%20I%20want%20to%20know%20more%20about%20the%201-2-1%20Consultation"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-full flex items-center justify-between group bg-emerald-600 text-white px-6 py-4 rounded-2xl text-base font-black shadow-xl shadow-emerald-600/10 hover:bg-emerald-700 hover:-translate-y-0.5 transition-all"
-                    >
-                      Start Chat Now
-                      <div className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center group-hover:bg-white group-hover:text-emerald-600 transition-all">
-                        <MessageCircle size={18} />
-                      </div>
-                    </a>
                   </div>
                 </div>
               </div>

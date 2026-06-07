@@ -1,8 +1,8 @@
 import Navbar from '../components/Navbar';
 import AestheticBackground from '../components/AestheticBackground';
-import { ArrowRight, Heart, Leaf, Activity, Moon, Baby, Pill } from 'lucide-react';
+import { ArrowRight, Heart, Leaf, Activity, Moon, Baby, Pill, Info, CheckCircle2 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import pcodBg from '../assets/pcod.jpeg';
+import pcodBg from '../assets/pcod.jpg';
 
 const WHAT_YOU_GET = [
   'Dedicated 1-on-1 session with Dt. Madhavi Latha',
@@ -10,15 +10,14 @@ const WHAT_YOU_GET = [
   'Hormone balance & cycle regulation tips',
   'Tailored exercise & movement protocol',
   'Stress management & sleep optimisation',
-  'Targeted supplement guidance (no prescriptions)',
   'Monthly progress review call',
 ];
 
 const HEALTH_PILLARS = [
   {
     icon: <Leaf size={20} className="text-pink-300" />,
-    title: 'PCOD Reversal',
-    desc: 'Root-cause nutrition and lifestyle changes that clinically reverse PCOD symptoms — without relying on medication.',
+    title: 'PCOD / PCOS Reversal',
+    desc: 'Root-cause nutrition and lifestyle changes that clinically reverse PCOD/PCOS symptoms — without relying on medication.',
   },
   {
     icon: <Moon size={20} className="text-pink-300" />,
@@ -33,7 +32,7 @@ const HEALTH_PILLARS = [
   {
     icon: <Pill size={20} className="text-pink-300" />,
     title: 'Medicine-Free Reversal',
-    desc: 'Proven protocols using food, movement, and sleep as medicine — so you can manage and reverse PCOD without long-term drug dependency.',
+    desc: 'Proven protocols using food, movement, and sleep as medicine — so you can manage and reverse PCOD/PCOS without long-term drug dependency.',
   },
 ];
 
@@ -83,6 +82,15 @@ const accentCardStyle = {
   boxShadow: '0 8px 40px rgba(236,72,153,0.18), 0 4px 16px rgba(0,0,0,0.50), inset 0 1px 0 rgba(255,255,255,0.05)',
 };
 
+const infoCardStyle = {
+  background: 'rgba(80, 15, 50, 0.75)',
+  backdropFilter: 'blur(20px)',
+  WebkitBackdropFilter: 'blur(20px)',
+  border: '1px solid rgba(236, 72, 153, 0.45)',
+  borderRadius: '1.25rem',
+  boxShadow: '0 6px 28px rgba(236,72,153,0.14), 0 2px 12px rgba(0,0,0,0.45)',
+};
+
 export default function PcodConsultancy() {
   return (
     <div className="min-h-screen bg-premium flex flex-col relative overflow-hidden">
@@ -100,11 +108,11 @@ export default function PcodConsultancy() {
               <div className="flex items-center gap-3">
                 <div className="w-10 h-1 bg-pink-400 rounded-full" />
                 <span className="text-[10px] sm:text-xs font-black text-pink-200 uppercase tracking-[0.3em]">
-                  Women's Health · PCOD Consultancy
+                  Women's Health · PCOD / PCOS Consultancy
                 </span>
               </div>
               <h1 className="text-5xl sm:text-7xl lg:text-[6rem] font-black tracking-tighter text-white leading-[0.85]">
-                PCOD <br />
+                PCOD &amp; PCOS <br />
                 <span className="text-pink-400">Reversal</span>
               </h1>
               <p className="text-pink-200 font-black uppercase tracking-[0.4em] text-sm sm:text-lg">
@@ -114,7 +122,7 @@ export default function PcodConsultancy() {
 
             <div className="text-base lg:text-lg text-pink-100 leading-relaxed space-y-4 max-w-xl">
               <p>
-                There is currently no permanent pharmaceutical "cure" for PCOD — but through targeted nutrition, movement, and lifestyle changes, the condition can be put into full{' '}
+                There is currently no permanent pharmaceutical "cure" for PCOD/PCOS — but through targeted nutrition, movement, and lifestyle changes, the condition can be put into full{' '}
                 <strong className="text-pink-300">clinical remission</strong>.
               </p>
               <p>
@@ -172,8 +180,8 @@ export default function PcodConsultancy() {
 
               <div className="space-y-1">
                 <div className="flex items-end gap-2">
-                  <span className="text-4xl font-black text-white">₹499</span>
-                  <span className="text-pink-300 text-sm pb-1">/ session</span>
+                  <span className="text-4xl font-black text-white">₹99</span>
+                  <span className="text-pink-300 text-sm pb-1">/ Consultation</span>
                 </div>
                 <p className="text-pink-100 text-sm leading-relaxed">
                   Includes a full initial assessment, personalised plan, and a follow-up check-in.
@@ -181,7 +189,7 @@ export default function PcodConsultancy() {
               </div>
 
               <ul className="space-y-2 text-sm text-pink-100">
-                {['45-min video consultation', 'WhatsApp support for 7 days', 'Custom PDF plan delivered'].map((f) => (
+                {['45-min consultation'].map((f) => (
                   <li key={f} className="flex gap-2 items-center">
                     <Heart size={12} className="text-pink-400 shrink-0" />
                     {f}
@@ -202,6 +210,73 @@ export default function PcodConsultancy() {
             </div>
           </div>
         </div>
+
+        {/* ── PCOD → PCOS NAME CHANGE INFO ─────────────────────── */}
+        <section className="mb-20">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="w-10 h-1 bg-pink-400 rounded-full" />
+            <h2 className="text-xs font-black text-pink-200 uppercase tracking-[0.3em]">
+              Important Update · PCOD is now PCOS
+            </h2>
+          </div>
+
+          <div className="p-8 space-y-6" style={infoCardStyle}>
+            <div className="flex items-start gap-5">
+              <div
+                className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"
+                style={{ background: 'rgba(236, 72, 153, 0.25)', border: '1px solid rgba(236,72,153,0.4)' }}
+              >
+                <Info size={22} className="text-pink-300" />
+              </div>
+              <div className="space-y-2">
+                <h3 className="text-lg font-black text-white tracking-tight">
+                  Why was PCOD renamed to PCOS?
+                </h3>
+                <p className="text-pink-100 text-sm leading-relaxed">
+                  The medical community has globally shifted from the term{' '}
+                  <strong className="text-pink-300">PCOD (Polycystic Ovarian Disease)</strong> to{' '}
+                  <strong className="text-pink-300">PCOS (Polycystic Ovary Syndrome)</strong>. Here's why this matters:
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              {[
+                {
+                  title: '"Disease" vs "Syndrome"',
+                  desc: 'PCOD implied a singular disease with a specific cause. PCOS better reflects that it is a complex hormonal syndrome — a cluster of symptoms rather than one defined disease.',
+                },
+                {
+                  title: 'Broader Recognition',
+                  desc: 'The term PCOS is now internationally adopted (WHO, ESHRE, Endocrine Society) ensuring women worldwide get consistent diagnosis, treatment, and research standards.',
+                },
+                {
+                  title: 'Not All Have Cysts',
+                  desc: 'Many women with PCOS do not actually have ovarian cysts detectable by ultrasound. The new term focuses on the hormonal and metabolic picture rather than just structural findings.',
+                },
+              ].map((point, i) => (
+                <div
+                  key={i}
+                  className="p-5 space-y-3 rounded-xl"
+                  style={{
+                    background: 'rgba(236, 72, 153, 0.10)',
+                    border: '1px solid rgba(236, 72, 153, 0.25)',
+                  }}
+                >
+                  <div className="flex items-center gap-3">
+                    <CheckCircle2 size={16} className="text-pink-400 shrink-0" />
+                    <h4 className="text-sm font-black text-pink-200 tracking-tight">{point.title}</h4>
+                  </div>
+                  <p className="text-pink-100 text-xs leading-relaxed">{point.desc}</p>
+                </div>
+              ))}
+            </div>
+
+            <p className="text-pink-200 text-sm text-center leading-relaxed border-t pt-5" style={{ borderColor: 'rgba(236,72,153,0.20)' }}>
+              Throughout this page, <strong className="text-pink-300">PCOD and PCOS refer to the same condition</strong>. Both terms are used interchangeably. Our consultancy addresses both terminologies equally.
+            </p>
+          </div>
+        </section>
 
         {/* ── HEALTH PILLARS ───────────────────────────────────── */}
         <section className="mb-20 space-y-8">
@@ -244,30 +319,54 @@ export default function PcodConsultancy() {
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
-            {ROADMAP.map(({ step, title, desc }) => (
-              <div
-                key={step}
-                className="p-6 space-y-3 relative overflow-hidden transition-all hover:scale-[1.02]"
-                style={cardStyle}
-              >
-                <span
-                  className="absolute -top-3 -right-2 text-[4rem] font-black leading-none select-none"
-                  style={{ color: 'rgba(236,72,153,0.12)' }}
-                >
-                  {step}
-                </span>
-                <p className="text-pink-400 text-xs font-black tracking-widest">{step}</p>
-                <h3 className="text-sm font-black text-white">{title}</h3>
-                <p className="text-pink-100 text-xs leading-relaxed">{desc}</p>
-              </div>
-            ))}
-          </div>
+          <div className="p-8 space-y-6" style={infoCardStyle}>
+            <p className="text-pink-100 text-sm leading-relaxed max-w-2xl">
+              A proven, step-by-step protocol to reverse PCOD/PCOS through holistic lifestyle changes — no crash diets, no medication dependency.
+            </p>
 
-          <p className="text-pink-200 text-sm text-center pt-4 max-w-xl mx-auto">
-            A sustainable, gradual lifestyle shift yields the best long-term results for hormonal health.{' '}
-            <strong className="text-pink-300">No crash diets. No dependency. Just results.</strong>
-          </p>
+            <div className="space-y-4">
+              {ROADMAP.map(({ step, title, desc }) => (
+                <div
+                  key={step}
+                  className="flex items-start gap-5 p-5 rounded-xl group transition-all hover:scale-[1.01]"
+                  style={{
+                    background: 'rgba(236, 72, 153, 0.08)',
+                    border: '1px solid rgba(236, 72, 153, 0.20)',
+                  }}
+                >
+                  {/* Step badge */}
+                  <div
+                    className="shrink-0 w-10 h-10 rounded-xl flex items-center justify-center font-black text-xs text-pink-300 tracking-widest"
+                    style={{
+                      background: 'rgba(236, 72, 153, 0.20)',
+                      border: '1px solid rgba(236, 72, 153, 0.35)',
+                    }}
+                  >
+                    {step}
+                  </div>
+
+                  {/* Content */}
+                  <div className="space-y-1 flex-1">
+                    <h4 className="text-sm font-black text-white tracking-tight group-hover:text-pink-200 transition-colors">
+                      {title}
+                    </h4>
+                    <p className="text-pink-100 text-sm leading-relaxed">{desc}</p>
+                  </div>
+
+                  {/* Right accent dot */}
+                  <div
+                    className="shrink-0 mt-2 w-2 h-2 rounded-full"
+                    style={{ background: 'rgba(236, 72, 153, 0.50)' }}
+                  />
+                </div>
+              ))}
+            </div>
+
+            <p className="text-pink-200 text-sm text-center pt-4 border-t" style={{ borderColor: 'rgba(236,72,153,0.20)' }}>
+              A sustainable, gradual lifestyle shift yields the best long-term results for hormonal health.{' '}
+              <strong className="text-pink-300">No crash diets. No dependency. Just results.</strong>
+            </p>
+          </div>
         </section>
 
       </main>

@@ -4,7 +4,7 @@ import Navbar from '../components/Navbar';
 import axios from 'axios';
 import { ArrowLeft, TrendingUp, Activity, User, Target } from 'lucide-react';
 import AestheticBackground from '../components/AestheticBackground';
-import bgDashboard from '../assets/dashboard.jpeg';
+import bgDashboard from '../assets/dashboard.jpg';
 
 interface HealthDetailProps {
   setIsAuthenticated: (val: boolean) => void;

@@ -6,7 +6,7 @@ import { Mail, Lock, User, ArrowRight, Eye, EyeOff, ArrowLeft, Phone } from 'luc
 
 import logo from '../assets/logo.png';
 import AestheticBackground from '../components/AestheticBackground';
-import bgLanding from '../assets/landingpage.jpeg';
+import bgLanding from '../assets/landingpage.jpg';
 
 
 

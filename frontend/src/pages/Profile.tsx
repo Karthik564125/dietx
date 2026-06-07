@@ -5,7 +5,7 @@ import axios from 'axios';
 import { Mail, Shield, Save, CheckCircle, ArrowLeft, Activity, Phone, User } from 'lucide-react';
 import toast from 'react-hot-toast';
 import AestheticBackground from '../components/AestheticBackground';
-import bgDashboard from '../assets/dashboard.jpeg';
+import bgDashboard from '../assets/dashboard.jpg';
 
 interface ProfileProps {
   setIsAuthenticated: (val: boolean) => void;

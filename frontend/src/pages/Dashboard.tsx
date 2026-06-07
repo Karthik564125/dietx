@@ -3,11 +3,23 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import axios from 'axios';
 import { Calendar, Salad, TrendingUp, Plus, ChevronRight, Activity, Zap, ArrowUpRight, Save, Moon, Sparkles, Search, Trash2, Utensils, Coffee, Sun, MoonStar, Target, ChevronDown, Minus } from 'lucide-react';
-import { FOOD_DATA, type Food } from '../data/foods';
+import { CALORIE_REFERENCE_DATA, type ReferenceFood } from '../data/calorieReference';
+
+const REFERENCE_FOODS: ReferenceFood[] = (() => {
+  const unique = new Map<string, ReferenceFood>();
+  CALORIE_REFERENCE_DATA.forEach(cat => {
+    cat.items.forEach(item => {
+      if (!unique.has(item.name)) {
+        unique.set(item.name, item);
+      }
+    });
+  });
+  return Array.from(unique.values());
+})();
 import AestheticBackground from '../components/AestheticBackground';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
-import bgDashboard from '../assets/dashboard.jpeg';
+import bgDashboard from '../assets/dashboard.jpg';
 import CalorieReferenceGuide from '../components/CalorieReferenceGuide';
 
 interface DashboardProps { setIsAuthenticated: (val: boolean) => void; }
@@ -112,7 +124,7 @@ const Dashboard = ({ setIsAuthenticated }: DashboardProps) => {
   const [showAddFood, setShowAddFood] = useState(false);
   const [selectedMealType, setSelectedMealType] = useState('Breakfast');
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedFood, setSelectedFood] = useState<Food | null>(null);
+  const [selectedFood, setSelectedFood] = useState<ReferenceFood | null>(null);
   const [quantity, setQuantity] = useState('1');
   const [isPremium, setIsPremium] = useState(false);
   const [savingTracking, setSavingTracking] = useState<string | null>(null);
@@ -162,15 +174,15 @@ const Dashboard = ({ setIsAuthenticated }: DashboardProps) => {
     const qty = Number(quantity);
     const entry: FoodEntry = {
       id: Date.now().toString(),
-      foodId: selectedFood.id,
+      foodId: selectedFood.name,
       name: selectedFood.name,
       quantity: qty,
-      calories: Math.round(selectedFood.caloriesPerUnit * qty),
-      protein: Number((selectedFood.protein * qty).toFixed(1)),
-      carbs: Number((selectedFood.carbs * qty).toFixed(1)),
-      fats: Number((selectedFood.fats * qty).toFixed(1)),
+      calories: Math.round(selectedFood.kcal * qty),
+      protein: 0,
+      carbs: 0,
+      fats: 0,
       mealType: selectedMealType,
-      unit: selectedFood.unit,
+      unit: selectedFood.qty,
       time: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }),
     };
     const updated = [...foodLog, entry];
@@ -221,7 +233,7 @@ const Dashboard = ({ setIsAuthenticated }: DashboardProps) => {
     return foodLog.filter(f => f.mealType === type).reduce((s, e) => s + e.calories, 0);
   };
 
-  const filteredFoods = FOOD_DATA.filter(f =>
+  const filteredFoods = REFERENCE_FOODS.filter(f =>
     f.name.toLowerCase().includes(searchQuery.toLowerCase())
   ).slice(0, 8);
 
@@ -273,7 +285,7 @@ const Dashboard = ({ setIsAuthenticated }: DashboardProps) => {
           {[
             { title: 'Health', desc: 'Analytics', points: 'BMI · Biometrics', icon: <Activity size={24} />, iconBg: 'bg-blue-50', text: 'text-blue-600', cardBg: 'border-blue-100 hover:bg-blue-50/30', path: '/health' },
             { title: 'Nutrition', desc: 'Diet Plan', points: 'Meal Guides · Recipes', icon: <Salad size={24} />, iconBg: 'bg-emerald-50', text: 'text-emerald-600', cardBg: 'border-emerald-100 hover:bg-emerald-50/30', path: '/nutrition' },
-            { title: 'Sessions', desc: 'Booking', points: 'Consultations · Chat', icon: <Calendar size={24} />, iconBg: 'bg-amber-50', text: 'text-amber-600', cardBg: 'border-amber-100 hover:bg-amber-50/30', path: '/sessions' }
+            { title: 'One to One Consultancy', desc: 'Booking', points: 'Consultations · Chat', icon: <Calendar size={24} />, iconBg: 'bg-amber-50', text: 'text-amber-600', cardBg: 'border-amber-100 hover:bg-amber-50/30', path: '/sessions' }
           ].map((item, i) => (
             <motion.button
               key={i}
@@ -486,15 +498,15 @@ const Dashboard = ({ setIsAuthenticated }: DashboardProps) => {
                                       <div className="absolute top-full left-0 w-full mt-4 bg-slate-900 border border-white/10 rounded-[2.5rem] overflow-hidden shadow-2xl z-[100] animate-in fade-in slide-in-from-top-4 backdrop-blur-3xl">
                                         {filteredFoods.length > 0 ? filteredFoods.map(f => (
                                           <button
-                                            key={f.id}
+                                            key={f.name}
                                             onClick={() => { setSelectedFood(f); setSearchQuery(f.name); }}
                                             className="w-full px-8 py-5 text-left hover:bg-emerald-500 group/item transition-all border-b border-white/5 last:border-0 flex justify-between items-center"
                                           >
                                             <div>
                                               <p className="font-bold text-sm text-slate-200 group-hover/item:text-white transition-colors">{f.name}</p>
-                                              <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest mt-1 group-hover/item:text-emerald-100 transition-colors">{f.cuisine} · {f.category}</p>
+                                              <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest mt-1 group-hover/item:text-emerald-100 transition-colors">Portion: {f.qty}</p>
                                             </div>
-                                            <div className="text-[10px] font-black text-slate-500 group-hover/item:text-white transition-colors">{f.caloriesPerUnit} <span className="opacity-40">cal</span></div>
+                                            <div className="text-[10px] font-black text-slate-500 group-hover/item:text-white transition-colors">{f.kcal} <span className="opacity-40">cal</span></div>
                                           </button>
                                         )) : <div className="px-8 py-8 text-slate-600 text-sm italic text-center">No results for "{searchQuery}"</div>}
                                       </div>
@@ -517,7 +529,7 @@ const Dashboard = ({ setIsAuthenticated }: DashboardProps) => {
                                               `}</style>
                                       <input
                                         type="number"
-                                        placeholder={selectedFood ? `How many ${selectedFood.unit}s?` : "Enter amount"}
+                                        placeholder={selectedFood ? `Portions (Reference: ${selectedFood.qty})` : "Enter amount"}
                                         className="w-full h-full bg-white/5 border border-white/10 text-white px-6 py-5 rounded-3xl outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500/50 font-black text-xl transition-all disabled:opacity-50"
                                         value={quantity}
                                         onChange={e => setQuantity(e.target.value)}
@@ -528,37 +540,15 @@ const Dashboard = ({ setIsAuthenticated }: DashboardProps) => {
 
                                     {/* Unit / Calory Box */}
                                     <div className="flex-1 bg-emerald-500 text-white px-4 py-5 rounded-3xl flex flex-col items-center justify-center shadow-lg shadow-emerald-500/20">
-                                      <p className="text-2xl font-black leading-none">{selectedFood ? Math.round(selectedFood.caloriesPerUnit * Number(quantity)) : 0}</p>
+                                      <p className="text-2xl font-black leading-none">{selectedFood ? Math.round(selectedFood.kcal * Number(quantity)) : 0}</p>
                                       <p className="text-[9px] font-black uppercase tracking-widest mt-1 opacity-80">
-                                        {selectedFood ? `${selectedFood.unit} / KCAL` : "UNIT / KCAL"}
+                                        {selectedFood ? `${selectedFood.qty} / KCAL` : "PORTION / KCAL"}
                                       </p>
                                     </div>
                                   </div>
                                 </div>
                               </div>
 
-                              {/* Nutrition Breakdown */}
-                              {selectedFood && (
-                                <motion.div
-                                  initial={{ opacity: 0, y: 10 }}
-                                  animate={{ opacity: 1, y: 0 }}
-                                  className="space-y-3"
-                                >
-                                  {[
-                                    { label: 'Prot', val: (selectedFood.protein * Number(quantity)).toFixed(1), color: 'text-blue-400', bar: 'bg-blue-500' },
-                                    { label: 'Carb', val: (selectedFood.carbs * Number(quantity)).toFixed(1), color: 'text-amber-400', bar: 'bg-amber-500' },
-                                    { label: 'Fat', val: (selectedFood.fats * Number(quantity)).toFixed(1), color: 'text-rose-400', bar: 'bg-rose-500' }
-                                  ].map(m => (
-                                    <div key={m.label} className="p-3 bg-white/5 border border-white/5 rounded-2xl flex items-center gap-6">
-                                      <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest w-8 shrink-0">{m.label}</span>
-                                      <div className="flex-1 h-1 bg-white/5 rounded-full overflow-hidden">
-                                        <div className={`h-full ${m.bar} w-2/3 rounded-full opacity-60`}></div>
-                                      </div>
-                                      <span className={`text-xs font-black ${m.color} w-12 text-right shrink-0`}>{m.val}g</span>
-                                    </div>
-                                  ))}
-                                </motion.div>
-                              )}
                             </div>
                           </div>
 

@@ -1,0 +1,53 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String?
+  createdAt DateTime @default(now()) @map("createdat")
+
+  // Health Profile
+  age             Int?
+  gender          String?
+  height          Float? // stored in cm
+  heightUnit      String? @map("heightunit") // "cm" or "ft_in"
+  weight          Float? // stored in kg
+  weightUnit      String? @map("weightunit") // "kg" or "lbs"
+  activityLevel   String? @map("activitylevel")
+  bmi             Float?
+  dailyCalories   Int?    @map("dailycalories")
+  profileComplete Boolean @default(false) @map("profilecomplete")
+
+  // Daily Tracking (Last recorded)
+  waterIntake   Int     @default(0) @map("waterintake")
+  sleepHours    Float   @default(0) @map("sleephours")
+  lastEntryDate String? @map("lastentrydate") // YYYY-MM-DD
+  phone         String?
+
+  @@map("user")
+}
+
+model NutritionPlanPurchase {
+  id                String   @id @default(cuid())
+  userId            String
+  email             String
+  phone             String?
+  razorpayOrderId   String
+  razorpayPaymentId String
+  amount            Int
+  status            String
+  createdAt         DateTime @default(now())
+}

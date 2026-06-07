@@ -9,7 +9,7 @@ const LandingPage = () => {
    const navigate = useNavigate();
 
    return (
-      <div className="h-screen overflow-hidden bg-premium flex flex-col relative">
+      <div className="min-h-screen lg:h-screen lg:overflow-hidden bg-premium flex flex-col relative">
 
          <AestheticBackground bgImage={bgLanding} />
 
@@ -32,30 +32,41 @@ const LandingPage = () => {
          </nav>
 
          {/* Hero Section */}
-         <main className="relative z-10 flex-1 flex flex-col lg:flex-row items-center justify-center px-6 py-4 lg:py-0 gap-6 lg:gap-20 max-w-7xl mx-auto w-full min-h-0">
+         <main className="relative z-10 flex-1 flex flex-col lg:flex-row items-center justify-center px-6 py-4 lg:py-0 gap-5 lg:gap-20 max-w-7xl mx-auto w-full">
 
-            {/* Visual Hook (Left on Laptop) */}
-            <div className="flex justify-center lg:justify-end order-1 lg:order-2 shrink-0">
+            {/* Large logo — desktop only */}
+            <div className="hidden lg:flex flex-1 justify-end order-1 lg:order-2">
                <div className="relative group">
                   <div className="absolute inset-0 bg-emerald-500/20 rounded-[3rem] blur-[60px] group-hover:bg-emerald-500/30 transition-all duration-700"></div>
-                  <div className="w-32 h-32 sm:w-64 sm:h-64 lg:w-[32rem] lg:h-[32rem] bg-white/15 backdrop-blur-3xl rounded-[2.5rem] sm:rounded-[4rem] border-4 border-white/30 shadow-2xl flex items-center justify-center relative z-10 overflow-hidden">
+                  <div className="lg:w-[32rem] lg:h-[32rem] bg-white/15 backdrop-blur-3xl rounded-[4rem] border-4 border-white/30 shadow-2xl flex items-center justify-center relative z-10 overflow-hidden">
                      <img src={logo} alt="DietX" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                      <div className="absolute inset-0 bg-gradient-to-tr from-emerald-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
                </div>
             </div>
 
-            {/* Content (Right on Laptop) */}
-            <div className="flex-1 text-center lg:text-left space-y-5 lg:space-y-12 order-2 lg:order-1">
-               <div className="space-y-4 lg:space-y-6">
-                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/20 backdrop-blur-xl text-emerald-300 border border-emerald-400/30 rounded-full text-[10px] font-black uppercase tracking-widest mb-2">
+            {/* Content */}
+            <div className="flex-1 text-center lg:text-left space-y-4 lg:space-y-12 order-2 lg:order-1">
+
+               {/* Logo — mobile only, large and prominent */}
+               <div className="flex justify-center lg:hidden">
+                  <div className="relative group">
+                     <div className="absolute inset-0 bg-emerald-500/20 rounded-[2.5rem] blur-[50px] group-hover:bg-emerald-500/30 transition-all duration-700"></div>
+                     <div className="w-44 h-44 bg-white/15 backdrop-blur-3xl rounded-[2.5rem] border-4 border-white/30 shadow-2xl flex items-center justify-center relative z-10 overflow-hidden">
+                        <img src={logo} alt="DietX" className="w-full h-full object-cover" />
+                     </div>
+                  </div>
+               </div>
+
+               <div className="space-y-3 lg:space-y-6">
+                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/20 backdrop-blur-xl text-emerald-300 border border-emerald-400/30 rounded-full text-[10px] font-black uppercase tracking-widest">
                      <Sparkles size={12} /> The Future of Holistic Health
                   </div>
                   <h1 className="text-4xl sm:text-6xl lg:text-8xl font-black text-white tracking-tighter leading-[0.9] flex flex-col">
                      Heal your body,
                      <span className="text-emerald-400">the holistic way.</span>
                   </h1>
-                  <p className="max-w-xl mx-auto lg:mx-0 text-white/70 font-bold text-xs sm:text-lg lg:text-xl leading-relaxed">
+                  <p className="max-w-xl mx-auto lg:mx-0 text-white/70 font-bold text-xs lg:text-xl leading-relaxed">
                      Experience a science-backed nutrition strategy designed by <span className="text-white font-black">Dt. Madhavi Latha</span> to transform your life and vitality sustainably.
                   </p>
                </div>
@@ -84,8 +95,8 @@ const LandingPage = () => {
                   { icon: <Heart />, title: "Holistic", desc: "Rejuvenation", color: "text-rose-400" }
                ].map((f, i) => (
                   <div key={i} className="flex items-center gap-4 group">
-                     <div className={`${f.color} opacity-80 transition-transform group-hover:scale-110`}>
-                        {React.cloneElement(f.icon as React.ReactElement<any>, { size: 24 })}
+                     <div className={`${f.color} opacity-80 transition-transform group-hover:scale-110 shrink-0`}>
+                        {React.cloneElement(f.icon as React.ReactElement<any>, { size: 22 })}
                      </div>
                      <div>
                         <h3 className="text-[10px] font-black text-white uppercase tracking-widest">{f.title}</h3>

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import axios from 'axios';
-import { ArrowLeft, TrendingUp, Activity, User, Target } from 'lucide-react';
+import { ArrowLeft, Activity, Target } from 'lucide-react';
 import AestheticBackground from '../components/AestheticBackground';
 import bgDashboard from '../assets/dashboard.jpg';
 import { API_BASE_URL } from '../config';
@@ -129,27 +129,7 @@ const HealthDetail = ({ setIsAuthenticated }: HealthDetailProps) => {
           </div>
         </div>
 
-        {/* Detailed Metrics */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-           <div className="glass-card p-8 flex items-center gap-6">
-              <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center shrink-0">
-                <TrendingUp size={24} />
-              </div>
-              <div>
-                <h4 className="font-black text-slate-900">Activity Level</h4>
-                <p className="text-slate-500 font-medium text-sm">{health?.activityLevel?.replace(/([A-Z])/g, ' $1').trim()}</p>
-              </div>
-           </div>
-           <div className="glass-card p-8 flex items-center gap-6">
-              <div className="w-16 h-16 bg-violet-50 text-violet-600 rounded-2xl flex items-center justify-center shrink-0">
-                <User size={24} />
-              </div>
-              <div>
-                <h4 className="font-black text-slate-900">Age & Gender</h4>
-                <p className="text-slate-500 font-medium text-sm">{health?.age} Years · {health?.gender?.charAt(0).toUpperCase() + health?.gender?.slice(1)}</p>
-              </div>
-           </div>
-        </div>
+
       </main>
     </div>
   );

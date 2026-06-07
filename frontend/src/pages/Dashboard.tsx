@@ -247,24 +247,24 @@ const Dashboard = ({ setIsAuthenticated }: DashboardProps) => {
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="flex items-center gap-6 p-4 bg-white/10 backdrop-blur-xl rounded-[2rem] border border-white/20 shadow-sm"
+            className="flex items-center gap-6 p-5 bg-[#FFEBE3] rounded-[2rem] border-2 border-[#FFD4C4] shadow-lg"
           >
-            <div className="flex flex-col items-end pr-6 border-r border-white/20">
-              <span className="text-[9px] font-black text-white/50 uppercase tracking-widest">Current BMI</span>
-              <span className="text-2xl font-black text-white">{health.bmi.toFixed(1)}</span>
+            <div className="flex flex-col items-end pr-6 border-r-2 border-[#FFD4C4]">
+              <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Current BMI</span>
+              <span className="text-2xl font-black text-slate-900">{health.bmi.toFixed(1)}</span>
             </div>
             <div className="flex flex-col items-end">
-              <span className="text-[9px] font-black text-white/50 uppercase tracking-widest">Weight Status</span>
-              <span className={`text-xs font-black uppercase tracking-tighter ${health.bmiCategory === 'Normal' ? 'text-emerald-400' : 'text-amber-400'}`}>{health.bmiCategory}</span>
+              <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Weight Status</span>
+              <span className={`text-xs font-black uppercase tracking-tighter ${health.bmiCategory === 'Normal' ? 'text-emerald-600' : 'text-amber-600'}`}>{health.bmiCategory}</span>
             </div>
           </motion.div>
         </header>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-10">
           {[
-            { title: 'Health', desc: 'Analytics', points: 'BMI · Biometrics', icon: <Activity size={24} />, iconBg: 'bg-blue-50', text: 'text-blue-600', cardBg: 'border-blue-100 hover:bg-blue-50/30', path: '/health' },
-            { title: 'Nutrition', desc: 'Diet Plan', points: 'Meal Guides · Recipes', icon: <Salad size={24} />, iconBg: 'bg-emerald-50', text: 'text-emerald-600', cardBg: 'border-emerald-100 hover:bg-emerald-50/30', path: '/nutrition' },
-            { title: 'One to One Consultancy', desc: 'Booking', points: 'Consultations · Chat', icon: <Calendar size={24} />, iconBg: 'bg-amber-50', text: 'text-amber-600', cardBg: 'border-amber-100 hover:bg-amber-50/30', path: '/sessions' }
+            { title: 'Health', desc: 'Analytics', points: 'BMI · Biometrics', icon: <Activity size={24} />, iconBg: 'bg-blue-50', text: 'text-blue-600', cardBg: 'border-blue-200/80', path: '/health' },
+            { title: 'Nutrition', desc: 'Diet Plan', points: 'Meal Guides · Recipes', icon: <Salad size={24} />, iconBg: 'bg-emerald-50', text: 'text-emerald-600', cardBg: 'border-emerald-200/80', path: '/nutrition' },
+            { title: 'One to One Consultancy', desc: 'Booking', points: 'Consultations · Chat', icon: <Calendar size={24} />, iconBg: 'bg-amber-50', text: 'text-amber-600', cardBg: 'border-amber-200/80', path: '/sessions' }
           ].map((item, i) => (
             <motion.button
               key={i}
@@ -272,17 +272,17 @@ const Dashboard = ({ setIsAuthenticated }: DashboardProps) => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1 }}
               onClick={() => navigate(item.path)}
-              className={`glass-card p-6 sm:p-8 group flex flex-col gap-6 transition-all duration-500 border-2 ${item.cardBg} hover:-translate-y-1`}
+              className={`peach-card p-6 sm:p-8 group flex flex-col gap-6 transition-all duration-500 border-2 ${item.cardBg} hover:-translate-y-1`}
             >
               <div className="flex justify-between items-start w-full">
                 <div className={`w-14 h-14 ${item.iconBg} ${item.text} rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm`}>{item.icon}</div>
-                <div className="w-10 h-10 bg-white/50 rounded-full flex items-center justify-center text-slate-300 group-hover:text-emerald-600 group-hover:bg-white transition-all"><ArrowUpRight size={18} /></div>
+                <div className="w-10 h-10 bg-white/50 rounded-full flex items-center justify-center text-slate-500 group-hover:text-emerald-600 group-hover:bg-white transition-all"><ArrowUpRight size={18} /></div>
               </div>
               <div className="text-left">
                 <h3 className="font-black text-xl text-slate-900 leading-none">{item.title}</h3>
-                <p className="text-xs font-black text-slate-400 uppercase tracking-widest mt-2">{item.desc}</p>
-                <div className="h-px bg-slate-100 w-full my-4"></div>
-                <p className="text-[10px] font-black text-slate-300 uppercase tracking-wider">{item.points}</p>
+                <p className="text-xs font-black text-slate-500 uppercase tracking-widest mt-2">{item.desc}</p>
+                <div className="h-px bg-slate-200 w-full my-4"></div>
+                <p className="text-[10px] font-black text-slate-600 uppercase tracking-wider">{item.points}</p>
               </div>
             </motion.button>
           ))}
@@ -290,7 +290,7 @@ const Dashboard = ({ setIsAuthenticated }: DashboardProps) => {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
           <div className="lg:col-span-3 space-y-10">
-            <section className="glass-card overflow-hidden border-2 border-slate-50 relative group">
+            <section className="peach-card overflow-hidden border-2 border-[#FFD4C4] relative group">
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-400 to-teal-500 opacity-50"></div>
 
               <div className="p-8 sm:p-10 space-y-10">
@@ -315,7 +315,7 @@ const Dashboard = ({ setIsAuthenticated }: DashboardProps) => {
                   <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-stretch">
                     {/* Calorie Overview */}
                     <div className="lg:col-span-8 flex flex-col">
-                      <div className="relative p-6 sm:p-10 bg-emerald-50/30 rounded-[2.5rem] sm:rounded-[3.5rem] border border-emerald-100/50 overflow-hidden group/main h-full flex items-center">
+                      <div className="relative p-6 sm:p-10 bg-[#FFDFD3] rounded-[2.5rem] sm:rounded-[3.5rem] border-2 border-[#FFC8B4] overflow-hidden group/main h-full flex items-center">
                         <div className="absolute -right-20 -top-20 w-64 h-64 bg-emerald-200/20 blur-[80px] rounded-full group-hover/main:scale-110 transition-transform duration-1000"></div>
 
                         <div className="flex flex-col sm:flex-row items-center gap-6 sm:gap-12 relative z-10 w-full">
@@ -394,12 +394,12 @@ const Dashboard = ({ setIsAuthenticated }: DashboardProps) => {
                   {/* Meal Breakdown Row */}
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
                     {[
-                      { name: 'Breakfast', icon: <Coffee size={16} />, color: 'bg-amber-100 text-amber-600', bColor: 'border-amber-100' },
-                      { name: 'Lunch', icon: <Sun size={16} />, color: 'bg-emerald-100 text-emerald-600', bColor: 'border-emerald-100' },
-                      { name: 'Snacks', icon: <Utensils size={16} />, color: 'bg-blue-100 text-blue-600', bColor: 'border-blue-100' },
-                      { name: 'Dinner', icon: <MoonStar size={16} />, color: 'bg-indigo-100 text-indigo-600', bColor: 'border-indigo-100' }
+                      { name: 'Breakfast', icon: <Coffee size={16} />, color: 'bg-amber-100 text-amber-600', bColor: 'border-amber-200' },
+                      { name: 'Lunch', icon: <Sun size={16} />, color: 'bg-emerald-100 text-emerald-600', bColor: 'border-emerald-200' },
+                      { name: 'Snacks', icon: <Utensils size={16} />, color: 'bg-blue-100 text-blue-600', bColor: 'border-blue-200' },
+                      { name: 'Dinner', icon: <MoonStar size={16} />, color: 'bg-indigo-100 text-indigo-600', bColor: 'border-indigo-200' }
                     ].map(meal => (
-                      <div key={meal.name} className={`p-4 sm:p-6 bg-white/80 rounded-[2.5rem] border ${meal.bColor} shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-center gap-3 sm:gap-6 group/meal`}>
+                      <div key={meal.name} className={`p-4 sm:p-6 bg-white rounded-[2.5rem] border-2 ${meal.bColor} shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-center gap-3 sm:gap-6 group/meal`}>
                         <div className={`p-3 sm:p-4 rounded-xl sm:rounded-2xl ${meal.color} group-hover/meal:scale-110 transition-transform`}>
                           {meal.icon}
                         </div>
@@ -547,16 +547,16 @@ const Dashboard = ({ setIsAuthenticated }: DashboardProps) => {
 
                 {/* Section 4: Today's Food Log (Stretched) */}
                 <div className="lg:col-span-12">
-                  <div className="bg-slate-50/50 rounded-[1.75rem] sm:rounded-[2rem] border border-slate-100 flex-1 flex flex-col overflow-hidden">
-                    <div className="p-4 sm:p-6 border-b border-white flex justify-between items-center shrink-0">
-                      <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Today's Food Log</h4>
-                      <div className="px-3 py-1 bg-white rounded-full text-[9px] font-black text-slate-400 border border-slate-100">{foodLog.length} Items</div>
+                  <div className="bg-[#FFF3EE] rounded-[1.75rem] sm:rounded-[2rem] border-2 border-[#FFD4C4] flex-1 flex flex-col overflow-hidden">
+                    <div className="p-4 sm:p-6 border-b-2 border-[#FFD4C4] flex justify-between items-center shrink-0">
+                      <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Today's Food Log</h4>
+                      <div className="px-3 py-1 bg-white rounded-full text-[9px] font-black text-slate-500 border border-slate-200">{foodLog.length} Items</div>
                     </div>
                     <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-4 sm:space-y-6 custom-scrollbar relative">
                       {foodLog.length === 0 ? (
                         <div className="h-full flex flex-col items-center justify-center text-center space-y-6 opacity-40">
                           <div className="w-24 h-24 bg-slate-100 rounded-[2.5rem] flex items-center justify-center text-slate-300 shadow-inner"><Salad size={48} /></div>
-                          <p className="text-sm font-bold text-slate-400 uppercase tracking-[0.2em]">Your log is empty<br /><span className="text-[10px] font-normal lowercase tracking-widest mt-1 opacity-60">Add some delicious meals above</span></p>
+                          <p className="text-sm font-bold text-slate-600 uppercase tracking-[0.2em]">Your log is empty<br /><span className="text-[10px] font-normal lowercase tracking-widest mt-1 opacity-60">Add some delicious meals above</span></p>
                         </div>
                       ) : (
                         <AnimatePresence mode="popLayout">

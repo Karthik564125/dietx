@@ -9,12 +9,12 @@ const LandingPage = () => {
    const navigate = useNavigate();
 
    return (
-      <div className="min-h-screen lg:h-screen lg:overflow-hidden bg-premium flex flex-col relative">
+      <div className="h-screen overflow-hidden bg-premium flex flex-col relative">
 
          <AestheticBackground bgImage={bgLanding} />
 
          {/* Navigation */}
-         <nav className="relative z-50 max-w-7xl mx-auto w-full px-6 py-4 sm:py-8 flex justify-between items-center shrink-0">
+         <nav className="relative z-50 max-w-7xl mx-auto w-full px-6 py-3 sm:py-8 flex justify-between items-center shrink-0">
             <div className="flex items-center gap-3">
                <div className="w-10 h-10 bg-white/20 backdrop-blur-xl rounded-xl shadow-lg flex items-center justify-center p-1.5 border border-white/30">
                   <img src={logo} alt="Logo" className="w-full h-full object-contain" />
@@ -32,13 +32,13 @@ const LandingPage = () => {
          </nav>
 
          {/* Hero Section */}
-         <main className="relative z-10 flex-1 flex flex-col lg:flex-row items-center justify-center px-6 py-8 lg:py-0 gap-12 lg:gap-20 max-w-7xl mx-auto w-full">
+         <main className="relative z-10 flex-1 flex flex-col lg:flex-row items-center justify-center px-6 py-4 lg:py-0 gap-6 lg:gap-20 max-w-7xl mx-auto w-full min-h-0">
 
             {/* Visual Hook (Left on Laptop) */}
-            <div className="flex-1 flex justify-center lg:justify-end order-1 lg:order-2">
+            <div className="flex justify-center lg:justify-end order-1 lg:order-2 shrink-0">
                <div className="relative group">
                   <div className="absolute inset-0 bg-emerald-500/20 rounded-[3rem] blur-[60px] group-hover:bg-emerald-500/30 transition-all duration-700"></div>
-                  <div className="w-40 h-40 sm:w-64 sm:h-64 lg:w-[32rem] lg:h-[32rem] bg-white/15 backdrop-blur-3xl rounded-[2.5rem] sm:rounded-[4rem] border-4 border-white/30 shadow-2xl flex items-center justify-center relative z-10 overflow-hidden">
+                  <div className="w-32 h-32 sm:w-64 sm:h-64 lg:w-[32rem] lg:h-[32rem] bg-white/15 backdrop-blur-3xl rounded-[2.5rem] sm:rounded-[4rem] border-4 border-white/30 shadow-2xl flex items-center justify-center relative z-10 overflow-hidden">
                      <img src={logo} alt="DietX" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                      <div className="absolute inset-0 bg-gradient-to-tr from-emerald-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
@@ -46,7 +46,7 @@ const LandingPage = () => {
             </div>
 
             {/* Content (Right on Laptop) */}
-            <div className="flex-1 text-center lg:text-left space-y-8 lg:space-y-12 order-2 lg:order-1">
+            <div className="flex-1 text-center lg:text-left space-y-5 lg:space-y-12 order-2 lg:order-1">
                <div className="space-y-4 lg:space-y-6">
                   <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/20 backdrop-blur-xl text-emerald-300 border border-emerald-400/30 rounded-full text-[10px] font-black uppercase tracking-widest mb-2">
                      <Sparkles size={12} /> The Future of Holistic Health
@@ -75,8 +75,8 @@ const LandingPage = () => {
          </main>
 
          {/* Footer Features */}
-         <footer className="relative z-10 max-w-7xl mx-auto w-full px-6 py-6 lg:py-10 shrink-0">
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-12 py-6 lg:py-8 border-t border-white/15">
+         <footer className="relative z-10 max-w-7xl mx-auto w-full px-6 py-3 lg:py-10 shrink-0">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-12 py-3 lg:py-8 border-t border-white/15">
                {[
                   { icon: <Zap />, title: "Personalized", desc: "Bio-individual", color: "text-amber-400" },
                   { icon: <Leaf />, title: "Sustainable", desc: "Long-term goal", color: "text-emerald-400" },

@@ -25,6 +25,22 @@
     @apply bg-white/10 backdrop-blur-2xl border border-white/25 shadow-[0_8px_32px_rgba(0,0,0,0.25)] rounded-[2.5rem] transition-all duration-500 hover:shadow-[0_16px_48px_rgba(16,185,129,0.2)] hover:-translate-y-1 hover:bg-white/15 hover:border-white/40;
   }
 
+  .peach-card {
+    background-color: #FFEBE3;
+    backdrop-filter: blur(24px);
+    border: 2px solid #FFD4C4;
+    box-shadow: 0 10px 30px -5px rgba(255, 120, 80, 0.12);
+    border-radius: 2.5rem;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .peach-card:hover {
+    background-color: #FFF2EB;
+    border-color: #FFC0AA;
+    box-shadow: 0 20px 40px -10px rgba(255, 120, 80, 0.22);
+    transform: translateY(-4px);
+  }
+
   .glass-nav {
     @apply sticky top-0 z-40 px-6 py-4 bg-black/30 backdrop-blur-2xl border-b border-white/10 shadow-sm flex justify-between items-center transition-all duration-300;
   }

@@ -20,6 +20,7 @@ import AestheticBackground from '../components/AestheticBackground';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import bgDashboard from '../assets/dashboard.jpg';
+import { API_BASE_URL } from '../config';
 
 interface DashboardProps { setIsAuthenticated: (val: boolean) => void; }
 
@@ -137,7 +138,7 @@ const Dashboard = ({ setIsAuthenticated }: DashboardProps) => {
     const token = localStorage.getItem('token');
     if (!token) { navigate('/auth'); return; }
     try {
-      const res = await axios.get('http://localhost:5001/api/health-profile', {
+      const res = await axios.get(`${API_BASE_URL}/api/health-profile`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.data.profileComplete) { navigate('/onboarding'); return; }

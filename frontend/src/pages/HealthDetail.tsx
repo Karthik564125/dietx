@@ -5,6 +5,7 @@ import axios from 'axios';
 import { ArrowLeft, TrendingUp, Activity, User, Target } from 'lucide-react';
 import AestheticBackground from '../components/AestheticBackground';
 import bgDashboard from '../assets/dashboard.jpg';
+import { API_BASE_URL } from '../config';
 
 interface HealthDetailProps {
   setIsAuthenticated: (val: boolean) => void;
@@ -18,7 +19,7 @@ const HealthDetail = ({ setIsAuthenticated }: HealthDetailProps) => {
     const token = localStorage.getItem('token');
     if (!token) return;
 
-    axios.get('http://localhost:5001/api/health-profile', {
+    axios.get(`${API_BASE_URL}/api/health-profile`, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => setHealth(res.data.health))

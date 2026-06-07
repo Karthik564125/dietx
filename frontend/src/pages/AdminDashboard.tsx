@@ -23,6 +23,7 @@ import {
 
 import logo from '../assets/logo.png';
 import AestheticBackground from '../components/AestheticBackground';
+import { API_BASE_URL } from '../config';
 
 const AdminDashboard = ({ setIsAuthenticated }: { setIsAuthenticated: (val: boolean) => void }) => {
   const navigate = useNavigate();
@@ -38,7 +39,7 @@ const AdminDashboard = ({ setIsAuthenticated }: { setIsAuthenticated: (val: bool
     if (!token) { navigate('/auth'); return; }
 
     try {
-      const res = await axios.get('http://localhost:5001/api/admin/data', {
+      const res = await axios.get(`${API_BASE_URL}/api/admin/data`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setData(res.data.data);

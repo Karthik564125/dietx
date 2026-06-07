@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 import { MessageCircle, ArrowLeft, Sparkles, Loader2, CheckCircle2, Clock, Heart, Leaf, UserCheck, ChevronRight } from 'lucide-react';
 import AestheticBackground from '../components/AestheticBackground';
 import bgDashboard from '../assets/dashboard.jpg';
+import { API_BASE_URL } from '../config';
 
 interface SessionsProps {
   setIsAuthenticated: (val: boolean) => void;
@@ -56,7 +57,7 @@ const Sessions = ({ setIsAuthenticated }: SessionsProps) => {
     const token = localStorage.getItem('token');
     if (!token) return;
 
-    axios.get('http://localhost:5001/api/health-profile', {
+    axios.get(`${API_BASE_URL}/api/health-profile`, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => {
@@ -81,7 +82,7 @@ const Sessions = ({ setIsAuthenticated }: SessionsProps) => {
       }
 
       const { data } = await axios.post(
-        'http://localhost:5001/api/payment/create-order',
+        `${API_BASE_URL}/api/payment/create-order`,
         { amount: 499 },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -98,7 +99,7 @@ const Sessions = ({ setIsAuthenticated }: SessionsProps) => {
         handler: async (response: any) => {
           try {
             const verifyRes = await axios.post(
-              'http://localhost:5001/api/payment/verify',
+              `${API_BASE_URL}/api/payment/verify`,
               {
                 ...response,
                 userId: user?.id,

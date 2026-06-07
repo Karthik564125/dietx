@@ -7,6 +7,7 @@ import { ArrowLeft, Salad, Flame, PieChart, Info, Lock, Loader2 } from 'lucide-r
 import AestheticBackground from '../components/AestheticBackground';
 import bgDashboard from '../assets/dashboard.jpg';
 import toast from 'react-hot-toast';
+import { API_BASE_URL } from '../config';
 
 declare global {
   interface Window {
@@ -136,7 +137,7 @@ const NutritionDetail = ({ setIsAuthenticated }: NutritionDetailProps) => {
 
       // 1. Create Order in Backend
       const { data } = await axios.post(
-        'http://localhost:5001/api/payment/create-order',
+        `${API_BASE_URL}/api/payment/create-order`,
         { amount },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -155,7 +156,7 @@ const NutritionDetail = ({ setIsAuthenticated }: NutritionDetailProps) => {
           try {
             // 3. Verify Payment in Backend
             const verifyRes = await axios.post(
-              'http://localhost:5001/api/payment/verify',
+              `${API_BASE_URL}/api/payment/verify`,
               {
                 ...response,
                 userId: user?.id,
@@ -169,7 +170,7 @@ const NutritionDetail = ({ setIsAuthenticated }: NutritionDetailProps) => {
             if (verifyRes.data.success) {
               toast.success('Payment Successful!');
               // Re-fetch health profile to update states
-              axios.get('http://localhost:5001/api/health-profile', {
+              axios.get(`${API_BASE_URL}/api/health-profile`, {
                 headers: { Authorization: `Bearer ${token}` }
               })
                 .then(res => {
@@ -214,7 +215,7 @@ const NutritionDetail = ({ setIsAuthenticated }: NutritionDetailProps) => {
     const token = localStorage.getItem('token');
     if (!token) return;
 
-    axios.get('http://localhost:5001/api/health-profile', {
+    axios.get(`${API_BASE_URL}/api/health-profile`, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => {

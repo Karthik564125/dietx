@@ -7,6 +7,7 @@ import { Mail, Lock, User, ArrowRight, Eye, EyeOff, ArrowLeft, Phone } from 'luc
 import logo from '../assets/logo.png';
 import AestheticBackground from '../components/AestheticBackground';
 import bgLanding from '../assets/landingpage.jpg';
+import { API_BASE_URL } from '../config';
 
 
 
@@ -61,7 +62,7 @@ const AuthPage = ({ setAuth }: AuthPageProps) => {
 
     try {
       if (isLogin) {
-        const res = await axios.post('http://localhost:5001/api/login', {
+        const res = await axios.post(`${API_BASE_URL}/api/login`, {
           email: formData.email,
           password: formData.password
         });
@@ -78,7 +79,7 @@ const AuthPage = ({ setAuth }: AuthPageProps) => {
         }
 
       } else {
-        await axios.post('http://localhost:5001/api/users', {
+        await axios.post(`${API_BASE_URL}/api/users`, {
           name: formData.name,
           email: formData.email,
           password: formData.password,
@@ -86,7 +87,7 @@ const AuthPage = ({ setAuth }: AuthPageProps) => {
           gender: formData.gender
         });
 
-        const res = await axios.post('http://localhost:5001/api/login', {
+        const res = await axios.post(`${API_BASE_URL}/api/login`, {
           email: formData.email,
           password: formData.password
         });

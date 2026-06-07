@@ -6,6 +6,7 @@ import { Mail, Shield, Save, CheckCircle, ArrowLeft, Activity, Phone, User } fro
 import toast from 'react-hot-toast';
 import AestheticBackground from '../components/AestheticBackground';
 import bgDashboard from '../assets/dashboard.jpg';
+import { API_BASE_URL } from '../config';
 
 interface ProfileProps {
   setIsAuthenticated: (val: boolean) => void;
@@ -28,7 +29,7 @@ const Profile = ({ setIsAuthenticated }: ProfileProps) => {
     const token = localStorage.getItem('token');
     if (!token) { navigate('/auth'); return; }
 
-    axios.get('http://localhost:5001/api/health-profile', {
+    axios.get(`${API_BASE_URL}/api/health-profile`, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => {
@@ -50,7 +51,7 @@ const Profile = ({ setIsAuthenticated }: ProfileProps) => {
 
     setIsUpdating(true);
     try {
-      await axios.post('http://localhost:5001/api/update-profile', formData, {
+      await axios.post(`${API_BASE_URL}/api/update-profile`, formData, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setSuccess(true);

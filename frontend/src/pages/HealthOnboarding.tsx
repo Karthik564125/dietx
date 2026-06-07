@@ -4,6 +4,7 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import logo from '../assets/logo.png';
 import AestheticBackground from '../components/AestheticBackground';
+import { API_BASE_URL } from '../config';
 
 type Gender = 'male' | 'female' | 'other' | '';
 type ActivityLevel = 'sedentary' | 'light' | 'moderate' | 'active' | 'veryActive' | '';
@@ -92,7 +93,7 @@ export default function HealthOnboarding() {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token && !hasFetched) {
-      axios.get('http://localhost:5001/api/health-profile', {
+      axios.get(`${API_BASE_URL}/api/health-profile`, {
         headers: { Authorization: `Bearer ${token}` }
       }).then(res => {
         const d = res.data;
@@ -158,7 +159,7 @@ export default function HealthOnboarding() {
       if (useImperial) { payload.feet = heightFt; payload.inches = heightIn; payload.weight = weightLbs; }
       else { payload.height = heightCm; payload.weight = weightKg; }
 
-      const res = await axios.post('http://localhost:5001/api/health-profile', payload, {
+      const res = await axios.post(`${API_BASE_URL}/api/health-profile`, payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const stored = JSON.parse(localStorage.getItem('user') || '{}');

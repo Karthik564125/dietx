@@ -11,6 +11,19 @@ export interface CalorieCategory {
 
 export const CALORIE_REFERENCE_DATA: CalorieCategory[] = [
   {
+    title: "Breakfast",
+    items: [
+      { name: "Egg Toast", qty: "1", kcal: 200 },
+      { name: "Veg Sandwich Plain", qty: "1", kcal: 150 },
+      { name: "Paneer Sandwich", qty: "1", kcal: 250 },
+      { name: "Avocado Toast", qty: "1", kcal: 220 },
+      { name: "Veg Omlette", qty: "1", kcal: 110 },
+      { name: "Egg Burji", qty: "2", kcal: 220 },
+      { name: "Boiled Egg", qty: "1", kcal: 78 },
+      { name: "Egg Dosa", qty: "1", kcal: 220 },
+    ],
+  },
+  {
     title: "South Indian Breakfast",
     items: [
       { name: "Idli", qty: "2", kcal: 200 },

@@ -110,7 +110,7 @@ const AuthPage = ({ setAuth }: AuthPageProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-premium relative overflow-hidden flex flex-col items-center justify-center p-4 pt-16 sm:pt-4">
+    <div className="h-screen h-[100dvh] bg-premium relative overflow-hidden flex flex-col items-center justify-center p-4 pt-12 sm:pt-4">
       
       <AestheticBackground bgImage={bgLanding} />
 
@@ -124,41 +124,41 @@ const AuthPage = ({ setAuth }: AuthPageProps) => {
         <ArrowLeft size={14} /> Back
       </button>
 
-      <div className="w-full max-w-md flex flex-col items-center gap-4 sm:gap-6 relative z-10">
+      <div className="w-full max-w-md flex flex-col items-center gap-2 sm:gap-6 relative z-10">
         {/* Brand Header */}
         <div 
-          className="flex flex-col sm:flex-row items-center gap-3 sm:gap-6 cursor-pointer group"
+          className="flex flex-col sm:flex-row items-center gap-1.5 sm:gap-6 cursor-pointer group"
           onClick={() => navigate('/')}
         >
-          <div className="w-16 h-16 sm:w-32 sm:h-32 flex items-center justify-center transition-transform group-hover:scale-105">
+          <div className="w-12 h-12 sm:w-32 sm:h-32 flex items-center justify-center transition-transform group-hover:scale-105">
              <img src={logo} alt="DietX Logo" className="w-full h-full object-contain rounded-3xl" />
           </div>
           <div className="flex flex-col items-center sm:items-start text-center sm:text-left">
-            <span className="text-3xl sm:text-6xl font-black text-white tracking-tighter leading-none">
+            <span className="text-2xl sm:text-6xl font-black text-white tracking-tighter leading-none">
               DIET<span className="text-emerald-400">X</span>
             </span>
             <span className="text-[10px] sm:text-base font-black text-white/50 uppercase tracking-widest mt-1">Holistic Wellness</span>
           </div>
         </div>
 
-        <div className="glass-card w-full p-6 sm:p-10 flex flex-col gap-5">
+        <div className="glass-card w-full p-4 sm:p-10 flex flex-col gap-3 sm:gap-5">
 
           <div className="text-center">
-            <h2 className="text-2xl font-black text-white">
+            <h2 className="text-xl sm:text-2xl font-black text-white">
               {isLogin ? 'Welcome back' : 'Join us'}
             </h2>
-            <p className="text-xs text-white/60 font-medium mt-1">
+            <p className="text-[10px] sm:text-xs text-white/60 font-medium mt-0.5">
               {isLogin ? 'Please enter your details to sign in' : 'Start your holistic health journey'}
             </p>
           </div>
 
           {error && (
-            <div className="p-3 bg-red-500/20 border border-red-400/30 text-red-300 text-[10px] rounded-xl text-center font-bold">
+            <div className="p-2.5 bg-red-500/20 border border-red-400/30 text-red-300 text-[9px] sm:text-[10px] rounded-xl text-center font-bold">
               {error}
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-2.5 sm:gap-3">
 
             <div className={`transition-all duration-300 overflow-hidden ${!isLogin ? 'max-h-16 opacity-100' : 'max-h-0 opacity-0 pointer-events-none'}`}>
               <div className="relative">
@@ -166,7 +166,7 @@ const AuthPage = ({ setAuth }: AuthPageProps) => {
                 <input
                   type="text"
                   placeholder="Full Name"
-                  className="input-field pl-12 py-3 text-sm"
+                  className="input-field pl-12 py-2 sm:py-3 text-sm"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   required={!isLogin}
@@ -180,7 +180,7 @@ const AuthPage = ({ setAuth }: AuthPageProps) => {
                 <input
                   type="tel"
                   placeholder="Phone Number"
-                  className="input-field pl-12 py-3 text-sm"
+                  className="input-field pl-12 py-2 sm:py-3 text-sm"
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                   required={!isLogin}
@@ -222,7 +222,7 @@ const AuthPage = ({ setAuth }: AuthPageProps) => {
               <input
                 type="email"
                 placeholder="Email Address"
-                className="input-field pl-12 py-3 text-sm"
+                className="input-field pl-12 py-2 sm:py-3 text-sm"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 required
@@ -234,7 +234,7 @@ const AuthPage = ({ setAuth }: AuthPageProps) => {
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="Password"
-                className="input-field pl-12 pr-12 py-3 text-sm"
+                className="input-field pl-12 pr-12 py-2 sm:py-3 text-sm"
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 required
@@ -257,7 +257,7 @@ const AuthPage = ({ setAuth }: AuthPageProps) => {
             <button
               type="submit"
               disabled={loading}
-              className="btn-primary mt-2 py-3 text-sm"
+              className="btn-primary mt-1 py-2.5 sm:py-3 text-sm"
             >
               {loading ? 'Processing...' : (isLogin ? 'Sign In' : 'Sign Up')}
               {!loading && <ArrowRight size={16} />}
@@ -265,8 +265,8 @@ const AuthPage = ({ setAuth }: AuthPageProps) => {
 
           </form>
 
-          <div className="text-center pt-4 border-t border-white/10">
-            <p className="text-xs text-white/50 font-medium">
+          <div className="text-center pt-2 sm:pt-4 border-t border-white/10">
+            <p className="text-[11px] sm:text-xs text-white/50 font-medium">
               {isLogin ? "New to DietX? " : "Already have an account? "}
               <button
                 onClick={handleToggle}

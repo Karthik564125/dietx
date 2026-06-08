@@ -49,5 +49,6 @@ model NutritionPlanPurchase {
   razorpayPaymentId String
   amount            Int
   status            String
+  planName          String?
   createdAt         DateTime @default(now())
 }

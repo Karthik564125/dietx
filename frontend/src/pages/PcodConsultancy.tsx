@@ -1,9 +1,18 @@
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import AestheticBackground from '../components/AestheticBackground';
-import { ArrowLeft, ArrowRight, Heart, Leaf, Moon, Baby, Pill, Info, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Heart, Leaf, Moon, Baby, Pill, Info, CheckCircle2, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import axios from 'axios';
+import { API_BASE_URL } from '../config';
 import pcodBg from '../assets/pcod.jpg';
+
+declare global {
+  interface Window {
+    Razorpay: any;
+  }
+}
 
 const WHAT_YOU_GET = [
   'Dedicated 1-on-1 session with Dt. Madhavi Latha',
@@ -87,12 +96,105 @@ const infoCardStyle = {
   boxShadow: '0 6px 28px rgba(236,72,153,0.14), 0 2px 12px rgba(0,0,0,0.45)',
 };
 
-export default function PcodConsultancy() {
+interface PcodConsultancyProps {
+  setIsAuthenticated: (val: boolean) => void;
+}
+
+export default function PcodConsultancy({ setIsAuthenticated }: PcodConsultancyProps) {
   const navigate = useNavigate();
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    axios.get(`${API_BASE_URL}/api/health-profile`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(res => {
+        setUser({
+          id: res.data.userId || '',
+          name: res.data.name,
+          email: res.data.email,
+          phone: res.data.phone,
+          isPcodUnlocked: res.data.isPcodUnlocked
+        });
+      })
+      .catch(console.error);
+  }, []);
+
+  const handlePayment = async () => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        toast.error('Please log in to make a payment');
+        return;
+      }
+
+      const { data } = await axios.post(
+        `${API_BASE_URL}/api/payment/create-order`,
+        { amount: 99 },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      const { order } = data;
+
+      const options = {
+        key: 'rzp_test_SnyXd605r6Yfse',
+        amount: order.amount,
+        currency: order.currency,
+        name: 'Diet X PCOD Consultancy',
+        description: '1-on-1 PCOD/PCOS Consultation with Dt. Madhavi Latha',
+        order_id: order.id,
+        handler: async (response: any) => {
+          try {
+            const verifyRes = await axios.post(
+              `${API_BASE_URL}/api/payment/verify`,
+              {
+                ...response,
+                userId: user?.id,
+                email: user?.email,
+                phone: user?.phone || response.contact,
+                amount: 99,
+                planName: 'pcod_consultancy'
+              },
+              { headers: { Authorization: `Bearer ${token}` } }
+            );
+
+            if (verifyRes.data.success) {
+              toast.success('Payment Successful! Your PCOD Consultation is Booked.');
+              setUser((prev: any) => ({ ...prev, isPcodUnlocked: true }));
+            }
+          } catch (err) {
+            console.error(err);
+            toast.error('Payment verification failed');
+          }
+        },
+        prefill: {
+          name: user?.name || '',
+          email: user?.email || '',
+          contact: user?.phone || '',
+        },
+        theme: {
+          color: '#db2777',
+        },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    } catch (error) {
+      console.error('Payment initiation failed', error);
+      toast.error('Failed to initiate payment');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-premium flex flex-col relative overflow-hidden">
-      <Navbar setIsAuthenticated={() => { }} />
+      <Navbar setIsAuthenticated={setIsAuthenticated} />
       <AestheticBackground bgImage={pcodBg} />
 
       <main className="max-w-7xl mx-auto px-6 flex-1 flex flex-col justify-center py-14 sm:py-20 animate-in fade-in duration-700">
@@ -191,31 +293,56 @@ export default function PcodConsultancy() {
                 <p className="text-pink-200 text-xs">with Dt. Madhavi Latha</p>
               </div>
 
-              <div className="space-y-1">
-                <div className="flex items-end gap-2">
-                  <span className="text-4xl font-black text-white">₹99</span>
-                  <span className="text-pink-300 text-sm pb-1">/ Consultation</span>
-                </div>
-                <p className="text-pink-100 text-sm leading-relaxed">
-                  Includes a full initial assessment, personalised plan, and a follow-up check-in.
-                </p>
-              </div>
+              {user?.isPcodUnlocked ? (
+                <>
+                  <div className="space-y-2">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-gradient-to-r from-emerald-600 to-teal-500 text-white rounded-full text-[10px] font-black uppercase tracking-widest shadow-xl">
+                      <CheckCircle2 size={12} /> Consultation Unlocked
+                    </span>
+                    <p className="text-pink-100 text-sm leading-relaxed mt-2">
+                      Your PCOD/PCOS consultation is booked! Tap below to start your private session on WhatsApp.
+                    </p>
+                  </div>
 
-              <ul className="space-y-2 text-sm text-pink-100">
-                {['45-min consultation'].map((f) => (
-                  <li key={f} className="flex gap-2 items-center">
-                    <Heart size={12} className="text-pink-400 shrink-0" />
-                    {f}
-                  </li>
-                ))}
-              </ul>
+                  <a
+                    href="https://wa.me/919100101921?text=Hi%20I%20have%20booked%20the%20PCOD%20Consultation.%20Please%20guide%20me!"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2 text-sm text-center shadow-lg hover:-translate-y-0.5"
+                  >
+                    Start Chat Now <ArrowRight size={16} />
+                  </a>
+                </>
+              ) : (
+                <>
+                  <div className="space-y-1">
+                    <div className="flex items-end gap-2">
+                      <span className="text-4xl font-black text-white">₹99</span>
+                      <span className="text-pink-300 text-sm pb-1">/ Consultation</span>
+                    </div>
+                    <p className="text-pink-100 text-sm leading-relaxed">
+                      Includes a full initial assessment, personalised plan, and a follow-up check-in.
+                    </p>
+                  </div>
 
-              <button
-                onClick={() => toast.error('Booking flow coming soon!', { icon: '📅' })}
-                className="w-full py-3.5 bg-pink-600 hover:bg-pink-500 text-white font-bold rounded-xl transition-colors flex items-center justify-center gap-2 text-sm"
-              >
-                Book My Session <ArrowRight size={16} />
-              </button>
+                  <ul className="space-y-2 text-sm text-pink-100">
+                    {['45-min consultation'].map((f) => (
+                      <li key={f} className="flex gap-2 items-center">
+                        <Heart size={12} className="text-pink-400 shrink-0" />
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
+
+                  <button
+                    onClick={handlePayment}
+                    disabled={loading}
+                    className="w-full py-3.5 bg-pink-600 hover:bg-pink-500 text-white font-bold rounded-xl transition-colors flex items-center justify-center gap-2 text-sm disabled:opacity-50"
+                  >
+                    {loading ? <Loader2 className="animate-spin" size={16} /> : 'Book My Session'} <ArrowRight size={16} />
+                  </button>
+                </>
+              )}
 
               <p className="text-center text-pink-300 text-[10px] uppercase tracking-widest">
                 Secure · Confidential · Personalised

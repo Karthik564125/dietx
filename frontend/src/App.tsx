@@ -88,7 +88,7 @@ function App() {
         />
           <Route
             path="/pcod-consultancy"
-            element={isAuthenticated ? <PcodConsultancy /> : <Navigate to="/auth" />}
+            element={isAuthenticated ? <PcodConsultancy setIsAuthenticated={setIsAuthenticated} /> : <Navigate to="/auth" />}
           />
           <Route
             path="/admin"

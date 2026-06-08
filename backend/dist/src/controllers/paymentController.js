@@ -33,7 +33,7 @@ const createOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 exports.createOrder = createOrder;
 const verifyPayment = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { razorpay_order_id, razorpay_payment_id, razorpay_signature, userId, email, phone, amount } = req.body;
+        const { razorpay_order_id, razorpay_payment_id, razorpay_signature, userId, email, phone, amount, planName } = req.body;
         const isValid = paymentService_1.PaymentService.verifySignature(razorpay_order_id, razorpay_payment_id, razorpay_signature);
         if (!isValid) {
             return res.status(400).json({ success: false, message: 'Invalid signature' });
@@ -48,6 +48,7 @@ const verifyPayment = (req, res) => __awaiter(void 0, void 0, void 0, function* 
                 razorpayPaymentId: razorpay_payment_id,
                 amount: Number(amount),
                 status: 'completed',
+                planName: planName || null,
             },
         });
         // Also update user's phone if it was provided
@@ -57,10 +58,10 @@ const verifyPayment = (req, res) => __awaiter(void 0, void 0, void 0, function* 
                 data: { phone },
             });
         }
-        // Trigger Email Notification (Non-blocking or handled) - Only for Personal Consultancy (amount >= 299)
+        // Trigger Email Notification (Non-blocking or handled) - Only for Personal Consultancy (amount >= 299 or PCOD consultancy)
         try {
             const fullUser = yield prismaClient_1.default.user.findUnique({ where: { id: userId } });
-            if (Number(amount) >= 299 && fullUser) {
+            if ((Number(amount) >= 299 || planName === 'pcod_consultancy') && fullUser) {
                 yield mailService_1.MailService.sendConsultationMail({
                     user: {
                         id: fullUser.id,

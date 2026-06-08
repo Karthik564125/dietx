@@ -2226,6 +2226,7 @@ export namespace Prisma {
     razorpayPaymentId: string | null
     amount: number | null
     status: string | null
+    planName: string | null
     createdAt: Date | null
   }
 
@@ -2238,6 +2239,7 @@ export namespace Prisma {
     razorpayPaymentId: string | null
     amount: number | null
     status: string | null
+    planName: string | null
     createdAt: Date | null
   }
 
@@ -2250,6 +2252,7 @@ export namespace Prisma {
     razorpayPaymentId: number
     amount: number
     status: number
+    planName: number
     createdAt: number
     _all: number
   }
@@ -2272,6 +2275,7 @@ export namespace Prisma {
     razorpayPaymentId?: true
     amount?: true
     status?: true
+    planName?: true
     createdAt?: true
   }
 
@@ -2284,6 +2288,7 @@ export namespace Prisma {
     razorpayPaymentId?: true
     amount?: true
     status?: true
+    planName?: true
     createdAt?: true
   }
 
@@ -2296,6 +2301,7 @@ export namespace Prisma {
     razorpayPaymentId?: true
     amount?: true
     status?: true
+    planName?: true
     createdAt?: true
     _all?: true
   }
@@ -2395,6 +2401,7 @@ export namespace Prisma {
     razorpayPaymentId: string
     amount: number
     status: string
+    planName: string | null
     createdAt: Date
     _count: NutritionPlanPurchaseCountAggregateOutputType | null
     _avg: NutritionPlanPurchaseAvgAggregateOutputType | null
@@ -2426,6 +2433,7 @@ export namespace Prisma {
     razorpayPaymentId?: boolean
     amount?: boolean
     status?: boolean
+    planName?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["nutritionPlanPurchase"]>
 
@@ -2438,6 +2446,7 @@ export namespace Prisma {
     razorpayPaymentId?: boolean
     amount?: boolean
     status?: boolean
+    planName?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["nutritionPlanPurchase"]>
 
@@ -2450,6 +2459,7 @@ export namespace Prisma {
     razorpayPaymentId?: boolean
     amount?: boolean
     status?: boolean
+    planName?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["nutritionPlanPurchase"]>
 
@@ -2462,10 +2472,11 @@ export namespace Prisma {
     razorpayPaymentId?: boolean
     amount?: boolean
     status?: boolean
+    planName?: boolean
     createdAt?: boolean
   }
 
-  export type NutritionPlanPurchaseOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "email" | "phone" | "razorpayOrderId" | "razorpayPaymentId" | "amount" | "status" | "createdAt", ExtArgs["result"]["nutritionPlanPurchase"]>
+  export type NutritionPlanPurchaseOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "email" | "phone" | "razorpayOrderId" | "razorpayPaymentId" | "amount" | "status" | "planName" | "createdAt", ExtArgs["result"]["nutritionPlanPurchase"]>
 
   export type $NutritionPlanPurchasePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "NutritionPlanPurchase"
@@ -2479,6 +2490,7 @@ export namespace Prisma {
       razorpayPaymentId: string
       amount: number
       status: string
+      planName: string | null
       createdAt: Date
     }, ExtArgs["result"]["nutritionPlanPurchase"]>
     composites: {}
@@ -2911,6 +2923,7 @@ export namespace Prisma {
     readonly razorpayPaymentId: FieldRef<"NutritionPlanPurchase", 'String'>
     readonly amount: FieldRef<"NutritionPlanPurchase", 'Int'>
     readonly status: FieldRef<"NutritionPlanPurchase", 'String'>
+    readonly planName: FieldRef<"NutritionPlanPurchase", 'String'>
     readonly createdAt: FieldRef<"NutritionPlanPurchase", 'DateTime'>
   }
     
@@ -3331,6 +3344,7 @@ export namespace Prisma {
     razorpayPaymentId: 'razorpayPaymentId',
     amount: 'amount',
     status: 'status',
+    planName: 'planName',
     createdAt: 'createdAt'
   };
 
@@ -3568,6 +3582,7 @@ export namespace Prisma {
     razorpayPaymentId?: StringFilter<"NutritionPlanPurchase"> | string
     amount?: IntFilter<"NutritionPlanPurchase"> | number
     status?: StringFilter<"NutritionPlanPurchase"> | string
+    planName?: StringNullableFilter<"NutritionPlanPurchase"> | string | null
     createdAt?: DateTimeFilter<"NutritionPlanPurchase"> | Date | string
   }
 
@@ -3580,6 +3595,7 @@ export namespace Prisma {
     razorpayPaymentId?: SortOrder
     amount?: SortOrder
     status?: SortOrder
+    planName?: SortOrderInput | SortOrder
     createdAt?: SortOrder
   }
 
@@ -3595,6 +3611,7 @@ export namespace Prisma {
     razorpayPaymentId?: StringFilter<"NutritionPlanPurchase"> | string
     amount?: IntFilter<"NutritionPlanPurchase"> | number
     status?: StringFilter<"NutritionPlanPurchase"> | string
+    planName?: StringNullableFilter<"NutritionPlanPurchase"> | string | null
     createdAt?: DateTimeFilter<"NutritionPlanPurchase"> | Date | string
   }, "id">
 
@@ -3607,6 +3624,7 @@ export namespace Prisma {
     razorpayPaymentId?: SortOrder
     amount?: SortOrder
     status?: SortOrder
+    planName?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     _count?: NutritionPlanPurchaseCountOrderByAggregateInput
     _avg?: NutritionPlanPurchaseAvgOrderByAggregateInput
@@ -3627,6 +3645,7 @@ export namespace Prisma {
     razorpayPaymentId?: StringWithAggregatesFilter<"NutritionPlanPurchase"> | string
     amount?: IntWithAggregatesFilter<"NutritionPlanPurchase"> | number
     status?: StringWithAggregatesFilter<"NutritionPlanPurchase"> | string
+    planName?: StringNullableWithAggregatesFilter<"NutritionPlanPurchase"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"NutritionPlanPurchase"> | Date | string
   }
 
@@ -3793,6 +3812,7 @@ export namespace Prisma {
     razorpayPaymentId: string
     amount: number
     status: string
+    planName?: string | null
     createdAt?: Date | string
   }
 
@@ -3805,6 +3825,7 @@ export namespace Prisma {
     razorpayPaymentId: string
     amount: number
     status: string
+    planName?: string | null
     createdAt?: Date | string
   }
 
@@ -3817,6 +3838,7 @@ export namespace Prisma {
     razorpayPaymentId?: StringFieldUpdateOperationsInput | string
     amount?: IntFieldUpdateOperationsInput | number
     status?: StringFieldUpdateOperationsInput | string
+    planName?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -3829,6 +3851,7 @@ export namespace Prisma {
     razorpayPaymentId?: StringFieldUpdateOperationsInput | string
     amount?: IntFieldUpdateOperationsInput | number
     status?: StringFieldUpdateOperationsInput | string
+    planName?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -3841,6 +3864,7 @@ export namespace Prisma {
     razorpayPaymentId: string
     amount: number
     status: string
+    planName?: string | null
     createdAt?: Date | string
   }
 
@@ -3853,6 +3877,7 @@ export namespace Prisma {
     razorpayPaymentId?: StringFieldUpdateOperationsInput | string
     amount?: IntFieldUpdateOperationsInput | number
     status?: StringFieldUpdateOperationsInput | string
+    planName?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -3865,6 +3890,7 @@ export namespace Prisma {
     razorpayPaymentId?: StringFieldUpdateOperationsInput | string
     amount?: IntFieldUpdateOperationsInput | number
     status?: StringFieldUpdateOperationsInput | string
+    planName?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -4180,6 +4206,7 @@ export namespace Prisma {
     razorpayPaymentId?: SortOrder
     amount?: SortOrder
     status?: SortOrder
+    planName?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -4196,6 +4223,7 @@ export namespace Prisma {
     razorpayPaymentId?: SortOrder
     amount?: SortOrder
     status?: SortOrder
+    planName?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -4208,6 +4236,7 @@ export namespace Prisma {
     razorpayPaymentId?: SortOrder
     amount?: SortOrder
     status?: SortOrder
+    planName?: SortOrder
     createdAt?: SortOrder
   }
 

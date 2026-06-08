@@ -117,11 +117,29 @@ const getHealthProfile = (req, res) => __awaiter(void 0, void 0, void 0, functio
         }
         // Check if user has a premium purchase (personal consultancy)
         const consultancyPurchase = yield prismaClient_1.default.nutritionPlanPurchase.findFirst({
-            where: { userId, status: 'completed', amount: { in: [299, 499, 1499] } }
+            where: {
+                userId,
+                status: 'completed',
+                OR: [
+                    { amount: { in: [299, 499, 1499] } },
+                    { planName: 'pcod_consultancy' }
+                ]
+            }
         });
         // Check if user has unlocked recipes
         const recipesPurchase = yield prismaClient_1.default.nutritionPlanPurchase.findFirst({
-            where: { userId, status: 'completed', amount: { in: [99, 299, 499, 1499] } }
+            where: {
+                userId,
+                status: 'completed',
+                OR: [
+                    { amount: { in: [99, 299, 499, 1499] } },
+                    { planName: 'suggested_recipes' }
+                ]
+            }
+        });
+        // Check if user has unlocked PCOD consultancy specifically
+        const pcodPurchase = yield prismaClient_1.default.nutritionPlanPurchase.findFirst({
+            where: { userId, status: 'completed', planName: 'pcod_consultancy' }
         });
         res.json({
             profileComplete: user.profileComplete,
@@ -131,6 +149,7 @@ const getHealthProfile = (req, res) => __awaiter(void 0, void 0, void 0, functio
             phone: user.phone,
             isPremium: !!consultancyPurchase,
             isRecipesUnlocked: !!recipesPurchase,
+            isPcodUnlocked: !!pcodPurchase,
             health: {
                 age: user.age,
                 gender: user.gender,

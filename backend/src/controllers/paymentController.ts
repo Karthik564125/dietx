@@ -30,7 +30,8 @@ export const verifyPayment = async (req: Request, res: Response) => {
       userId,
       email,
       phone,
-      amount 
+      amount,
+      planName
     } = req.body;
 
     const isValid = PaymentService.verifySignature(
@@ -53,6 +54,7 @@ export const verifyPayment = async (req: Request, res: Response) => {
         razorpayPaymentId: razorpay_payment_id,
         amount: Number(amount),
         status: 'completed',
+        planName: planName || null,
       },
     });
 
@@ -64,10 +66,10 @@ export const verifyPayment = async (req: Request, res: Response) => {
       });
     }
 
-    // Trigger Email Notification (Non-blocking or handled) - Only for Personal Consultancy (amount >= 299)
+    // Trigger Email Notification (Non-blocking or handled) - Only for Personal Consultancy (amount >= 299 or PCOD consultancy)
     try {
       const fullUser = await (prisma as any).user.findUnique({ where: { id: userId } });
-      if (Number(amount) >= 299 && fullUser) {
+      if ((Number(amount) >= 299 || planName === 'pcod_consultancy') && fullUser) {
         await MailService.sendConsultationMail({
           user: {
             id: fullUser.id,

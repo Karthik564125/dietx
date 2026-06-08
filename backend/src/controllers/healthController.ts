@@ -106,12 +106,31 @@ export const getHealthProfile = async (req: Request, res: Response): Promise<voi
 
     // Check if user has a premium purchase (personal consultancy)
     const consultancyPurchase = await (prisma as any).nutritionPlanPurchase.findFirst({
-      where: { userId, status: 'completed', amount: { in: [299, 499, 1499] } }
+      where: {
+        userId,
+        status: 'completed',
+        OR: [
+          { amount: { in: [299, 499, 1499] } },
+          { planName: 'pcod_consultancy' }
+        ]
+      }
     });
 
     // Check if user has unlocked recipes
     const recipesPurchase = await (prisma as any).nutritionPlanPurchase.findFirst({
-      where: { userId, status: 'completed', amount: { in: [99, 299, 499, 1499] } }
+      where: {
+        userId,
+        status: 'completed',
+        OR: [
+          { amount: { in: [99, 299, 499, 1499] } },
+          { planName: 'suggested_recipes' }
+        ]
+      }
+    });
+
+    // Check if user has unlocked PCOD consultancy specifically
+    const pcodPurchase = await (prisma as any).nutritionPlanPurchase.findFirst({
+      where: { userId, status: 'completed', planName: 'pcod_consultancy' }
     });
 
     res.json({
@@ -122,6 +141,7 @@ export const getHealthProfile = async (req: Request, res: Response): Promise<voi
       phone: user.phone,
       isPremium: !!consultancyPurchase,
       isRecipesUnlocked: !!recipesPurchase,
+      isPcodUnlocked: !!pcodPurchase,
 
       health: {
 

@@ -151,6 +151,7 @@ exports.Prisma.NutritionPlanPurchaseScalarFieldEnum = {
   razorpayPaymentId: 'razorpayPaymentId',
   amount: 'amount',
   status: 'status',
+  planName: 'planName',
   createdAt: 'createdAt'
 };
 

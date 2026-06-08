@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { LogOut, Info, Menu, X, LayoutDashboard, User, ChevronRight, Heart } from 'lucide-react';
 import logo from '../assets/logo.png';
@@ -10,20 +10,8 @@ interface NavbarProps {
 }
 
 const Navbar = ({ setIsAuthenticated }: NavbarProps) => {
-  const [isFemale, setIsFemale] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
-
-  useEffect(() => {
-    const userStr = localStorage.getItem('user');
-    if (userStr) {
-      try {
-        const user = JSON.parse(userStr);
-        setIsFemale(user.gender === 'female');
-      } catch { }
-    }
-  }, []);
-  // Removed profile picture state
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -65,8 +53,7 @@ const Navbar = ({ setIsAuthenticated }: NavbarProps) => {
               {[
                 { name: 'Dashboard', path: '/dashboard', icon: <LayoutDashboard size={14} /> },
                 { name: 'About', path: '/about', icon: <Info size={14} /> },
-                // PCOD Consultancy appears for female users
-                ...(isFemale ? [{ name: 'Women Health', path: '/pcod-consultancy', icon: <Heart size={14} /> }] : []),
+                { name: 'Women Health', path: '/pcod-consultancy', icon: <Heart size={14} /> },
               ].map((link) => (
                 <button
                   key={link.path}
@@ -142,7 +129,7 @@ const Navbar = ({ setIsAuthenticated }: NavbarProps) => {
             { name: 'Dashboard', path: '/dashboard', icon: <LayoutDashboard size={22} /> },
             { name: 'About Us', path: '/about', icon: <Info size={22} /> },
             { name: 'My Profile', path: '/profile', icon: <User size={22} /> },
-            ...(isFemale ? [{ name: 'Women Health', path: '/pcod-consultancy', icon: <Heart size={22} /> }] : []),
+            { name: 'Women Health', path: '/pcod-consultancy', icon: <Heart size={22} /> },
           ].map((link) => (
             <button
               key={link.path}

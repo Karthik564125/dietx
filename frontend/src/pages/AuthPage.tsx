@@ -110,7 +110,7 @@ const AuthPage = ({ setAuth }: AuthPageProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-premium relative overflow-hidden flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen bg-premium relative overflow-hidden flex flex-col items-center justify-center p-4 pt-16 sm:pt-4">
       
       <AestheticBackground bgImage={bgLanding} />
 
@@ -124,20 +124,20 @@ const AuthPage = ({ setAuth }: AuthPageProps) => {
         <ArrowLeft size={14} /> Back
       </button>
 
-      <div className="w-full max-w-md flex flex-col items-center gap-6 relative z-10">
+      <div className="w-full max-w-md flex flex-col items-center gap-4 sm:gap-6 relative z-10">
         {/* Brand Header */}
         <div 
-          className="flex flex-row items-center gap-6 cursor-pointer group"
+          className="flex flex-col sm:flex-row items-center gap-3 sm:gap-6 cursor-pointer group"
           onClick={() => navigate('/')}
         >
-          <div className="w-24 h-24 sm:w-32 sm:h-32 flex items-center justify-center transition-transform group-hover:scale-105">
+          <div className="w-16 h-16 sm:w-32 sm:h-32 flex items-center justify-center transition-transform group-hover:scale-105">
              <img src={logo} alt="DietX Logo" className="w-full h-full object-contain rounded-3xl" />
           </div>
-          <div className="flex flex-col text-left">
-            <span className="text-4xl sm:text-6xl font-black text-white tracking-tighter leading-none">
+          <div className="flex flex-col items-center sm:items-start text-center sm:text-left">
+            <span className="text-3xl sm:text-6xl font-black text-white tracking-tighter leading-none">
               DIET<span className="text-emerald-400">X</span>
             </span>
-            <span className="text-xs sm:text-base font-black text-white/50 uppercase tracking-widest mt-1">Holistic Wellness</span>
+            <span className="text-[10px] sm:text-base font-black text-white/50 uppercase tracking-widest mt-1">Holistic Wellness</span>
           </div>
         </div>
 
@@ -174,7 +174,7 @@ const AuthPage = ({ setAuth }: AuthPageProps) => {
               </div>
             </div>
 
-            <div className={`transition-all duration-300 overflow-hidden ${!isLogin ? 'max-h-16 opacity-100' : 'max-h-0 opacity-0 pointer-events-none'}`}>
+            <div className={`transition-all duration-300 overflow-hidden ${!isLogin ? 'max-h-32 opacity-100' : 'max-h-0 opacity-0 pointer-events-none'}`}>
               <div className="relative">
                 <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40" size={16} />
                 <input
@@ -187,7 +187,7 @@ const AuthPage = ({ setAuth }: AuthPageProps) => {
                 />
                           </div>
 {!isLogin && (
-  <div className="flex items-center gap-4">
+  <div className="flex items-center gap-4 mt-2">
     <label className="text-white/70 font-black text-sm">Gender</label>
     <div className="flex gap-2">
       <label className="flex items-center gap-1 text-white/70">

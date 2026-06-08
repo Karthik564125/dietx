@@ -370,7 +370,7 @@ const Dashboard = ({ setIsAuthenticated }: DashboardProps) => {
                           </div>
                         </div>
 
-                        <div className="space-y-5">
+                        <div className="hidden sm:block space-y-5">
                           {[
                             { label: 'Proteins', val: totals.protein.toFixed(0), target: 120, color: 'bg-blue-500' },
                             { label: 'Carbs', val: totals.carbs.toFixed(0), target: 300, color: 'bg-amber-500' },
@@ -399,15 +399,15 @@ const Dashboard = ({ setIsAuthenticated }: DashboardProps) => {
                       { name: 'Snacks', icon: <Utensils size={16} />, color: 'bg-blue-100 text-blue-600', bColor: 'border-blue-200' },
                       { name: 'Dinner', icon: <MoonStar size={16} />, color: 'bg-indigo-100 text-indigo-600', bColor: 'border-indigo-200' }
                     ].map(meal => (
-                      <div key={meal.name} className={`p-4 sm:p-6 bg-white rounded-[2.5rem] border-2 ${meal.bColor} shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-center gap-3 sm:gap-6 group/meal`}>
-                        <div className={`p-3 sm:p-4 rounded-xl sm:rounded-2xl ${meal.color} group-hover/meal:scale-110 transition-transform`}>
+                      <div key={meal.name} className={`p-3 sm:p-6 bg-white rounded-3xl sm:rounded-[2.5rem] border-2 ${meal.bColor} shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col sm:flex-row items-center gap-2 sm:gap-6 group/meal`}>
+                        <div className={`p-2.5 sm:p-4 rounded-xl sm:rounded-2xl ${meal.color} group-hover/meal:scale-110 transition-transform`}>
                           {meal.icon}
                         </div>
-                        <div className="space-y-1">
+                        <div className="space-y-0.5 sm:space-y-1 text-center sm:text-left">
                           <p className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">{meal.name}</p>
-                          <p className="text-xl font-black text-slate-900 leading-none">
+                          <p className="text-lg sm:text-xl font-black text-slate-900 leading-none">
                             {getMealTotal(meal.name)}
-                            <span className="text-[10px] text-slate-300 font-normal ml-1">KCAL</span>
+                            <span className="text-[10px] text-slate-300 font-normal ml-0.5 sm:ml-1">KCAL</span>
                           </p>
                         </div>
                       </div>
@@ -567,30 +567,30 @@ const Dashboard = ({ setIsAuthenticated }: DashboardProps) => {
                               animate={{ opacity: 1, x: 0 }}
                               exit={{ opacity: 0, x: -20 }}
                               transition={{ delay: idx * 0.05 }}
-                              className="p-4 sm:p-5 bg-white rounded-[1.5rem] sm:rounded-[2rem] border border-white shadow-[0_8px_30px_rgba(0,0,0,0.02)] group hover:shadow-[0_15px_40px_rgba(16,185,129,0.1)] hover:border-emerald-100/50 transition-all flex justify-between items-center relative overflow-hidden"
+                              className="p-3 sm:p-5 bg-white rounded-[1.5rem] sm:rounded-[2rem] border border-white shadow-[0_8px_30px_rgba(0,0,0,0.02)] group hover:shadow-[0_15px_40px_rgba(16,185,129,0.1)] hover:border-emerald-100/50 transition-all flex justify-between items-center relative overflow-hidden"
                             >
                               <div className="absolute left-0 top-0 w-1 h-full bg-emerald-500/0 group-hover:bg-emerald-500 transition-all"></div>
-                              <div className="flex items-center gap-5">
-                                <div className="w-12 h-12 sm:w-14 sm:h-14 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center text-2xl shadow-inner group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
+                              <div className="flex items-center gap-3 sm:gap-5 min-w-0 flex-1">
+                                <div className="w-10 h-10 sm:w-14 sm:h-14 bg-emerald-50 text-emerald-600 rounded-xl sm:rounded-2xl flex items-center justify-center text-xl sm:text-2xl shadow-inner group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shrink-0">
                                   {f.mealType === 'Breakfast' ? '🍳' : f.mealType === 'Lunch' ? '☀️' : f.mealType === 'Snacks' ? '☕' : '🌙'}
                                 </div>
-                                <div>
-                                  <h5 className="font-black text-slate-800 text-sm">{f.name}</h5>
-                                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">
-                                    {f.quantity} {f.unit} <span className="mx-1 text-slate-200">·</span> {f.mealType}
+                                <div className="min-w-0 flex-1">
+                                  <h5 className="font-black text-slate-800 text-xs sm:text-sm truncate">{f.name}</h5>
+                                  <p className="text-[9px] sm:text-[10px] text-slate-400 font-bold uppercase tracking-wider sm:tracking-widest mt-0.5 truncate">
+                                    {f.quantity} {f.unit} <span className="mx-0.5 sm:mx-1 text-slate-200">·</span> {f.mealType}
                                   </p>
-                                  <p className="text-[9px] font-bold text-slate-300 uppercase mt-1 flex items-center gap-1"><Zap size={10} className="text-emerald-400" /> {f.time}</p>
+                                  <p className="text-[8px] sm:text-[9px] font-bold text-slate-300 uppercase mt-0.5 sm:mt-1 flex items-center gap-1"><Zap size={8} className="text-emerald-400" /> {f.time}</p>
                                 </div>
                               </div>
-                              <div className="flex items-center gap-6">
+                              <div className="flex items-center gap-2 sm:gap-6 shrink-0 ml-2">
                                 <div className="text-right">
-                                  <p className="font-black text-slate-900 text-lg leading-none">{f.calories} <span className="text-[9px] text-slate-300 font-normal uppercase tracking-widest ml-0.5">Kcal</span></p>
+                                  <p className="font-black text-slate-900 text-sm sm:text-lg leading-none">{f.calories} <span className="text-[8px] sm:text-[9px] text-slate-300 font-normal uppercase tracking-widest ml-0.5">Kcal</span></p>
                                 </div>
                                 <button
                                   onClick={() => deleteFoodEntry(f.id)}
-                                  className="p-3 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-xl transition-all active:scale-90"
+                                  className="p-2 sm:p-3 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-xl transition-all active:scale-90"
                                 >
-                                  <Trash2 size={18} />
+                                  <Trash2 size={16} />
                                 </button>
                               </div>
                             </motion.div>

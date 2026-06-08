@@ -82,16 +82,16 @@ const HealthDetail = ({ setIsAuthenticated }: HealthDetailProps) => {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 pt-4">
-               <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100">
-                  <p className="text-[10px] font-black text-slate-400 uppercase mb-2">Current Weight</p>
-                  <p className="text-2xl font-black text-slate-900">{health?.weight} <span className="text-sm font-bold text-slate-400">kg</span></p>
-               </div>
-               <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100">
-                  <p className="text-[10px] font-black text-slate-400 uppercase mb-2">Height</p>
-                  <p className="text-2xl font-black text-slate-900">{health?.height} <span className="text-sm font-bold text-slate-400">cm</span></p>
-               </div>
-            </div>
+             <div className="grid grid-cols-2 gap-4 pt-4">
+                <div className="p-4 sm:p-6 bg-slate-50 rounded-3xl border border-slate-100">
+                   <p className="text-[10px] font-black text-slate-400 uppercase mb-2">Current Weight</p>
+                   <p className="text-xl sm:text-2xl font-black text-slate-900 whitespace-nowrap">{health?.weight} <span className="text-xs sm:text-sm font-bold text-slate-400">kg</span></p>
+                </div>
+                <div className="p-4 sm:p-6 bg-slate-50 rounded-3xl border border-slate-100">
+                   <p className="text-[10px] font-black text-slate-400 uppercase mb-2">Height</p>
+                   <p className="text-xl sm:text-2xl font-black text-slate-900 whitespace-nowrap">{health?.height} <span className="text-xs sm:text-sm font-bold text-slate-400">cm</span></p>
+                </div>
+             </div>
           </div>
 
           {/* Goals Card */}

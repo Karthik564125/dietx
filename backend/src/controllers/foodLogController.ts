@@ -22,15 +22,14 @@ export const getFoodLog = async (req: Request, res: Response): Promise<void> => 
 /** POST /api/food-log  – add one or more entries for the authenticated user */
 export const addFoodLogEntries = async (req: Request, res: Response): Promise<void> => {
   try {
-    const userId = (req as any).user.userId;
+    const userId = (req as any).user?.userId;
+    console.log('addFoodLogEntries called by user:', userId);
+    console.log('Payload:', JSON.stringify(req.body));
     const { entries } = req.body as {
       entries: Array<{
         name: string;
         quantity: number;
         calories: number;
-        protein?: number;
-        carbs?: number;
-        fats?: number;
         mealType: string;
         unit: string;
         time: string;
@@ -50,9 +49,6 @@ export const addFoodLogEntries = async (req: Request, res: Response): Promise<vo
         name: e.name,
         quantity: e.quantity,
         calories: e.calories,
-        protein: e.protein ?? 0,
-        carbs: e.carbs ?? 0,
-        fats: e.fats ?? 0,
         mealType: e.mealType,
         unit: e.unit,
         time: e.time,
@@ -69,6 +65,7 @@ export const addFoodLogEntries = async (req: Request, res: Response): Promise<vo
     res.status(201).json({ count: created.count, entries: allForDay });
   } catch (error) {
     console.error('addFoodLogEntries error:', error);
+    if (error instanceof Error) console.error(error.stack);
     res.status(500).json({ error: 'Internal server error' });
   }
 };

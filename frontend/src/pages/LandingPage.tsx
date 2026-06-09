@@ -46,13 +46,13 @@ const LandingPage = () => {
             </div>
 
             {/* Content */}
-            <div className="flex-1 text-center lg:text-left space-y-3 sm:space-y-6 lg:space-y-8 xl:space-y-12 order-2 lg:order-1">
+            <div className="flex-1 text-center lg:text-left space-y-1 sm:space-y-3 lg:space-y-6 xl:space-y-8 order-2 lg:order-1">
 
                {/* Logo — mobile only, prominent and resized to fit without scroll, set to object-contain */}
                <div className="flex justify-center lg:hidden">
                   <div className="relative group">
                      <div className="absolute inset-0 bg-emerald-500/20 rounded-[2rem] blur-[50px] group-hover:bg-emerald-500/30 transition-all duration-700"></div>
-                     <div className="w-20 h-20 sm:w-28 sm:h-28 bg-white/15 backdrop-blur-3xl rounded-[2rem] border-2 border-white/30 shadow-2xl flex items-center justify-center relative z-10 overflow-hidden p-2">
+                              <div className="w-14 h-14 sm:w-24 sm:h-24 bg-white/15 backdrop-blur-3xl rounded-[2rem] border-2 border-white/30 shadow-2xl flex items-center justify-center relative z-10 overflow-hidden p-1">
                         <img src={logo} alt="DietX" className="w-full h-full object-contain" />
                      </div>
                   </div>
@@ -62,11 +62,11 @@ const LandingPage = () => {
                   <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-500/20 backdrop-blur-xl text-emerald-300 border border-emerald-400/30 rounded-full text-[8px] sm:text-[10px] font-black uppercase tracking-widest">
                      <Sparkles size={12} /> The Future of Holistic Health
                   </div>
-                  <h1 className="text-2xl sm:text-4xl lg:text-5xl xl:text-8xl font-black text-white tracking-tighter leading-[0.95] flex flex-col">
+                  <h1 className="text-2xl sm:text-2xl lg:text-5xl xl:text-8xl font-black text-white tracking-tighter leading-[0.95] flex flex-col">
                      Heal your body,
                      <span className="text-emerald-400">the holistic way.</span>
                   </h1>
-                  <p className="max-w-xl mx-auto lg:mx-0 text-white/70 font-bold text-[9px] sm:text-sm lg:text-sm xl:text-xl leading-relaxed">
+                  <p className="max-w-xl mx-auto lg:mx-0 text-white/70 font-bold text-[7px] sm:text-[9px] lg:text-sm xl:text-xl leading-relaxed">
                      Experience a science-backed nutrition strategy designed by <span className="text-white font-black">Dt. Madhavi Latha</span> to transform your life and vitality sustainably.
                   </p>
                </div>
@@ -74,7 +74,7 @@ const LandingPage = () => {
                   <div className="max-w-md mx-auto lg:mx-0 w-full">
                   <button
                      onClick={() => navigate('/auth', { state: { mode: 'signup' } })}
-                     className="w-full flex items-center justify-between group bg-emerald-500/80 backdrop-blur-xl text-white p-3 sm:p-4 xl:p-6 rounded-[1.25rem] sm:rounded-[2rem] xl:rounded-[2.5rem] text-sm sm:text-base xl:text-xl font-black hover:bg-emerald-500 hover:-translate-y-1 transition-all duration-500 shadow-2xl shadow-emerald-900/30 border border-emerald-400/30"
+                     className="w-full flex items-center justify-between group bg-emerald-500/80 backdrop-blur-xl text-white p-2 sm:p-2.5 xl:p-4 rounded-[1.25rem] sm:rounded-[2rem] xl:rounded-[2.5rem] text-sm sm:text-base xl:text-xl font-black hover:bg-emerald-500 hover:-translate-y-1 transition-all duration-500 shadow-2xl shadow-emerald-900/30 border border-emerald-400/30"
                   >
                      <span>Start Journey</span>
                      <div className="w-8 h-8 sm:w-10 sm:h-10 xl:w-14 xl:h-14 bg-white/15 rounded-full flex items-center justify-center group-hover:bg-white group-hover:text-emerald-600 transition-all">
@@ -87,7 +87,7 @@ const LandingPage = () => {
 
          {/* Footer Features */}
          <footer className="relative z-10 max-w-7xl mx-auto w-full px-6 py-2 lg:py-10 shrink-0">
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-12 py-3 lg:py-8 border-t border-white/15">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 lg:gap-10 py-1 lg:py-6 border-t border-white/15">
                {[
                   { icon: <Zap />, title: "Personalized", desc: "Bio-individual", color: "text-amber-400" },
                   { icon: <Leaf />, title: "Sustainable", desc: "Long-term goal", color: "text-emerald-400" },

@@ -14,7 +14,7 @@ const LandingPage = () => {
          <AestheticBackground bgImage={bgLanding} />
 
          {/* Navigation */}
-         <nav className="relative z-50 max-w-7xl mx-auto w-full px-6 py-2 sm:py-8 flex justify-between items-center shrink-0">
+         <nav className="relative z-50 max-w-7xl mx-auto w-full px-6 py-2 sm:py-4 flex justify-between items-center shrink-0">
             <div className="flex items-center gap-3">
                <div className="w-10 h-10 bg-white/20 backdrop-blur-xl rounded-xl shadow-lg flex items-center justify-center p-1.5 border border-white/30">
                   <img src={logo} alt="Logo" className="w-full h-full object-contain" />
@@ -32,7 +32,7 @@ const LandingPage = () => {
          </nav>
 
          {/* Hero Section */}
-         <main className="relative z-10 flex-1 flex flex-col lg:flex-row items-start lg:items-center justify-start lg:justify-center px-6 py-2 lg:py-0 gap-3 lg:gap-20 max-w-7xl mx-auto w-full">
+         <main className="relative z-10 flex-1 flex flex-col lg:flex-row items-start lg:items-center justify-start lg:justify-center px-6 py-0 lg:py-0 gap-3 lg:gap-18 max-w-7xl mx-auto w-full">
 
             {/* Large logo — desktop only, optimized for standard laptop views */}
             <div className="hidden lg:flex flex-1 justify-end order-1 lg:order-2">
@@ -52,7 +52,7 @@ const LandingPage = () => {
                <div className="flex justify-center lg:hidden">
                   <div className="relative group">
                      <div className="absolute inset-0 bg-emerald-500/20 rounded-[2rem] blur-[50px] group-hover:bg-emerald-500/30 transition-all duration-700"></div>
-                     <div className="w-24 h-24 sm:w-32 sm:h-32 bg-white/15 backdrop-blur-3xl rounded-[2rem] border-2 border-white/30 shadow-2xl flex items-center justify-center relative z-10 overflow-hidden p-2">
+                     <div className="w-20 h-20 sm:w-28 sm:h-28 bg-white/15 backdrop-blur-3xl rounded-[2rem] border-2 border-white/30 shadow-2xl flex items-center justify-center relative z-10 overflow-hidden p-2">
                         <img src={logo} alt="DietX" className="w-full h-full object-contain" />
                      </div>
                   </div>
@@ -62,7 +62,7 @@ const LandingPage = () => {
                   <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-500/20 backdrop-blur-xl text-emerald-300 border border-emerald-400/30 rounded-full text-[8px] sm:text-[10px] font-black uppercase tracking-widest">
                      <Sparkles size={12} /> The Future of Holistic Health
                   </div>
-                  <h1 className="text-2xl sm:text-5xl lg:text-5xl xl:text-8xl font-black text-white tracking-tighter leading-[0.95] flex flex-col">
+                  <h1 className="text-2xl sm:text-4xl lg:text-5xl xl:text-8xl font-black text-white tracking-tighter leading-[0.95] flex flex-col">
                      Heal your body,
                      <span className="text-emerald-400">the holistic way.</span>
                   </h1>
@@ -71,10 +71,10 @@ const LandingPage = () => {
                   </p>
                </div>
 
-               <div className="max-w-md mx-auto lg:mx-0 w-full">
+                  <div className="max-w-md mx-auto lg:mx-0 w-full">
                   <button
                      onClick={() => navigate('/auth', { state: { mode: 'signup' } })}
-                     className="w-full flex items-center justify-between group bg-emerald-500/80 backdrop-blur-xl text-white p-3 sm:p-5 xl:p-7 rounded-[1.25rem] sm:rounded-[2rem] xl:rounded-[2.5rem] text-sm sm:text-lg xl:text-xl font-black hover:bg-emerald-500 hover:-translate-y-1 transition-all duration-500 shadow-2xl shadow-emerald-900/30 border border-emerald-400/30"
+                     className="w-full flex items-center justify-between group bg-emerald-500/80 backdrop-blur-xl text-white p-3 sm:p-4 xl:p-6 rounded-[1.25rem] sm:rounded-[2rem] xl:rounded-[2.5rem] text-sm sm:text-base xl:text-xl font-black hover:bg-emerald-500 hover:-translate-y-1 transition-all duration-500 shadow-2xl shadow-emerald-900/30 border border-emerald-400/30"
                   >
                      <span>Start Journey</span>
                      <div className="w-8 h-8 sm:w-10 sm:h-10 xl:w-14 xl:h-14 bg-white/15 rounded-full flex items-center justify-center group-hover:bg-white group-hover:text-emerald-600 transition-all">
@@ -87,7 +87,7 @@ const LandingPage = () => {
 
          {/* Footer Features */}
          <footer className="relative z-10 max-w-7xl mx-auto w-full px-6 py-2 lg:py-10 shrink-0">
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-12 py-4 lg:py-8 border-t border-white/15">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-12 py-3 lg:py-8 border-t border-white/15">
                {[
                   { icon: <Zap />, title: "Personalized", desc: "Bio-individual", color: "text-amber-400" },
                   { icon: <Leaf />, title: "Sustainable", desc: "Long-term goal", color: "text-emerald-400" },

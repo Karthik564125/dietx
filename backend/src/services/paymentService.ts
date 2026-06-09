@@ -8,12 +8,16 @@ const razorpay = new Razorpay({
 });
 
 export class PaymentService {
-  static async createOrder(amount: number, receipt: string) {
-    const options = {
+  static async createOrder(amount: number, receipt: string, notes?: Record<string, string>) {
+    const options: any = {
       amount: amount * 100, // Razorpay expects amount in paise
       currency: 'INR',
-      receipt: receipt,
+      receipt,
     };
+
+    if (notes && Object.keys(notes).length > 0) {
+      options.notes = notes;
+    }
 
     try {
       const order = await razorpay.orders.create(options);

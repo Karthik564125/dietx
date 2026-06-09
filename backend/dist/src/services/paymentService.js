@@ -21,13 +21,16 @@ const razorpay = new razorpay_1.default({
     key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 class PaymentService {
-    static createOrder(amount, receipt) {
+    static createOrder(amount, receipt, notes) {
         return __awaiter(this, void 0, void 0, function* () {
             const options = {
                 amount: amount * 100, // Razorpay expects amount in paise
                 currency: 'INR',
-                receipt: receipt,
+                receipt,
             };
+            if (notes && Object.keys(notes).length > 0) {
+                options.notes = notes;
+            }
             try {
                 const order = yield razorpay.orders.create(options);
                 return order;

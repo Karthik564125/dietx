@@ -51,8 +51,10 @@ app.post('/api/test', (req, res) => res.json({ ok: true }));
 console.log('authRoutes:', typeof authRoutes_1.default);
 app.use('/api', authRoutes_1.default);
 app.use('/api', paymentRoutes_1.default);
-// Debug routes (no auth) — REMOVE in production
-app.use('/api/debug', debugRoutes);
+// Debug routes (no auth) — mount only if loaded
+if (debugRoutes) {
+    app.use('/api/debug', debugRoutes);
+}
 // Dump registered routes for debugging (safe guard)
 setTimeout(() => {
     try {

@@ -6,12 +6,29 @@ import prisma from '../prismaClient';
 
 export const createOrder = async (req: Request, res: Response) => {
   try {
-    const { amount } = req.body; // In a real app, you'd validate this or use a fixed amount
-    const receipt = `receipt_${Date.now()}`;
-    
-    const order = await PaymentService.createOrder(amount || 1499, receipt);
+    const { amount, planName } = req.body; // planName optional; helps set clean metadata
 
-    
+    // Determine a clean receipt base and human-friendly notes.service without PII
+    let receiptBase = 'DIETX-CONSULT';
+    let notes: Record<string, string> = { service: 'Consultation' };
+
+    // Prefer explicit planName when provided, otherwise infer from amount
+    if (planName === 'pcod_consultancy') {
+      receiptBase = 'DIETX-PCOD';
+      notes = { service: 'PCOD/PCOS Consultation' };
+    } else if (planName === 'suggested_recipes' || (amount && Number(amount) === 99)) {
+      receiptBase = 'DIETX-SUGGESTED-RECIPES';
+      notes = { service: 'Suggested Recipes' };
+    } else if (amount && Number(amount) === 1499) {
+      receiptBase = 'DIETX-PERSONAL-CONSULT';
+      notes = { service: 'Personalised Nutrition Consultation' };
+    }
+
+    // Use a short unique receipt to avoid PII (timestamped)
+    const receipt = `${receiptBase}-${Date.now()}`;
+
+    const order = await PaymentService.createOrder(amount || 1499, receipt, notes);
+
     res.status(200).json({
       success: true,
       order,

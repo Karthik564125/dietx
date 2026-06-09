@@ -110,7 +110,7 @@ const AuthPage = ({ setAuth }: AuthPageProps) => {
   };
 
   return (
-    <div className="h-screen h-[100dvh] bg-premium relative overflow-hidden flex flex-col items-center justify-center p-4 pt-12 sm:pt-4">
+    <div className="min-h-screen bg-premium relative flex flex-col items-center justify-center p-4 pt-8 sm:pt-4">
       
       <AestheticBackground bgImage={bgLanding} />
 

@@ -9,7 +9,7 @@ const LandingPage = () => {
    const navigate = useNavigate();
 
    return (
-      <div className="h-screen h-[100dvh] overflow-hidden bg-premium flex flex-col relative">
+      <div className="min-h-screen bg-premium flex flex-col relative">
 
          <AestheticBackground bgImage={bgLanding} />
 
@@ -32,7 +32,7 @@ const LandingPage = () => {
          </nav>
 
          {/* Hero Section */}
-         <main className="relative z-10 flex-1 flex flex-col lg:flex-row items-center justify-center px-6 py-2 lg:py-0 gap-3 lg:gap-20 max-w-7xl mx-auto w-full">
+         <main className="relative z-10 flex-1 flex flex-col lg:flex-row items-start lg:items-center justify-start lg:justify-center px-6 py-2 lg:py-0 gap-3 lg:gap-20 max-w-7xl mx-auto w-full">
 
             {/* Large logo — desktop only, optimized for standard laptop views */}
             <div className="hidden lg:flex flex-1 justify-end order-1 lg:order-2">
@@ -87,7 +87,7 @@ const LandingPage = () => {
 
          {/* Footer Features */}
          <footer className="relative z-10 max-w-7xl mx-auto w-full px-6 py-2 lg:py-10 shrink-0">
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 lg:gap-12 py-2 lg:py-8 border-t border-white/15">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-12 py-4 lg:py-8 border-t border-white/15">
                {[
                   { icon: <Zap />, title: "Personalized", desc: "Bio-individual", color: "text-amber-400" },
                   { icon: <Leaf />, title: "Sustainable", desc: "Long-term goal", color: "text-emerald-400" },

@@ -13,7 +13,22 @@ process.on('unhandledRejection', (reason) => {
 });
 import authRoutes from './routes/authRoutes';
 import paymentRoutes from './routes/paymentRoutes';
-import debugRoutes from './routes/debugRoutes';
+// Load debug routes conditionally — some deploys may omit debugRoutes file
+import fs from 'fs';
+import path from 'path';
+let debugRoutes: any = null;
+try {
+  const possibleTs = path.join(__dirname, 'routes', 'debugRoutes.ts');
+  const possibleJs = path.join(__dirname, 'routes', 'debugRoutes.js');
+  if (fs.existsSync(possibleJs) || fs.existsSync(possibleTs)) {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    debugRoutes = require('./routes/debugRoutes').default;
+  } else {
+    console.log('debugRoutes file not present in build — skipping debug routes');
+  }
+} catch (e) {
+  console.warn('Could not load debugRoutes:', e);
+}
 import { authMiddleware } from './middleware/authMiddleware';
 
 const app = express();

@@ -142,12 +142,13 @@ export default function PcodConsultancy({ setIsAuthenticated }: PcodConsultancyP
       const { order } = data;
 
       const options = {
-        key: 'rzp_live_SzVEKJaiNjOm1R', //Live Key
+        key: 'rzp_live_SzVEKJaiNjOm1R', // Live Key
         amount: order.amount,
         currency: order.currency,
-        name: 'Diet X PCOD Consultancy',
-        description: '1-on-1 PCOD/PCOS Consultation with Dt. Madhavi Latha',
+        name: 'DietX Holistic Wellness',
+        description: 'DietX - PCOD/PCOS Consultation',
         order_id: order.id,
+        notes: { consultationType: 'PCOD/PCOS' },
         handler: async (response: any) => {
           try {
             const verifyRes = await axios.post(

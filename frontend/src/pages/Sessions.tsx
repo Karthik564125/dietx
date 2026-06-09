@@ -93,9 +93,10 @@ const Sessions = ({ setIsAuthenticated }: SessionsProps) => {
         key: 'rzp_live_SzVEKJaiNjOm1R', // Live Key
         amount: order.amount,
         currency: order.currency,
-        name: 'Diet X Personal Consultancy',
-        description: '1-2-1 Personal Consultation Session',
+        name: 'DietX Holistic Wellness',
+        description: 'DietX - Personalized Nutrition Consultation',
         order_id: order.id,
+        notes: { consultationType: 'Personal Consultancy' },
         handler: async (response: any) => {
           try {
             const verifyRes = await axios.post(

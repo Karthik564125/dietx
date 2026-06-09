@@ -145,13 +145,16 @@ const NutritionDetail = ({ setIsAuthenticated }: NutritionDetailProps) => {
       const { order } = data;
 
       // 2. Open Razorpay Checkout
+      const consultationType = amount === 99 ? 'Suggested Recipes' : 'Personalized Nutrition';
+
       const options = {
         key: 'rzp_live_SzVEKJaiNjOm1R', // Live Key
         amount: order.amount,
         currency: order.currency,
-        name: amount === 99 ? 'Diet X Suggested Recipes' : 'Diet X Premium',
-        description: amount === 99 ? 'Unlock Curated Suggested Recipes' : 'Personalized Dietician Consultation',
+        name: 'DietX Holistic Wellness',
+        description: amount === 99 ? 'DietX - Suggested Recipes' : 'DietX - Personalized Nutrition Consultation',
         order_id: order.id,
+        notes: { consultationType },
         handler: async (response: any) => {
           try {
             // 3. Verify Payment in Backend

@@ -119,12 +119,16 @@ const MobileBottomSheet = ({
 }) => {
   // Prevent background scroll when sheet is open
   useEffect(() => {
-    if (open) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
+    // Only lock body scroll for small screens (mobile). Desktop should keep page scrollable.
+    const isMobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 1023px)').matches;
+    if (isMobile) {
+      if (open) {
+        document.body.style.overflow = 'hidden';
+      } else {
+        document.body.style.overflow = '';
+      }
     }
-    return () => { document.body.style.overflow = ''; };
+    return () => { if (isMobile) document.body.style.overflow = ''; };
   }, [open]);
 
   return (
@@ -176,17 +180,14 @@ const MobileBottomSheet = ({
 
 // ─── Desktop Right Drawer (large screens) ─────────────────────────────────────
 const DesktopRightDrawer = ({ open, onClose, children }: { open: boolean; onClose: () => void; children: React.ReactNode }) => {
-  useEffect(() => {
-    if (open) document.body.style.overflow = 'hidden';
-    else document.body.style.overflow = '';
-    return () => { document.body.style.overflow = ''; };
-  }, [open]);
-
+  // Desktop drawer should not prevent background scrolling — user requested desktop page remains scrollable.
+  // We therefore do NOT modify document.body.style. The drawer itself is scrollable via `overflow-auto`.
   return (
     <AnimatePresence>
       {open && (
         <>
-          <motion.div key="backdrop-desk" initial={{ opacity: 0 }} animate={{ opacity: 0.6 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/60 z-[300]" onClick={onClose} />
+          {/* Backdrop is visual only on desktop — allow pointer events through so page can still scroll. Close via the drawer close button. */}
+          <motion.div key="backdrop-desk" initial={{ opacity: 0 }} animate={{ opacity: 0.45 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/45 z-[300] pointer-events-none" />
           <motion.aside
             key="drawer"
             initial={{ x: '100%' }}

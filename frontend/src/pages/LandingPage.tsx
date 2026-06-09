@@ -32,7 +32,7 @@ const LandingPage = () => {
          </nav>
 
          {/* Hero Section */}
-         <main className="relative z-10 flex-1 flex flex-col lg:flex-row items-start lg:items-center justify-start lg:justify-center px-6 py-0 lg:py-0 gap-3 lg:gap-18 max-w-7xl mx-auto w-full">
+         <main className="relative z-10 flex-1 flex flex-col lg:flex-row items-start lg:items-center justify-start lg:justify-center px-6 py-0 lg:py-0 gap-3 lg:gap-18 max-w-7xl mx-auto w-full min-h-[50vh] sm:min-h-[55vh] lg:min-h-0">
 
             {/* Large logo — desktop only, optimized for standard laptop views */}
             <div className="hidden lg:flex flex-1 justify-end order-1 lg:order-2">
@@ -71,7 +71,7 @@ const LandingPage = () => {
                   </p>
                </div>
 
-                  <div className="max-w-md mx-auto lg:mx-0 w-full">
+                  <div className="max-w-md mx-auto lg:mx-0 w-full -mb-8 lg:mb-0">
                   <button
                      onClick={() => navigate('/auth', { state: { mode: 'signup' } })}
                      className="w-full flex items-center justify-between group bg-emerald-500/80 backdrop-blur-xl text-white p-2 sm:p-2.5 xl:p-4 rounded-[1.25rem] sm:rounded-[2rem] xl:rounded-[2.5rem] text-sm sm:text-base xl:text-xl font-black hover:bg-emerald-500 hover:-translate-y-1 transition-all duration-500 shadow-2xl shadow-emerald-900/30 border border-emerald-400/30"
@@ -86,7 +86,7 @@ const LandingPage = () => {
          </main>
 
          {/* Footer Features */}
-         <footer className="relative z-10 max-w-7xl mx-auto w-full px-6 py-2 lg:py-10 shrink-0">
+         <footer className="relative z-10 max-w-7xl mx-auto w-full px-6 py-2 lg:py-10 shrink-0 -mt-8 lg:mt-0">
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 lg:gap-10 py-1 lg:py-6 border-t border-white/15">
                {[
                   { icon: <Zap />, title: "Personalized", desc: "Bio-individual", color: "text-amber-400" },

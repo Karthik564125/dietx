@@ -138,7 +138,7 @@ const NutritionDetail = ({ setIsAuthenticated }: NutritionDetailProps) => {
       // 1. Create Order in Backend
       const { data } = await axios.post(
         `${API_BASE_URL}/api/payment/create-order`,
-        { amount },
+        { amount, planName: amount === 99 ? 'suggested_recipes' : 'personal_consultancy' },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 

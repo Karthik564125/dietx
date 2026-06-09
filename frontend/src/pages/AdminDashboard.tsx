@@ -31,6 +31,7 @@ const AdminDashboard = ({ setIsAuthenticated }: { setIsAuthenticated: (val: bool
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState<'users' | 'purchases'>('users');
+   const [planFilter, setPlanFilter] = useState<'all' | 'pcod' | 'personal' | 'recipes'>('all');
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
 
@@ -105,19 +106,33 @@ const AdminDashboard = ({ setIsAuthenticated }: { setIsAuthenticated: (val: bool
     u.phone?.includes(searchTerm)
   );
 
-  const filteredPurchases = data?.purchases.filter((p: any) => 
-    p.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.phone?.includes(searchTerm) ||
-    p.razorpayPaymentId?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.razorpayOrderId?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (p.amount < 200 ? 'suggested recipes' : 'personal consultancy').includes(searchTerm.toLowerCase())
-  );
+   const filteredPurchases = data?.purchases
+      .filter((p: any) => {
+         const matchesSearch = [p.email, p.phone, p.razorpayPaymentId, p.razorpayOrderId]
+            .filter(Boolean)
+            .some((v: any) => String(v).toLowerCase().includes(searchTerm.toLowerCase()));
+
+         if (!matchesSearch && searchTerm.trim() !== '') return false;
+
+         if (planFilter !== 'all') {
+            if (planFilter === 'pcod' && p.planName !== 'pcod_consultancy') return false;
+            if (planFilter === 'personal' && p.planName !== 'personal_consultancy' && Number(p.amount) !== 1499) return false;
+            if (planFilter === 'recipes' && p.planName !== 'suggested_recipes' && Number(p.amount) !== 99) return false;
+         }
+
+         return true;
+      });
 
   const stats = [
     { label: 'Total Users', value: data?.stats.totalUsers, icon: <Users size={24} />, color: 'text-blue-600', bg: 'bg-blue-50' },
     { label: 'Total Sales', value: data?.stats.totalPurchases, icon: <ShoppingBag size={24} />, color: 'text-emerald-600', bg: 'bg-emerald-50' },
-    { label: 'Total Revenue', value: `₹${data?.stats.totalRevenue}`, icon: <TrendingUp size={24} />, color: 'text-violet-600', bg: 'bg-violet-50' }
+      { label: 'Total Revenue', value: `₹${data?.stats.totalRevenue}`, icon: <TrendingUp size={24} />, color: 'text-violet-600', bg: 'bg-violet-50' }
   ];
+
+   // Additional computed stats derived from purchases (per-plan counts)
+   const pcodCount = data?.purchases?.filter((p: any) => p.planName === 'pcod_consultancy' || p.amount === 99 && p.planName === 'pcod_consultancy').length || 0;
+   const personalCount = data?.purchases?.filter((p: any) => p.planName === 'personal_consultancy' || Number(p.amount) === 1499).length || 0;
+   const recipesCount = data?.purchases?.filter((p: any) => p.planName === 'suggested_recipes' || Number(p.amount) === 99).length || 0;
 
   return (
     <div className="min-h-screen bg-slate-50 flex font-sans relative overflow-hidden">
@@ -191,12 +206,18 @@ const AdminDashboard = ({ setIsAuthenticated }: { setIsAuthenticated: (val: bool
                    onChange={e => setSearchTerm(e.target.value)}
                  />
               </div>
-              <button className="p-3.5 bg-white border border-slate-200 rounded-2xl hover:bg-slate-50 transition-all shadow-sm">
+                     <button className="p-3.5 bg-white border border-slate-200 rounded-2xl hover:bg-slate-50 transition-all shadow-sm">
                  <Filter size={20} className="text-slate-500" />
               </button>
               <button onClick={fetchData} className="p-3.5 bg-white border border-slate-200 rounded-2xl hover:bg-slate-50 transition-all shadow-sm text-emerald-600">
                  <TrendingUp size={20} />
               </button>
+                     <div className="ml-3 flex items-center gap-2">
+                        <button onClick={() => setPlanFilter('all')} className={`px-3 py-2 rounded-full text-xs font-black ${planFilter === 'all' ? 'bg-emerald-600 text-white' : 'bg-white border border-slate-200 text-slate-600'}`}>All</button>
+                        <button onClick={() => setPlanFilter('pcod')} className={`px-3 py-2 rounded-full text-xs font-black ${planFilter === 'pcod' ? 'bg-emerald-600 text-white' : 'bg-white border border-slate-200 text-slate-600'}`}>PCOD</button>
+                        <button onClick={() => setPlanFilter('personal')} className={`px-3 py-2 rounded-full text-xs font-black ${planFilter === 'personal' ? 'bg-emerald-600 text-white' : 'bg-white border border-slate-200 text-slate-600'}`}>Personal</button>
+                        <button onClick={() => setPlanFilter('recipes')} className={`px-3 py-2 rounded-full text-xs font-black ${planFilter === 'recipes' ? 'bg-emerald-600 text-white' : 'bg-white border border-slate-200 text-slate-600'}`}>Recipes</button>
+                     </div>
            </div>
         </header>
 
@@ -215,6 +236,36 @@ const AdminDashboard = ({ setIsAuthenticated }: { setIsAuthenticated: (val: bool
                    </div>
                 </div>
               ))}
+              {/* Per-plan quick stats */}
+              <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/20 flex flex-col gap-6 group hover:-translate-y-1 transition-all duration-500">
+                 <div className={`w-14 h-14 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform`}>
+                    <Leaf size={24} />
+                 </div>
+                 <div className="space-y-1">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">PCOD Sales</p>
+                    <p className="text-4xl font-black text-slate-900 tracking-tighter">{pcodCount}</p>
+                 </div>
+              </div>
+
+              <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/20 flex flex-col gap-6 group hover:-translate-y-1 transition-all duration-500">
+                 <div className={`w-14 h-14 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform`}>
+                    <ShoppingBag size={24} />
+                 </div>
+                 <div className="space-y-1">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Personal Consults</p>
+                    <p className="text-4xl font-black text-slate-900 tracking-tighter">{personalCount}</p>
+                 </div>
+              </div>
+
+              <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/20 flex flex-col gap-6 group hover:-translate-y-1 transition-all duration-500">
+                 <div className={`w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform`}>
+                    <Download size={24} />
+                 </div>
+                 <div className="space-y-1">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Recipes Sold</p>
+                    <p className="text-4xl font-black text-slate-900 tracking-tighter">{recipesCount}</p>
+                 </div>
+              </div>
            </div>
 
            {/* Table Section */}
@@ -266,7 +317,7 @@ const AdminDashboard = ({ setIsAuthenticated }: { setIsAuthenticated: (val: bool
                                       </div>
                                       <div>
                                          <p className="font-black text-slate-900 text-lg leading-none">{u.name}</p>
-                                         <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-1.5">{u.id.slice(0, 8)}</p>
+                                         <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-1.5">{u.createdAt ? new Date(u.createdAt).toLocaleDateString('en-IN') : (u.email ? u.email.split('@')[0] : 'Member')}</p>
                                       </div>
                                    </div>
                                 </td>
@@ -307,13 +358,17 @@ const AdminDashboard = ({ setIsAuthenticated }: { setIsAuthenticated: (val: bool
                                    <p className="text-[10px] font-bold text-slate-400 mt-0.5">{p.phone || 'N/A'}</p>
                                 </td>
                                 <td className="px-10 py-8">
-                                   <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border ${
-                                      p.amount < 200 
-                                         ? 'bg-blue-50 text-blue-600 border-blue-100' 
-                                         : 'bg-amber-50 text-amber-600 border-amber-100'
-                                   }`}>
-                                      {p.amount < 200 ? 'Suggested Recipes' : 'Personal Consultancy'}
-                                   </span>
+                                                    {(() => {
+                                                         const planLabel = p.planName === 'pcod_consultancy' ? 'PCOD Consultation' : (p.planName === 'suggested_recipes' ? 'Suggested Recipes' : (p.planName === 'personal_consultancy' ? 'Personal Consultancy' : (Number(p.amount) === 99 ? 'Suggested Recipes' : 'Personal Consultancy')));
+                                                         const isSmall = planLabel.toLowerCase().includes('suggested');
+                                                         return (
+                                                            <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border ${
+                                                               isSmall ? 'bg-blue-50 text-blue-600 border-blue-100' : 'bg-amber-50 text-amber-600 border-amber-100'
+                                                            }`}>
+                                                               {planLabel}
+                                                            </span>
+                                                         );
+                                                    })()}
                                 </td>
                                 <td className="px-10 py-8">
                                    <p className="text-2xl font-black text-slate-900 tracking-tighter">₹{p.amount}</p>

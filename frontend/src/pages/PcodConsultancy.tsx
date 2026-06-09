@@ -135,7 +135,7 @@ export default function PcodConsultancy({ setIsAuthenticated }: PcodConsultancyP
 
       const { data } = await axios.post(
         `${API_BASE_URL}/api/payment/create-order`,
-        { amount: 99 },
+        { amount: 99, planName: 'pcod_consultancy' },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 

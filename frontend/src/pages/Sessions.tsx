@@ -83,7 +83,7 @@ const Sessions = ({ setIsAuthenticated }: SessionsProps) => {
 
       const { data } = await axios.post(
         `${API_BASE_URL}/api/payment/create-order`,
-        { amount: 1499 },
+        { amount: 1499, planName: 'personal_consultancy' },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 

@@ -5,6 +5,7 @@ const authController_1 = require("../controllers/authController");
 const healthController_1 = require("../controllers/healthController");
 const adminController_1 = require("../controllers/adminController");
 const authMiddleware_1 = require("../middleware/authMiddleware");
+const foodLogController_1 = require("../controllers/foodLogController");
 const router = (0, express_1.Router)();
 router.post('/users', authController_1.registerUser);
 router.post('/login', authController_1.loginUser);
@@ -14,4 +15,8 @@ router.get('/health-profile', authMiddleware_1.authMiddleware, healthController_
 router.post('/daily-tracking', authMiddleware_1.authMiddleware, healthController_1.updateDailyTracking);
 router.post('/update-profile', authMiddleware_1.authMiddleware, healthController_1.updateBasicProfile);
 router.get('/admin/data', authMiddleware_1.authMiddleware, adminController_1.getAdminData);
+// Food Log routes (protected)
+router.get('/food-log', authMiddleware_1.authMiddleware, foodLogController_1.getFoodLog);
+router.post('/food-log', authMiddleware_1.authMiddleware, foodLogController_1.addFoodLogEntries);
+router.delete('/food-log/:id', authMiddleware_1.authMiddleware, foodLogController_1.deleteFoodLogEntry);
 exports.default = router;

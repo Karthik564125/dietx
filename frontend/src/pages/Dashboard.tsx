@@ -527,8 +527,53 @@ const Dashboard = ({ setIsAuthenticated }: DashboardProps) => {
   };
 
   useEffect(() => {
-    fetchProfile();
-    fetchFoodLog();
+    (async () => {
+      await fetchProfile();
+      // If there are any locally-stored logs from anonymous usage, push them to the server
+      const token = localStorage.getItem('token');
+      if (token) {
+        try {
+          const ey = `dietx_food_log`;
+          const raw = localStorage.getItem(ey);
+          if (raw) {
+            const parsed = JSON.parse(raw || '{}');
+            const localForToday = Array.isArray(parsed[TODAY]) ? parsed[TODAY] : [];
+            if (localForToday.length > 0) {
+              const entriesPayload = localForToday.map((e: any) => ({
+                name: e.name,
+                quantity: e.quantity || 1,
+                calories: e.calories || 0,
+                protein: e.protein ?? 0,
+                carbs: e.carbs ?? 0,
+                fats: e.fats ?? 0,
+                mealType: e.mealType || e.mealtype || 'Breakfast',
+                unit: e.unit || e.qty || '',
+                time: e.time || new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }),
+                date: TODAY,
+              }));
+
+              if (entriesPayload.length > 0) {
+                await axios.post(
+                  `${API_BASE_URL}/api/food-log`,
+                  { entries: entriesPayload },
+                  { headers: { Authorization: `Bearer ${token}` } }
+                );
+                // remove today's local entries after successful sync
+                delete parsed[TODAY];
+                try {
+                  localStorage.setItem(ey, JSON.stringify(parsed));
+                } catch {}
+                toast.success('Synced local food log to your account');
+              }
+            }
+          }
+        } catch (err) {
+          console.error('Failed to sync local food log:', err);
+        }
+      }
+
+      await fetchFoodLog();
+    })();
   }, [navigate]);
 
   /** Commit all cart items to the food log via API */

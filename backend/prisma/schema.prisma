@@ -47,9 +47,6 @@ model FoodLog {
   name      String
   quantity  Float
   calories  Int
-  protein   Float    @default(0)
-  carbs     Float    @default(0)
-  fats      Float    @default(0)
   mealType  String   @map("mealtype")
   unit      String
   time      String

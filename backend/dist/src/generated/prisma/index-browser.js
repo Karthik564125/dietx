@@ -142,6 +142,19 @@ exports.Prisma.UserScalarFieldEnum = {
   phone: 'phone'
 };
 
+exports.Prisma.FoodLogScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  date: 'date',
+  name: 'name',
+  quantity: 'quantity',
+  calories: 'calories',
+  mealType: 'mealType',
+  unit: 'unit',
+  time: 'time',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.NutritionPlanPurchaseScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -173,6 +186,7 @@ exports.Prisma.NullsOrder = {
 
 exports.Prisma.ModelName = {
   User: 'User',
+  FoodLog: 'FoodLog',
   NutritionPlanPurchase: 'NutritionPlanPurchase'
 };
 

@@ -24,6 +24,23 @@ async function run() {
       );
     `);
 
+    console.log("Creating 'foodlog' table if missing...");
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS public.foodlog (
+        id TEXT PRIMARY KEY,
+        userid TEXT,
+        date TEXT,
+        name TEXT,
+        quantity DOUBLE PRECISION,
+        calories INTEGER,
+        -- deprecated nutrition columns removed; store minimal fields only
+        mealtype TEXT,
+        unit TEXT,
+        time TEXT,
+        createdat TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
     console.log("Database schema updated successfully.");
     process.exit(0);
   } catch(err) {

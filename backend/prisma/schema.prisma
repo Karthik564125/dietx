@@ -40,6 +40,25 @@ model User {
   @@map("user")
 }
 
+model FoodLog {
+  id        String   @id @default(cuid())
+  userId    String   @map("userid")
+  date      String                         // YYYY-MM-DD
+  name      String
+  quantity  Float
+  calories  Int
+  protein   Float    @default(0)
+  carbs     Float    @default(0)
+  fats      Float    @default(0)
+  mealType  String   @map("mealtype")
+  unit      String
+  time      String
+  createdAt DateTime @default(now()) @map("createdat")
+
+  @@index([userId, date])
+  @@map("foodlog")
+}
+
 model NutritionPlanPurchase {
   id                 String   @id @default(cuid())
   userId             String

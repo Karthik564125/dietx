@@ -58,22 +58,6 @@ interface CartItem {
 }
 
 const TODAY = new Date().toISOString().slice(0, 10);
-const CALORIE_LOG_KEY = 'dietx_food_log';
-
-const readLog = (): FoodEntry[] => {
-  try {
-    const raw = JSON.parse(localStorage.getItem(CALORIE_LOG_KEY) ?? '{}');
-    return Array.isArray(raw[TODAY]) ? raw[TODAY] : [];
-  } catch { return []; }
-};
-
-const writeLog = (entries: FoodEntry[]) => {
-  try {
-    const raw = JSON.parse(localStorage.getItem(CALORIE_LOG_KEY) ?? '{}');
-    raw[TODAY] = entries;
-    localStorage.setItem(CALORIE_LOG_KEY, JSON.stringify(raw));
-  } catch { /* ignore */ }
-};
 
 const CircularProgress = ({
   size = 120,
@@ -470,7 +454,8 @@ const Dashboard = ({ setIsAuthenticated }: DashboardProps) => {
   const navigate = useNavigate();
   const [userName, setUserName] = useState('User');
   const [health, setHealth] = useState<HealthData>({ bmi: 0, bmiCategory: 'Calculating...', dailyCalories: 2000, weight: 0, height: 0 });
-  const [foodLog, setFoodLog] = useState<FoodEntry[]>(readLog());
+  const [foodLog, setFoodLog] = useState<FoodEntry[]>([]);
+  const [logLoading, setLogLoading] = useState(true);
   const [isPremium, setIsPremium] = useState(false);
 
   // Add-food panel state
@@ -510,17 +495,49 @@ const Dashboard = ({ setIsAuthenticated }: DashboardProps) => {
     }
   };
 
+  /** Fetch today's food log from the backend */
+  const fetchFoodLog = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+    try {
+      setLogLoading(true);
+      const res = await axios.get(`${API_BASE_URL}/api/food-log?date=${TODAY}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      // Map backend snake_case to camelCase FoodEntry shape
+      const entries: FoodEntry[] = (res.data.entries ?? []).map((e: any) => ({
+        id: e.id,
+        foodId: e.name,
+        name: e.name,
+        quantity: e.quantity,
+        calories: e.calories,
+        protein: e.protein ?? 0,
+        carbs: e.carbs ?? 0,
+        fats: e.fats ?? 0,
+        mealType: e.mealtype ?? e.mealType,
+        unit: e.unit,
+        time: e.time,
+      }));
+      setFoodLog(entries);
+    } catch (err) {
+      console.error('Failed to fetch food log:', err);
+    } finally {
+      setLogLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchProfile();
+    fetchFoodLog();
   }, [navigate]);
 
-  /** Commit all cart items to the food log */
-  const handleConfirmCart = () => {
+  /** Commit all cart items to the food log via API */
+  const handleConfirmCart = async () => {
     if (cart.length === 0) return;
+    const token = localStorage.getItem('token');
+    if (!token) return;
     const now = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
-    const newEntries: FoodEntry[] = cart.map(c => ({
-      id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
-      foodId: c.food.name,
+    const entries = cart.map(c => ({
       name: c.food.name,
       quantity: c.quantity,
       calories: Math.round(c.food.kcal * c.quantity),
@@ -530,20 +547,54 @@ const Dashboard = ({ setIsAuthenticated }: DashboardProps) => {
       mealType: selectedMealType,
       unit: c.food.qty,
       time: now,
+      date: TODAY,
     }));
-    const updated = [...foodLog, ...newEntries];
-    setFoodLog(updated);
-    writeLog(updated);
-    toast.success(`Added ${cart.length} item${cart.length > 1 ? 's' : ''} to ${selectedMealType}!`);
-    setCart([]);
-    setShowAddFood(false);
+    try {
+      const res = await axios.post(
+        `${API_BASE_URL}/api/food-log`,
+        { entries },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      // Use the server-returned list (includes real DB ids)
+      const saved: FoodEntry[] = (res.data.entries ?? []).map((e: any) => ({
+        id: e.id,
+        foodId: e.name,
+        name: e.name,
+        quantity: e.quantity,
+        calories: e.calories,
+        protein: e.protein ?? 0,
+        carbs: e.carbs ?? 0,
+        fats: e.fats ?? 0,
+        mealType: e.mealtype ?? e.mealType,
+        unit: e.unit,
+        time: e.time,
+      }));
+      setFoodLog(saved);
+      toast.success(`Added ${cart.length} item${cart.length > 1 ? 's' : ''} to ${selectedMealType}!`);
+      setCart([]);
+      setShowAddFood(false);
+    } catch (err) {
+      console.error('Failed to save food log:', err);
+      toast.error('Could not save entries. Please try again.');
+    }
   };
 
-  const deleteFoodEntry = (id: string) => {
-    const updated = foodLog.filter(f => f.id !== id);
-    setFoodLog(updated);
-    writeLog(updated);
-    toast.success('Food entry removed.');
+  const deleteFoodEntry = async (id: string) => {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+    // Optimistic UI
+    setFoodLog(prev => prev.filter(f => f.id !== id));
+    try {
+      await axios.delete(`${API_BASE_URL}/api/food-log/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      toast.success('Food entry removed.');
+    } catch (err) {
+      console.error('Failed to delete food entry:', err);
+      toast.error('Could not remove entry.');
+      // Revert optimistic update
+      fetchFoodLog();
+    }
   };
 
   const totals = foodLog.reduce((acc, f) => ({
@@ -806,7 +857,12 @@ const Dashboard = ({ setIsAuthenticated }: DashboardProps) => {
                       <div className="px-3 py-1 bg-white rounded-full text-[9px] font-black text-slate-500 border border-slate-200">{foodLog.length} Items</div>
                     </div>
                     <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-4 sm:space-y-6 custom-scrollbar relative">
-                      {foodLog.length === 0 ? (
+                      {logLoading ? (
+                        <div className="h-full flex flex-col items-center justify-center text-center space-y-4 opacity-60 py-12">
+                          <div className="w-10 h-10 border-4 border-emerald-200 border-t-emerald-500 rounded-full animate-spin" />
+                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Loading your log…</p>
+                        </div>
+                      ) : foodLog.length === 0 ? (
                         <div className="h-full flex flex-col items-center justify-center text-center space-y-6 opacity-40 py-12">
                           <div className="w-24 h-24 bg-slate-100 rounded-[2.5rem] flex items-center justify-center text-slate-300 shadow-inner"><Salad size={48} /></div>
                           <p className="text-sm font-bold text-slate-600 uppercase tracking-[0.2em]">Your log is empty<br /><span className="text-[10px] font-normal lowercase tracking-widest mt-1 opacity-60">Add some delicious meals above</span></p>

@@ -142,7 +142,7 @@ export default function PcodConsultancy({ setIsAuthenticated }: PcodConsultancyP
       const { order } = data;
 
       const options = {
-        key: 'rzp_test_SnyXd605r6Yfse',
+        key: 'rzp_live_SzVEKJaiNjOm1R', //Live Key
         amount: order.amount,
         currency: order.currency,
         name: 'Diet X PCOD Consultancy',

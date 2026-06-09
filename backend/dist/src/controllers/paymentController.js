@@ -20,7 +20,7 @@ const createOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     try {
         const { amount } = req.body; // In a real app, you'd validate this or use a fixed amount
         const receipt = `receipt_${Date.now()}`;
-        const order = yield paymentService_1.PaymentService.createOrder(amount || 499, receipt);
+        const order = yield paymentService_1.PaymentService.createOrder(amount || 1499, receipt);
         res.status(200).json({
             success: true,
             order,
@@ -58,10 +58,11 @@ const verifyPayment = (req, res) => __awaiter(void 0, void 0, void 0, function* 
                 data: { phone },
             });
         }
-        // Trigger Email Notification (Non-blocking or handled) - Only for Personal Consultancy (amount >= 299 or PCOD consultancy)
+        // Trigger Email Notification (Non-blocking or handled)
+        // Send to admin for personal consultancy OR PCOD consultancy OR suggested recipes (including ₹99 unlocks)
         try {
             const fullUser = yield prismaClient_1.default.user.findUnique({ where: { id: userId } });
-            if ((Number(amount) >= 299 || planName === 'pcod_consultancy') && fullUser) {
+            if (fullUser && (Number(amount) === 1499 || planName === 'pcod_consultancy' || planName === 'suggested_recipes' || Number(amount) === 99)) {
                 yield mailService_1.MailService.sendConsultationMail({
                     user: {
                         id: fullUser.id,

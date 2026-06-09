@@ -146,7 +146,7 @@ const NutritionDetail = ({ setIsAuthenticated }: NutritionDetailProps) => {
 
       // 2. Open Razorpay Checkout
       const options = {
-        key: 'rzp_test_SnyXd605r6Yfse', // Test Key
+        key: 'rzp_live_SzVEKJaiNjOm1R', // Live Key
         amount: order.amount,
         currency: order.currency,
         name: amount === 99 ? 'Diet X Suggested Recipes' : 'Diet X Premium',

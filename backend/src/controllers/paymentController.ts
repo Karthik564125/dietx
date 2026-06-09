@@ -9,7 +9,7 @@ export const createOrder = async (req: Request, res: Response) => {
     const { amount } = req.body; // In a real app, you'd validate this or use a fixed amount
     const receipt = `receipt_${Date.now()}`;
     
-    const order = await PaymentService.createOrder(amount || 499, receipt);
+    const order = await PaymentService.createOrder(amount || 1499, receipt);
 
     
     res.status(200).json({
@@ -66,10 +66,18 @@ export const verifyPayment = async (req: Request, res: Response) => {
       });
     }
 
-    // Trigger Email Notification (Non-blocking or handled) - Only for Personal Consultancy (amount >= 299 or PCOD consultancy)
+    // Trigger Email Notification (Non-blocking or handled)
+    // Send to admin for personal consultancy OR PCOD consultancy OR suggested recipes (including ₹99 unlocks)
     try {
       const fullUser = await (prisma as any).user.findUnique({ where: { id: userId } });
-      if ((Number(amount) >= 299 || planName === 'pcod_consultancy') && fullUser) {
+      if (
+        fullUser && (
+          Number(amount) === 1499 ||
+          planName === 'pcod_consultancy' || // explicit PCOD consultancy
+          planName === 'suggested_recipes' || // explicit suggested recipes plan
+          Number(amount) === 99 // recipe / small unlock payments
+        )
+      ) {
         await MailService.sendConsultationMail({
           user: {
             id: fullUser.id,

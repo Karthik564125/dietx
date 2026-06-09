@@ -110,7 +110,7 @@ export const getHealthProfile = async (req: Request, res: Response): Promise<voi
         userId,
         status: 'completed',
         OR: [
-          { amount: { in: [299, 499, 1499] } },
+                    { amount: { in: [1499] } },
           { planName: 'pcod_consultancy' }
         ]
       }
@@ -122,7 +122,7 @@ export const getHealthProfile = async (req: Request, res: Response): Promise<voi
         userId,
         status: 'completed',
         OR: [
-          { amount: { in: [99, 299, 499, 1499] } },
+          { amount: { in: [99] } },
           { planName: 'suggested_recipes' }
         ]
       }

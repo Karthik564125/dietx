@@ -77,7 +77,7 @@ const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 userId: user.id,
                 status: 'completed',
                 OR: [
-                    { amount: { in: [299, 499, 1499] } },
+                    { amount: { in: [1499] } },
                     { planName: 'pcod_consultancy' }
                 ]
             }
@@ -88,7 +88,7 @@ const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 userId: user.id,
                 status: 'completed',
                 OR: [
-                    { amount: { in: [99, 299, 499, 1499] } },
+                    { amount: { in: [99] } },
                     { planName: 'suggested_recipes' }
                 ]
             }

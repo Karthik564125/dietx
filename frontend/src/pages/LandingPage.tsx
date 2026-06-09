@@ -31,8 +31,8 @@ const LandingPage = () => {
             </div>
          </nav>
 
-         {/* Hero Section — flex-1 min-h-0 so it fills remaining space without overflow */}
-         <main className="relative z-10 flex-1 min-h-0 flex flex-col lg:flex-row items-center justify-center lg:justify-center px-6 gap-3 lg:gap-18 max-w-7xl mx-auto w-full">
+         {/* Hero — on mobile: relative container, content top-aligned, features pinned to bottom */}
+         <main className="relative z-10 flex-1 min-h-0 flex flex-col lg:flex-row items-center justify-center px-6 gap-3 lg:gap-18 max-w-7xl mx-auto w-full">
 
             {/* Large logo — desktop only */}
             <div className="hidden lg:flex flex-1 justify-end order-1 lg:order-2">
@@ -45,17 +45,19 @@ const LandingPage = () => {
                </div>
             </div>
 
-            {/* Content */}
-            <div className="flex-1 w-full text-center lg:text-left flex flex-col justify-between lg:justify-center gap-4 lg:gap-6 xl:gap-8 order-2 lg:order-1 h-full lg:h-auto py-4 lg:py-0">
+            {/* Content block */}
+            <div className="flex-1 w-full text-center lg:text-left flex flex-col order-2 lg:order-1 lg:gap-6 xl:gap-8 lg:justify-center
+                            /* mobile: fill height, space content at top, features at bottom */
+                            h-full justify-start pt-4 lg:pt-0">
 
-               {/* Top content block */}
+               {/* Top content */}
                <div className="space-y-3 lg:space-y-6">
 
                   {/* Logo — mobile only */}
                   <div className="flex justify-center lg:hidden">
                      <div className="relative group">
-                        <div className="absolute inset-0 bg-emerald-500/20 rounded-[2rem] blur-[50px] group-hover:bg-emerald-500/30 transition-all duration-700"></div>
-                        <div className="w-20 h-20 sm:w-28 sm:h-28 bg-white/15 backdrop-blur-3xl rounded-[2rem] border-2 border-white/30 shadow-2xl flex items-center justify-center relative z-10 overflow-hidden p-2">
+                        <div className="absolute inset-0 bg-emerald-500/20 rounded-[2rem] blur-[50px]"></div>
+                        <div className="w-20 h-20 sm:w-24 sm:h-24 bg-white/15 backdrop-blur-3xl rounded-[2rem] border-2 border-white/30 shadow-2xl flex items-center justify-center relative z-10 overflow-hidden p-2">
                            <img src={logo} alt="DietX" className="w-full h-full object-contain" />
                         </div>
                      </div>
@@ -73,23 +75,26 @@ const LandingPage = () => {
                         Experience a science-backed nutrition strategy designed by <span className="text-white font-black">Dt. Madhavi Latha</span> to transform your life and vitality sustainably.
                      </p>
                   </div>
+
+                  {/* CTA — close to text on mobile */}
+                  <div className="max-w-md mx-auto lg:mx-0 w-full pt-1 lg:pt-0">
+                     <button
+                        onClick={() => navigate('/auth', { state: { mode: 'signup' } })}
+                        className="w-full flex items-center justify-between group bg-emerald-500/80 backdrop-blur-xl text-white p-3 sm:p-3.5 xl:p-4 rounded-[1.5rem] sm:rounded-[2rem] xl:rounded-[2.5rem] text-sm sm:text-base xl:text-xl font-black hover:bg-emerald-500 hover:-translate-y-1 transition-all duration-500 shadow-2xl shadow-emerald-900/30 border border-emerald-400/30"
+                     >
+                        <span>Start Journey</span>
+                        <div className="w-9 h-9 sm:w-10 sm:h-10 xl:w-14 xl:h-14 bg-white/15 rounded-full flex items-center justify-center group-hover:bg-white group-hover:text-emerald-600 transition-all">
+                           <ArrowRight size={18} />
+                        </div>
+                     </button>
+                  </div>
                </div>
 
-               {/* CTA Button */}
-               <div className="max-w-md mx-auto lg:mx-0 w-full">
-                  <button
-                     onClick={() => navigate('/auth', { state: { mode: 'signup' } })}
-                     className="w-full flex items-center justify-between group bg-emerald-500/80 backdrop-blur-xl text-white p-3 sm:p-3.5 xl:p-4 rounded-[1.5rem] sm:rounded-[2rem] xl:rounded-[2.5rem] text-sm sm:text-base xl:text-xl font-black hover:bg-emerald-500 hover:-translate-y-1 transition-all duration-500 shadow-2xl shadow-emerald-900/30 border border-emerald-400/30"
-                  >
-                     <span>Start Journey</span>
-                     <div className="w-9 h-9 sm:w-10 sm:h-10 xl:w-14 xl:h-14 bg-white/15 rounded-full flex items-center justify-center group-hover:bg-white group-hover:text-emerald-600 transition-all">
-                        <ArrowRight size={18} />
-                     </div>
-                  </button>
-               </div>
+               {/* Spacer — pushes features to bottom on mobile */}
+               <div className="flex-1 lg:hidden" />
 
-               {/* Footer Features — MOBILE: shown inline here so they fill the bottom space */}
-               <div className="grid grid-cols-2 gap-x-4 gap-y-3 lg:hidden py-2 border-t border-white/15">
+               {/* Footer Features — mobile: pinned to bottom of flex column */}
+               <div className="lg:hidden grid grid-cols-2 gap-x-6 gap-y-2 py-3 border-t border-white/15 shrink-0">
                   {[
                      { icon: <Zap />, title: "Personalized", desc: "Bio-individual", color: "text-amber-400" },
                      { icon: <Leaf />, title: "Sustainable", desc: "Long-term goal", color: "text-emerald-400" },
@@ -97,7 +102,7 @@ const LandingPage = () => {
                      { icon: <Heart />, title: "Holistic", desc: "Rejuvenation", color: "text-rose-400" }
                   ].map((f, i) => (
                      <div key={i} className="flex items-center gap-2 group">
-                        <div className={`${f.color} opacity-80 transition-transform group-hover:scale-110 shrink-0`}>
+                        <div className={`${f.color} opacity-80 shrink-0`}>
                            {React.cloneElement(f.icon as React.ReactElement<any>, { size: 14 })}
                         </div>
                         <div>
@@ -111,7 +116,7 @@ const LandingPage = () => {
             </div>
          </main>
 
-         {/* Footer Features — DESKTOP only (lg+) */}
+         {/* Footer Features — desktop only */}
          <footer className="relative z-10 hidden lg:block max-w-7xl mx-auto w-full px-6 py-4 lg:py-6 shrink-0">
             <div className="grid grid-cols-4 gap-10 py-4 border-t border-white/15">
                {[

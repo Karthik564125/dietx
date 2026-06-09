@@ -174,6 +174,39 @@ const MobileBottomSheet = ({
   );
 };
 
+// ─── Desktop Right Drawer (large screens) ─────────────────────────────────────
+const DesktopRightDrawer = ({ open, onClose, children }: { open: boolean; onClose: () => void; children: React.ReactNode }) => {
+  useEffect(() => {
+    if (open) document.body.style.overflow = 'hidden';
+    else document.body.style.overflow = '';
+    return () => { document.body.style.overflow = ''; };
+  }, [open]);
+
+  return (
+    <AnimatePresence>
+      {open && (
+        <>
+          <motion.div key="backdrop-desk" initial={{ opacity: 0 }} animate={{ opacity: 0.6 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/60 z-[300]" onClick={onClose} />
+          <motion.aside
+            key="drawer"
+            initial={{ x: '100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '100%' }}
+            transition={{ type: 'spring', damping: 30, stiffness: 400 }}
+            className="fixed right-0 top-0 h-full w-[520px] max-w-[95vw] z-[310] bg-slate-950 border-l border-white/10 shadow-2xl overflow-auto"
+          >
+            <div className="flex items-center justify-between p-4 border-b border-white/5">
+              <p className="text-xs font-black text-emerald-400 uppercase tracking-[0.3em]">New Entry</p>
+              <button onClick={onClose} className="p-2 rounded-xl bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 transition-all"><X size={16} /></button>
+            </div>
+            <div className="p-6">{children}</div>
+          </motion.aside>
+        </>
+      )}
+    </AnimatePresence>
+  );
+};
+
 // ─── Cart Item Row ─────────────────────────────────────────────────────────────
 const CartRow = ({
   item,
@@ -829,23 +862,7 @@ const Dashboard = ({ setIsAuthenticated }: DashboardProps) => {
                           </div>
                         </div>
 
-                        <div className="hidden sm:block space-y-5">
-                          {[
-                            { label: 'Proteins', val: totals.protein.toFixed(0), target: 120, color: 'bg-blue-500' },
-                            { label: 'Carbs', val: totals.carbs.toFixed(0), target: 300, color: 'bg-amber-500' },
-                            { label: 'Fats', val: totals.fats.toFixed(0), target: 80, color: 'bg-rose-500' }
-                          ].map(m => (
-                            <div key={m.label} className="space-y-2">
-                              <div className="flex justify-between text-[8px] font-black uppercase tracking-[0.3em] text-slate-400">
-                                <span>{m.label}</span>
-                                <span className="text-white">{m.val}g <span className="opacity-60">/ {m.target}g</span></span>
-                              </div>
-                              <div className="h-1.5 bg-white/15 rounded-full overflow-hidden">
-                                <motion.div initial={{ width: 0 }} animate={{ width: `${Math.min((Number(m.val) / m.target) * 100, 100)}%` }} transition={{ duration: 1 }} className={`h-full ${m.color}`} />
-                              </div>
-                            </div>
-                          ))}
-                        </div>
+                        {/* macronutrient bars removed per request; only show total calories */}
                       </div>
                     </div>
                   </div>
@@ -873,25 +890,18 @@ const Dashboard = ({ setIsAuthenticated }: DashboardProps) => {
                     ))}
                   </div>
 
-                  {/* Desktop Inline Add-Food Panel (hidden on mobile) */}
-                  <AnimatePresence>
-                    {showAddFood && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0, y: -20 }}
-                        animate={{ opacity: 1, height: 'auto', y: 0 }}
-                        exit={{ opacity: 0, height: 0, y: -20 }}
-                        className="overflow-hidden hidden lg:block"
-                      >
-                        <AddFoodForm
-                          selectedMealType={selectedMealType}
-                          setSelectedMealType={setSelectedMealType}
-                          cart={cart}
-                          setCart={setCart}
-                          onConfirm={handleConfirmCart}
-                        />
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                  {/* Desktop Right-side Drawer for Add-Food (keeps mobile sheet intact) */}
+                  <div className="hidden lg:block">
+                    <DesktopRightDrawer open={showAddFood} onClose={closeAddFood}>
+                      <AddFoodForm
+                        selectedMealType={selectedMealType}
+                        setSelectedMealType={setSelectedMealType}
+                        cart={cart}
+                        setCart={setCart}
+                        onConfirm={handleConfirmCart}
+                      />
+                    </DesktopRightDrawer>
+                  </div>
                 </div>
 
                 {/* Today's Food Log */}

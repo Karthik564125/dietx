@@ -228,10 +228,11 @@ export default function PcodConsultancy({ setIsAuthenticated }: PcodConsultancyP
                 </span>
               </div>
               <h1 className="text-5xl sm:text-7xl lg:text-[6rem] font-black tracking-tighter text-white leading-[0.85]">
-                PCOD &amp; PCOS <br />
+                PMOS <br />
                 <span className="text-pink-400">Reversal</span>
               </h1>
               <p className="text-pink-200 font-black uppercase tracking-[0.4em] text-sm sm:text-lg">
+                PCOS changed to PMOS Recently
                 1-on-1 Personal Consultancy
               </p>
             </div>
